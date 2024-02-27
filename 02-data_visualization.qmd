@@ -30,7 +30,8 @@ format:
         center-title-slide: false
     html:
         output-file: 02-data_visualization_page.html 
-        code-tools: true
+        code-tools: 
+          source: repo
     ipynb:
         jupyter:
           kernelspec:
