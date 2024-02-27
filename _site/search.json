@@ -11,6 +11,6 @@
     "href": "index.html",
     "title": "Welcome!",
     "section": "",
-    "text": "The following topics are covered on this website. We automatically generate a webpage, pdf slides, and html slides (RevealJS) for your convenience. However, only the html slides are presented in class and are therefore checked for rendering issues.\n\nIntroduction to R\nData Visualization\nVisualizing Uncertainty"
+    "text": "This webiste covers the R implementation of some of the concepts discussed in class. We automatically generate multiple versions of the content for your convenience. However, only the RevealJS slides are presented in class and are therefore checked for rendering issues. To run the code yourself we recommend you download the Jupyter version which can be conveniently run using either Visual Studio Code or Jupyter Desktop.\n\nIntroduction to R\nData Visualization\nVisualizing Uncertainty"
   }
 ]

@@ -30,4 +30,5 @@ format:
         center-title-slide: false
     html:
         output-file: 03-model_visualization_page.html 
+    ipynb: default
 ---

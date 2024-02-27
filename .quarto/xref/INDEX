@@ -18,12 +18,15 @@
   "03-model_visualization.qmd": {
     "03-model_visualization.html": "6951bc54",
     "03-model_visualization.tex": "3cf1895c",
-    "03-model_visualization_page.html": "285abdd5"
+    "03-model_visualization_page.html": "285abdd5",
+    "03-model_visualization.ipynb": "b1dce751"
   },
   "01-introduction_to_r.qmd": {
     "01-introduction_to_r.html": "beafd23e",
     "01-introduction_to_r.tex": "e0230500",
-    "01-introduction_to_r_page.html": "ac2bafc5"
+    "01-introduction_to_r_page.html": "ac2bafc5",
+    "01-introduction_to_r.md": "80c5b6f5",
+    "01-introduction_to_r.ipynb": "6de9fa08"
   },
   "99-about.qmd": {
     "99-about.html": "2d39abec"
@@ -31,6 +34,7 @@
   "02-data_visualization.qmd": {
     "02-data_visualization.html": "85c793c9",
     "02-data_visualization.tex": "0f9946f5",
-    "02-data_visualization_page.html": "df48ec91"
+    "02-data_visualization_page.html": "df48ec91",
+    "02-data_visualization.ipynb": "3ec35be2"
   }
 }
