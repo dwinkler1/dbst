@@ -32,10 +32,11 @@ format:
         output-file: 02-data_visualization_page.html 
         code-tools: true
     ipynb:
-        kernelspec:
-          display_name: R
-          language: r
-          name: ir
+        jupyter:
+          kernelspec:
+            display_name: R
+            language: r
+            name: ir
 ---
 
 # Visual Channels

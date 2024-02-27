@@ -33,8 +33,9 @@ format:
         code-tools:
             source: repo
     ipynb:
-        kernelspec:
-          display_name: R
-          language: r
-          name: ir
+        jupyter:
+          kernelspec:
+            display_name: R
+            language: r
+            name: ir
 ---
