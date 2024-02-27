@@ -5,8 +5,24 @@ title: "Welcome!"
 This webiste covers the [R](https://www.r-project.org) implementation of some of the concepts discussed in class.
 We automatically generate multiple versions of the content for your convenience.
 However, only the [RevealJS](https://revealjs.com) slides are presented in class and are therefore checked for rendering issues.
-To run the code yourself we recommend you download the [Jupyter](https://jupyter.org) version which can be conveniently run using either [Visual Studio Code](https://code.visualstudio.com) or [Jupyter Desktop](https://github.com/jupyterlab/jupyterlab-desktop?tab=readme-ov-file#installation).
 
 1. [Introduction to R](01-introduction_to_r_page.html)
 2. [Data Visualization](02-data_visualization_page.html)
 3. [Visualizing Uncertainty](03-model_visualization_page.html)
+
+# Getting started with R
+
+1. Download the [R console](https://www.r-project.org)
+2. 
+
+## Optional
+
+If you are already familiar with [Jupyter notebooks](https://jupyter.org) you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:
+
+```{r}
+#| eval: false
+install.packages("IRkernel")
+IRkernel::installspec()
+```
+
+Now you can open the downloaded `.ipynb` file and execute it.

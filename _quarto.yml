@@ -3,6 +3,8 @@ project:
 
 website:
   title: "5936 - Data-based Storytelling"
+  repo-url: https://github.com/dwinkler1/dbst
+  site-url: https://dwinkler.org/dbst
   navbar:
     left:
       - href: index.qmd

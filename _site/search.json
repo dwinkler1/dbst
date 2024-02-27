@@ -4,13 +4,20 @@
     "href": "02-data_visualization_page.html",
     "title": "Data Visualization",
     "section": "",
-    "text": "Visual Channels"
+    "text": "Visual Channels\n\nprint(\"HI\")\n\n[1] \"HI\""
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Welcome!",
     "section": "",
-    "text": "This webiste covers the R implementation of some of the concepts discussed in class. We automatically generate multiple versions of the content for your convenience. However, only the RevealJS slides are presented in class and are therefore checked for rendering issues. To run the code yourself we recommend you download the Jupyter version which can be conveniently run using either Visual Studio Code or Jupyter Desktop.\n\nIntroduction to R\nData Visualization\nVisualizing Uncertainty"
+    "text": "This webiste covers the R implementation of some of the concepts discussed in class. We automatically generate multiple versions of the content for your convenience. However, only the RevealJS slides are presented in class and are therefore checked for rendering issues."
+  },
+  {
+    "objectID": "index.html#optional",
+    "href": "index.html#optional",
+    "title": "Welcome!",
+    "section": "Optional",
+    "text": "Optional\nIf you are already familiar with Jupyter notebooks you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:\n\ninstall.packages(\"IRkernel\")\nIRkernel::installspec()\n\nNow you can open the downloaded .ipynb file and execute it."
   }
 ]

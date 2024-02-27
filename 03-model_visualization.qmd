@@ -30,5 +30,11 @@ format:
         center-title-slide: false
     html:
         output-file: 03-model_visualization_page.html 
-    ipynb: default
+        code-tools:
+            source: repo
+    ipynb:
+        kernelspec:
+          display_name: R
+          language: r
+          name: ir
 ---

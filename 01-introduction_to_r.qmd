@@ -30,5 +30,10 @@ format:
         center-title-slide: false
     html:
         output-file: 01-introduction_to_r_page.html
-    ipynb: default
+        code-tools: true
+    ipynb:
+        kernelspec:
+          display_name: R
+          language: r
+          name: ir
 ---

@@ -30,8 +30,18 @@ format:
         center-title-slide: false
     html:
         output-file: 02-data_visualization_page.html 
-    ipynb: default
+        code-tools: true
+    ipynb:
+        kernelspec:
+          display_name: R
+          language: r
+          name: ir
 ---
 
 # Visual Channels
+
+
+```{r}
+print("HI")
+```
 
