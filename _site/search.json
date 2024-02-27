@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "02-data_visualization_page.html",
+    "href": "02-data_visualization_page.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Visual Channels"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome!",
+    "section": "",
+    "text": "The following topics are covered on this website. We automatically generate a webpage, pdf slides, and html slides (RevealJS) for your convenience. However, only the html slides are presented in class and are therefore checked for rendering issues.\n\nIntroduction to R\nData Visualization\nVisualizing Uncertainty"
+  }
+]

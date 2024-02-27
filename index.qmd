@@ -1,0 +1,9 @@
+---
+title: "Welcome!"
+---
+
+The following topics are covered on this website. We automatically generate a webpage, pdf slides, and html slides (RevealJS) for your convenience. However, only the html slides are presented in class and are therefore checked for rendering issues.
+
+1. [Introduction to R](01-introduction_to_r_page.html)
+2. [Data Visualization](02-data_visualization_page.html)
+3. [Visualizing Uncertainty](03-model_visualization_page.html)

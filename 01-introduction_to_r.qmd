@@ -1,0 +1,33 @@
+---
+title: 'Introduction to R'
+subtitle: '[Data-based Storytelling](./index.html)'
+title-slide-attributes: 
+  data-background-image: Graphics/D2.jpg
+author: 
+- Daniel Winkler
+- Stephan Fally
+institute: 
+- 'Institute for Retailing & Data Science'
+- 'Department Marketing'
+bibliography: src/data_storytelling.bib  
+format: 
+    revealjs:
+        theme: [simple, src/rds_theme.scss]
+        logo: Graphics/WU_logo.png
+        footer: "[Data-based Storytelling](./index.html)"
+        height: 1080
+        width: 1920
+        center-title-slide: false
+        center: false
+        progress: false
+        embed-resources: true # slower compile -> activate later
+        code-link: true
+        code-overflow: wrap
+        incremental: false
+    beamer:
+        incremental: false
+        aspectratio: 169
+        center-title-slide: false
+    html:
+        output-file: 01-introduction_to_r_page.html 
+---

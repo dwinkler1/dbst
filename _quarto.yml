@@ -1,0 +1,20 @@
+project:
+  type: website
+
+website:
+  title: "5936 - Data-based Storytelling"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: 01-introduction_to_r.qmd
+        text: Introduction to R
+      - href: 02-data_visualization.qmd
+        text: Data Visualization
+      - href: 03-model_visualization.qmd
+        text: Model Visualization
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    toc: true

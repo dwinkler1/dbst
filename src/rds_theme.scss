@@ -1,0 +1,24 @@
+/*-- scss:defaults --*/
+$presentation-title-slide-text-align: left;
+$presentation-title-slide-align: left;
+$link-color: #5a5a5a !default;
+$headingLineHeight: 1.5;
+$headingMargin: 0 0 33px 0;
+/*-- scss:rules --*/
+
+.reveal .quarto-title-block .quarto-title-authors {
+    justify-content: left;
+}
+
+.center-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+}
+
+// .reveal h2 {
+//     display: flex;
+//     align-items: flex-start;
+// }
