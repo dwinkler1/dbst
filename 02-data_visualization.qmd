@@ -20,18 +20,37 @@ format:
         center-title-slide: false
         center: false
         progress: false
-        embed-resources: true # slower compile -> activate later
+        embed-resources: false #true # slower compile -> activate later
+        echo: true
         code-link: true
         code-overflow: wrap
+        code-fold: true
         incremental: false
+        toc: true
+        toc-expand: 1
+        toc-depth: 1
+        toc-location: body
+        fig-width: 12
+        fig-height: 6
     beamer:
         incremental: false
         aspectratio: 169
         center-title-slide: false
+        slide-level: 2
+        echo: false
+        keep-tex: false
+        fig-width: 8
+        fig-height: 4
     html:
         output-file: 02-data_visualization_page.html 
         code-tools: 
           source: repo
+        code-overflow: wrap
+        code-fold: true
+        message: false
+        warning: false
+        fig-width: 12
+        fig-height: 6
     ipynb:
         jupyter:
           kernelspec:
@@ -40,6 +59,152 @@ format:
             name: ir
 ---
 
+# Always Visualize!
+
+## Processing numbers is hard {.scrollable}
+
+ 
+::: {.content-visible unless-format="pdf"}
+
+```{r}
+library(datasauRus)
+library(dplyr)
+library(ggplot2)
+library(gt)
+library(stringr)
+library(tidyr)
+
+tab_ds_data <- datasaurus_dozen |>
+  filter(dataset %in% c('dino', 'star')) |>
+  group_by(dataset) |>
+  mutate(id = 1:n()) |>
+  pivot_wider(
+    names_from = dataset, 
+    values_from = c(x,y),
+    names_vary = 'slowest'
+  ) |>
+  select(-id) |> 
+  head(10) 
+tab_ds_data |>  
+  gt() |>
+  cols_label(
+    x_dino = 'x',
+    y_dino = 'y',
+    x_star = 'x',
+    y_star = 'y'
+  ) |>
+  fmt_number() |>
+  tab_spanner(
+    label = "Dino",
+    columns = ends_with("dino")
+  ) |>
+  cols_align('center') |> 
+  tab_spanner(
+    label = "Star",
+    columns = ends_with("star")
+  ) |> 
+  tab_options(
+    table.width = pct(85),
+    table.font.size = 35) 
+```
+
+:::
+
+::: {.content-visible when-format="beamer"}
+
+```{r}
+tab_ds_data |> 
+knitr::kable(
+  col.names = c(
+    'Dino: x',
+    'Dino: y',
+    'Star: x',
+    'Star: y'),
+    digits = 2)
+```
+
+:::
+
+## Summary statistics are limiting
+
+```{r}
+datasaurus_dozen |>
+  filter(dataset %in% c('dino', 'star')) |>
+  group_by(dataset) |>
+  summarize(
+    avg_x = round(mean(x), digits = 2), 
+    sd_x = round(sd(x), digits = 2),
+    avg_y = round(mean(y), digits = 2),
+    sd_y = round(sd(y), digits = 2),
+    cor_xy = round(cor(x,y), digits = 2)
+    ) |>
+  mutate(dataset = str_to_title(dataset)) |> 
+  gt() |>
+  cols_label(
+    avg_x = "Mean of x",
+    sd_x = "Std. Dev. of x",
+    avg_y = "Mean of y",
+    sd_y = "Std. Dev. of y",
+    cor_xy = "Correlation") |> 
+  tab_options(
+    table.width = pct(85),
+    table.font.size = 35) 
+```
+
+::: {.fragment .fade-in}
+
+```{r}
+#| fig-align: center
+datasaurus_dozen |>
+  filter(dataset %in% c('dino', 'star')) |>
+  mutate(dataset = str_to_title(dataset)) |>
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  facet_wrap(~dataset) +
+  theme_minimal() +
+  theme(
+    panel.grid=element_blank(),
+    strip.text=element_text(size=35),
+    axis.ticks=element_blank(),
+    axis.text=element_blank(),
+    axis.title=element_text(size=30)
+  )
+```
+
+
+:::
+
+## Exercise 
+
+::: {.callout-tip}
+## See beyond summary statistics
+
+- Select the `dataset`s `x_shape` & `bullseye` from the data.frame `datasaurus_dozen`
+- Create a table showing the following statistics for the two `dataset`s:
+  - mean of `x` and `y`,
+  - standard deviation of `x` and `y`, and
+  - covariance between `x` and `y`
+- Create a plot showing the two `dataset`s
+:::
+
+::: {.content-visible when-format="html"}
+
+Here is some code to get you started:
+
+:::
+
+```{r}
+#| code-fold: show
+library(datasauRus)
+library(dplyr)
+library(ggplot2)
+library(gt)
+library(stringr)
+library(tidyr)
+filter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |>
+  str(give.attr = FALSE)
+```
+
 # Visual Channels
 
 
@@ -47,3 +212,9 @@ format:
 print("HI")
 ```
 
+# Mapping visual ratios
+
+::: {.note}
+If including $0$ in the y-axis would make the graph unreadable include additional annotation
+Or visualize the difference.
+:::

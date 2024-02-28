@@ -1,10 +1,59 @@
 [
   {
+    "objectID": "02-data_visualization.html#processing-numbers-is-hard",
+    "href": "02-data_visualization.html#processing-numbers-is-hard",
+    "title": "Data Visualization",
+    "section": "Processing numbers is hard",
+    "text": "Processing numbers is hard\n\nCodelibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\n\ntab_ds_data &lt;- datasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  mutate(id = 1:n()) |&gt;\n  pivot_wider(\n    names_from = dataset, \n    values_from = c(x,y),\n    names_vary = 'slowest'\n  ) |&gt;\n  select(-id) |&gt; \n  head(10) \ntab_ds_data |&gt;  \n  gt() |&gt;\n  cols_label(\n    x_dino = 'x',\n    y_dino = 'y',\n    x_star = 'x',\n    y_star = 'y'\n  ) |&gt;\n  fmt_number() |&gt;\n  tab_spanner(\n    label = \"Dino\",\n    columns = ends_with(\"dino\")\n  ) |&gt;\n  cols_align('center') |&gt; \n  tab_spanner(\n    label = \"Star\",\n    columns = ends_with(\"star\")\n  ) |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\n\nDino\nStar\n\n\nx\ny\nx\ny\n\n\n\n\n55.38\n97.18\n58.21\n91.88\n\n\n51.54\n96.03\n58.20\n92.21\n\n\n46.15\n94.49\n58.72\n90.31\n\n\n42.82\n91.41\n57.28\n89.91\n\n\n40.77\n88.33\n58.08\n92.01\n\n\n38.72\n84.87\n57.49\n88.09\n\n\n35.64\n79.87\n28.09\n63.51\n\n\n33.08\n77.56\n28.09\n63.59\n\n\n28.97\n74.49\n28.09\n63.12\n\n\n26.15\n71.41\n27.58\n62.82"
+  },
+  {
+    "objectID": "02-data_visualization.html#summary-statistics-are-limiting",
+    "href": "02-data_visualization.html#summary-statistics-are-limiting",
+    "title": "Data Visualization",
+    "section": "Summary statistics are limiting",
+    "text": "Summary statistics are limiting\n\nCodedatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  summarize(\n    avg_x = round(mean(x), digits = 2), \n    sd_x = round(sd(x), digits = 2),\n    avg_y = round(mean(y), digits = 2),\n    sd_y = round(sd(y), digits = 2),\n    cor_xy = round(cor(x,y), digits = 2)\n    ) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt; \n  gt() |&gt;\n  cols_label(\n    avg_x = \"Mean of x\",\n    sd_x = \"Std. Dev. of x\",\n    avg_y = \"Mean of y\",\n    sd_y = \"Std. Dev. of y\",\n    cor_xy = \"Correlation\") |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\ndataset\nMean of x\nStd. Dev. of x\nMean of y\nStd. Dev. of y\nCorrelation\n\n\n\nDino\n54.26\n16.77\n47.83\n26.94\n-0.06\n\n\nStar\n54.27\n16.77\n47.84\n26.93\n-0.06\n\n\n\n\n\n\n\n\nCodedatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt;\n  ggplot(aes(x = x, y = y)) +\n  geom_point() +\n  facet_wrap(~dataset) +\n  theme_minimal() +\n  theme(\n    panel.grid=element_blank(),\n    strip.text=element_text(size=35),\n    axis.ticks=element_blank(),\n    axis.text=element_blank(),\n    axis.title=element_text(size=30)\n  )"
+  },
+  {
+    "objectID": "02-data_visualization.html#exercise",
+    "href": "02-data_visualization.html#exercise",
+    "title": "Data Visualization",
+    "section": "Exercise",
+    "text": "Exercise\n\n\n\n\n\n\nSee beyond summary statistics\n\n\n\nSelect the datasets x_shape & bullseye from the data.frame datasaurus_dozen\n\nCreate a table showing the following statistics for the two datasets:\n\nmean of x and y,\nstandard deviation of x and y, and\ncovariance between x and y\n\n\n\nCreate a plot showing the two datasets\n\n\n\n\nHere is some code to get you started:\n\nCodelibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\nfilter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |&gt;\n  str(give.attr = FALSE)\n\ntibble [284 × 3] (S3: tbl_df/tbl/data.frame)\n $ dataset: chr [1:284] \"x_shape\" \"x_shape\" \"x_shape\" \"x_shape\" ...\n $ x      : num [1:284] 38.3 35.8 32.8 33.7 37.2 ...\n $ y      : num [1:284] 92.5 94.1 88.5 88.6 83.7 ..."
+  },
+  {
     "objectID": "02-data_visualization_page.html",
     "href": "02-data_visualization_page.html",
     "title": "Data Visualization",
     "section": "",
-    "text": "Visual Channels\n\nprint(\"HI\")\n\n[1] \"HI\""
+    "text": "Code\nlibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\n\ntab_ds_data &lt;- datasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  mutate(id = 1:n()) |&gt;\n  pivot_wider(\n    names_from = dataset, \n    values_from = c(x,y),\n    names_vary = 'slowest'\n  ) |&gt;\n  select(-id) |&gt; \n  head(10) \ntab_ds_data |&gt;  \n  gt() |&gt;\n  cols_label(\n    x_dino = 'x',\n    y_dino = 'y',\n    x_star = 'x',\n    y_star = 'y'\n  ) |&gt;\n  fmt_number() |&gt;\n  tab_spanner(\n    label = \"Dino\",\n    columns = ends_with(\"dino\")\n  ) |&gt;\n  cols_align('center') |&gt; \n  tab_spanner(\n    label = \"Star\",\n    columns = ends_with(\"star\")\n  ) |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\n\n\n\nDino\nStar\n\n\nx\ny\nx\ny\n\n\n\n\n55.38\n97.18\n58.21\n91.88\n\n\n51.54\n96.03\n58.20\n92.21\n\n\n46.15\n94.49\n58.72\n90.31\n\n\n42.82\n91.41\n57.28\n89.91\n\n\n40.77\n88.33\n58.08\n92.01\n\n\n38.72\n84.87\n57.49\n88.09\n\n\n35.64\n79.87\n28.09\n63.51\n\n\n33.08\n77.56\n28.09\n63.59\n\n\n28.97\n74.49\n28.09\n63.12\n\n\n26.15\n71.41\n27.58\n62.82\n\n\n\n\n\n\n\n\n\n\n\n\nCode\ndatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  summarize(\n    avg_x = round(mean(x), digits = 2), \n    sd_x = round(sd(x), digits = 2),\n    avg_y = round(mean(y), digits = 2),\n    sd_y = round(sd(y), digits = 2),\n    cor_xy = round(cor(x,y), digits = 2)\n    ) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt; \n  gt() |&gt;\n  cols_label(\n    avg_x = \"Mean of x\",\n    sd_x = \"Std. Dev. of x\",\n    avg_y = \"Mean of y\",\n    sd_y = \"Std. Dev. of y\",\n    cor_xy = \"Correlation\") |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\n\n\n\ndataset\nMean of x\nStd. Dev. of x\nMean of y\nStd. Dev. of y\nCorrelation\n\n\n\n\nDino\n54.26\n16.77\n47.83\n26.94\n-0.06\n\n\nStar\n54.27\n16.77\n47.84\n26.93\n-0.06\n\n\n\n\n\n\n\n\n\n\nCode\ndatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt;\n  ggplot(aes(x = x, y = y)) +\n  geom_point() +\n  facet_wrap(~dataset) +\n  theme_minimal() +\n  theme(\n    panel.grid=element_blank(),\n    strip.text=element_text(size=35),\n    axis.ticks=element_blank(),\n    axis.text=element_blank(),\n    axis.title=element_text(size=30)\n  )\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSee beyond summary statistics\n\n\n\n\nSelect the datasets x_shape & bullseye from the data.frame datasaurus_dozen\nCreate a table showing the following statistics for the two datasets:\n\nmean of x and y,\nstandard deviation of x and y, and\ncovariance between x and y\n\nCreate a plot showing the two datasets\n\n\n\nHere is some code to get you started:\n\n\nCode\nlibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\nfilter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |&gt;\n  str(give.attr = FALSE)\n\n\ntibble [284 × 3] (S3: tbl_df/tbl/data.frame)\n $ dataset: chr [1:284] \"x_shape\" \"x_shape\" \"x_shape\" \"x_shape\" ...\n $ x      : num [1:284] 38.3 35.8 32.8 33.7 37.2 ...\n $ y      : num [1:284] 92.5 94.1 88.5 88.6 83.7 ..."
+  },
+  {
+    "objectID": "02-data_visualization_page.html#processing-numbers-is-hard",
+    "href": "02-data_visualization_page.html#processing-numbers-is-hard",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Code\nlibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\n\ntab_ds_data &lt;- datasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  mutate(id = 1:n()) |&gt;\n  pivot_wider(\n    names_from = dataset, \n    values_from = c(x,y),\n    names_vary = 'slowest'\n  ) |&gt;\n  select(-id) |&gt; \n  head(10) \ntab_ds_data |&gt;  \n  gt() |&gt;\n  cols_label(\n    x_dino = 'x',\n    y_dino = 'y',\n    x_star = 'x',\n    y_star = 'y'\n  ) |&gt;\n  fmt_number() |&gt;\n  tab_spanner(\n    label = \"Dino\",\n    columns = ends_with(\"dino\")\n  ) |&gt;\n  cols_align('center') |&gt; \n  tab_spanner(\n    label = \"Star\",\n    columns = ends_with(\"star\")\n  ) |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\n\n\n\nDino\nStar\n\n\nx\ny\nx\ny\n\n\n\n\n55.38\n97.18\n58.21\n91.88\n\n\n51.54\n96.03\n58.20\n92.21\n\n\n46.15\n94.49\n58.72\n90.31\n\n\n42.82\n91.41\n57.28\n89.91\n\n\n40.77\n88.33\n58.08\n92.01\n\n\n38.72\n84.87\n57.49\n88.09\n\n\n35.64\n79.87\n28.09\n63.51\n\n\n33.08\n77.56\n28.09\n63.59\n\n\n28.97\n74.49\n28.09\n63.12\n\n\n26.15\n71.41\n27.58\n62.82"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#summary-statistics-are-limiting",
+    "href": "02-data_visualization_page.html#summary-statistics-are-limiting",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Code\ndatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  group_by(dataset) |&gt;\n  summarize(\n    avg_x = round(mean(x), digits = 2), \n    sd_x = round(sd(x), digits = 2),\n    avg_y = round(mean(y), digits = 2),\n    sd_y = round(sd(y), digits = 2),\n    cor_xy = round(cor(x,y), digits = 2)\n    ) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt; \n  gt() |&gt;\n  cols_label(\n    avg_x = \"Mean of x\",\n    sd_x = \"Std. Dev. of x\",\n    avg_y = \"Mean of y\",\n    sd_y = \"Std. Dev. of y\",\n    cor_xy = \"Correlation\") |&gt; \n  tab_options(\n    table.width = pct(85),\n    table.font.size = 35) \n\n\n\n\n\n\n\n\ndataset\nMean of x\nStd. Dev. of x\nMean of y\nStd. Dev. of y\nCorrelation\n\n\n\n\nDino\n54.26\n16.77\n47.83\n26.94\n-0.06\n\n\nStar\n54.27\n16.77\n47.84\n26.93\n-0.06\n\n\n\n\n\n\n\n\n\n\nCode\ndatasaurus_dozen |&gt;\n  filter(dataset %in% c('dino', 'star')) |&gt;\n  mutate(dataset = str_to_title(dataset)) |&gt;\n  ggplot(aes(x = x, y = y)) +\n  geom_point() +\n  facet_wrap(~dataset) +\n  theme_minimal() +\n  theme(\n    panel.grid=element_blank(),\n    strip.text=element_text(size=35),\n    axis.ticks=element_blank(),\n    axis.text=element_blank(),\n    axis.title=element_text(size=30)\n  )"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#exercise",
+    "href": "02-data_visualization_page.html#exercise",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "See beyond summary statistics\n\n\n\n\nSelect the datasets x_shape & bullseye from the data.frame datasaurus_dozen\nCreate a table showing the following statistics for the two datasets:\n\nmean of x and y,\nstandard deviation of x and y, and\ncovariance between x and y\n\nCreate a plot showing the two datasets\n\n\n\nHere is some code to get you started:\n\n\nCode\nlibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\nfilter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |&gt;\n  str(give.attr = FALSE)\n\n\ntibble [284 × 3] (S3: tbl_df/tbl/data.frame)\n $ dataset: chr [1:284] \"x_shape\" \"x_shape\" \"x_shape\" \"x_shape\" ...\n $ x      : num [1:284] 38.3 35.8 32.8 33.7 37.2 ...\n $ y      : num [1:284] 92.5 94.1 88.5 88.6 83.7 ..."
+  },
+  {
+    "objectID": "01-introduction_to_r_page.html",
+    "href": "01-introduction_to_r_page.html",
+    "title": "Introduction to R",
+    "section": "",
+    "text": "ToDos\n\nQuarto website"
   },
   {
     "objectID": "index.html",
@@ -18,6 +67,6 @@
     "href": "index.html#optional",
     "title": "Welcome!",
     "section": "Optional",
-    "text": "Optional\nIf you are already familiar with Jupyter notebooks you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:\n\ninstall.packages(\"IRkernel\")\nIRkernel::installspec()\n\nNow you can open the downloaded .ipynb file and execute it."
+    "text": "Optional\nIf you are already familiar with Jupyter you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:\n\ninstall.packages(\"IRkernel\")\nIRkernel::installspec()\n\nNow you can open the downloaded .ipynb file and execute it."
   }
 ]

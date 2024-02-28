@@ -193,11 +193,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Getting started with R</h1>
 <ol type="1">
 <li>Download the <a href="https://www.r-project.org">R console</a></li>
-<li></li>
+<li>Download an editor:
+<ol type="1">
+<li><strong>Recommended</strong>: <a href="https://posit.co/downloads/">R Studio Desktop</a></li>
+<li><a href="https://code.visualstudio.com">VS Code</a> + <a href="https://marketplace.visualstudio.com/items?itemName=REditorSupport.r">R Extension</a></li>
+<li><a href="https://jupyter.org">JupyterLab</a> or <a href="https://github.com/jupyterlab/jupyterlab-desktop?tab=readme-ov-file#installation">JupyterLab Desktop</a> (see below)</li>
+</ol></li>
 </ol>
 <section id="optional" class="level2">
 <h2 class="anchored" data-anchor-id="optional">Optional</h2>
-<p>If you are already familiar with <a href="https://jupyter.org">Jupyter notebooks</a> you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:</p>
+<p>If you are already familiar with <a href="https://jupyter.org">Jupyter</a> you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"IRkernel"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>IRkernel<span class="sc">::</span><span class="fu">installspec</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

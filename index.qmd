@@ -13,11 +13,14 @@ However, only the [RevealJS](https://revealjs.com) slides are presented in class
 # Getting started with R
 
 1. Download the [R console](https://www.r-project.org)
-2. 
+2. Download an editor:
+   1. **Recommended**: [R Studio Desktop](https://posit.co/downloads/)
+   2. [VS Code](https://code.visualstudio.com) + [R Extension](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r)
+   3. [JupyterLab](https://jupyter.org) or [JupyterLab Desktop](https://github.com/jupyterlab/jupyterlab-desktop?tab=readme-ov-file#installation) (see below)
 
 ## Optional
 
-If you are already familiar with [Jupyter notebooks](https://jupyter.org) you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:
+If you are already familiar with [Jupyter](https://jupyter.org) you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:
 
 ```{r}
 #| eval: false
