@@ -21,6 +21,41 @@
     "text": "Exercise\n\n\n\n\n\n\nSee beyond summary statistics\n\n\n\nSelect the datasets x_shape & bullseye from the data.frame datasaurus_dozen\n\nCreate a table showing the following statistics for the two datasets:\n\nmean of x and y,\nstandard deviation of x and y, and\ncovariance between x and y\n\n\n\nCreate a plot showing the two datasets\n\n\n\n\nHere is some code to get you started:\n\nCodelibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\nfilter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |&gt;\n  str(give.attr = FALSE)\n\ntibble [284 × 3] (S3: tbl_df/tbl/data.frame)\n $ dataset: chr [1:284] \"x_shape\" \"x_shape\" \"x_shape\" \"x_shape\" ...\n $ x      : num [1:284] 38.3 35.8 32.8 33.7 37.2 ...\n $ y      : num [1:284] 92.5 94.1 88.5 88.6 83.7 ..."
   },
   {
+    "objectID": "02-data_visualization.html#position-is-interpreted-most-accurately",
+    "href": "02-data_visualization.html#position-is-interpreted-most-accurately",
+    "title": "Data Visualization",
+    "section": "Position is interpreted most accurately",
+    "text": "Position is interpreted most accurately\n\nCommon y-axis alignment allows for accurate interpretation\nCategories in the x-axis sorted by y-axis value\nPosition should encode the answer to the questions the audience asks\n\n\nCodelibrary(palmerpenguins)\nlibrary(forcats)\nfct_revfreq &lt;- \\(x) fct_rev(fct_infreq(x))\nxx &lt;- ggplot(penguins, aes(x = fct_revfreq(species))) +\n  geom_bar(stat = \"count\") +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)),\n    breaks = seq(10,150, by = 20)) + \n  labs(\n    title = \"Number of observations by species\",\n    x = \"Penguin Species\"\n    ) +\n  theme_bw() +\n    theme(\n    plot.title=element_text(size=35),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=30),\n    axis.title=element_text(size=30)\n  )"
+  },
+  {
+    "objectID": "02-data_visualization.html#visualizing-many-categories-badly",
+    "href": "02-data_visualization.html#visualizing-many-categories-badly",
+    "title": "Data Visualization",
+    "section": "Visualizing many categories (badly!)",
+    "text": "Visualizing many categories (badly!)\n\nWhat is the 5th smallest state?\nWhere does MO rank in terms of size?\n\n\nCodelibrary(datasets)\nlibrary(scales)\nggplot(data.frame(abb = state.abb, area = state.area), aes(x = abb, y = area)) +\n  geom_bar(stat = 'identity') +\n  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)),\n    labels = label_comma(suffix = \" sq mi\")) + \n  theme_bw() +\n    theme(\n    plot.title=element_text(size=35),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=20),\n    axis.title=element_text(size=30),\n    axis.title.x=element_blank()\n  )"
+  },
+  {
+    "objectID": "02-data_visualization.html#visualizing-many-categories",
+    "href": "02-data_visualization.html#visualizing-many-categories",
+    "title": "Data Visualization",
+    "section": "Visualizing many categories",
+    "text": "Visualizing many categories\n\nWhat is the 5th smallest state?\nWhere does MO rank in terms of size?\n\n\nCodelibrary(colorspace)\nstate_areas &lt;- data.frame(abb = state.abb, area = state.area, name = state.name) |&gt;\n  mutate(abb = fct_reorder(abb, area))\nggplot(state_areas, aes(x = abb, y = area, \n  color = abb == 'MO', fill = abb == 'MO')) +\n  geom_bar(stat = 'identity') +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)), breaks = seq(50000,600000, by = 100000),\n    labels = label_comma(suffix = \" sq mi\")) + \n  scale_color_manual(values = c('gray85', 'red')) +\n  scale_fill_manual(values = c('gray20', 'red')) +\n  geom_text(\n    aes(label=abb, y = area), \n    position=position_dodge(width=0.9), \n    vjust=-0.50, \n    color = ifelse(state_areas$abb=='MO', 'red', 'gray20'),\n    size = 8)+\n  labs(title = \"US state areas\") +\n  theme_bw() +\n    theme(\n    plot.title=element_text(size=45),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=35),\n    axis.text.x=element_blank(),\n    axis.title=element_blank(),\n    legend.position='none'\n  )"
+  },
+  {
+    "objectID": "02-data_visualization.html#color-intensity-provides-less-accurate-encoding",
+    "href": "02-data_visualization.html#color-intensity-provides-less-accurate-encoding",
+    "title": "Data Visualization",
+    "section": "Color intensity provides less accurate encoding",
+    "text": "Color intensity provides less accurate encoding\n\nCodelibrary(maps)\nlibrary(sf)\nlibrary(colorspace)\nus_map_data &lt;- map(\"state\", fill=TRUE, plot =FALSE)\n\nusa &lt;- st_as_sf(map(\"state\", fill=TRUE, plot =FALSE))\nusa &lt;- merge(\n  usa, \n  mutate(state_areas, ID = str_to_lower(name)),\n  )\nggplot(usa) +\n  geom_sf(aes(fill = area), color = \"#2b2b2b\", size=0.125) +\n  coord_sf(crs = st_crs(6350)) +\n  geom_sf_text(aes(label = abb, color = abb == 'MO')) +\n  scale_color_manual(values = c('gray20', 'red')) +\n  guides(color = 'none') + \n  ggthemes::theme_map() +\n  scale_fill_continuous_sequential(\n    palette = \"Heat\", \n    labels = label_comma(suffix = \" sq mi\") \n    )"
+  },
+  {
+    "objectID": "02-data_visualization.html#colors-are-useful-to-mark-targets-for-preattentive-processing",
+    "href": "02-data_visualization.html#colors-are-useful-to-mark-targets-for-preattentive-processing",
+    "title": "Data Visualization",
+    "section": "Colors are useful to mark targets for preattentive processing",
+    "text": "Colors are useful to mark targets for preattentive processing\n\nLarge scale spatial data needs to be “projected” to 2D\nMost well known projection is 4326 measured in degrees latitude and longitude\nHowever, there are more accurate projections for specific regions e.g, 3035 for EU+candidates\n\n\nCode## Example using \"shapefile\"\n### e.g. for EU download here https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts\neu &lt;- st_read(\"data/NUTS_RG_60M_2021_3035.shp/\", quiet = TRUE)\neu0 &lt;- filter(eu, LEVL_CODE == 0)\n## Transform to longitude and latitude\neu0 &lt;- eu0 |&gt; st_transform(4326)\neu0_box &lt;- eu0 |&gt; st_bbox()\neu0_box &lt;- eu0_box + c(50, 20, 0, -10)\nggplot(st_crop(eu0, eu0_box))+ \n  geom_sf(fill = 'white', lwd = 1) +\n  geom_sf(data = filter(eu0, CNTR_CODE == 'AT'), color = 'red', lwd =1.5) + \n  coord_sf(crs = st_crs(3035)) +\n  geom_sf_text(aes(label = CNTR_CODE, color = CNTR_CODE == 'AT'), size = 15) +\n  scale_color_manual(values = c('gray20', 'red')) +\n  guides(color = 'none') + \n  ggthemes::theme_map(base_size = 12)"
+  },
+  {
     "objectID": "02-data_visualization_page.html",
     "href": "02-data_visualization_page.html",
     "title": "Data Visualization",
@@ -47,6 +82,41 @@
     "title": "Data Visualization",
     "section": "",
     "text": "See beyond summary statistics\n\n\n\n\nSelect the datasets x_shape & bullseye from the data.frame datasaurus_dozen\nCreate a table showing the following statistics for the two datasets:\n\nmean of x and y,\nstandard deviation of x and y, and\ncovariance between x and y\n\nCreate a plot showing the two datasets\n\n\n\nHere is some code to get you started:\n\n\nCode\nlibrary(datasauRus)\nlibrary(dplyr)\nlibrary(ggplot2)\nlibrary(gt)\nlibrary(stringr)\nlibrary(tidyr)\nfilter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |&gt;\n  str(give.attr = FALSE)\n\n\ntibble [284 × 3] (S3: tbl_df/tbl/data.frame)\n $ dataset: chr [1:284] \"x_shape\" \"x_shape\" \"x_shape\" \"x_shape\" ...\n $ x      : num [1:284] 38.3 35.8 32.8 33.7 37.2 ...\n $ y      : num [1:284] 92.5 94.1 88.5 88.6 83.7 ..."
+  },
+  {
+    "objectID": "02-data_visualization_page.html#position-is-interpreted-most-accurately",
+    "href": "02-data_visualization_page.html#position-is-interpreted-most-accurately",
+    "title": "Data Visualization",
+    "section": "Position is interpreted most accurately",
+    "text": "Position is interpreted most accurately\n\nCommon y-axis alignment allows for accurate interpretation\nCategories in the x-axis sorted by y-axis value\nPosition should encode the answer to the questions the audience asks\n\n\n\nCode\nlibrary(palmerpenguins)\nlibrary(forcats)\nfct_revfreq &lt;- \\(x) fct_rev(fct_infreq(x))\nxx &lt;- ggplot(penguins, aes(x = fct_revfreq(species))) +\n  geom_bar(stat = \"count\") +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)),\n    breaks = seq(10,150, by = 20)) + \n  labs(\n    title = \"Number of observations by species\",\n    x = \"Penguin Species\"\n    ) +\n  theme_bw() +\n    theme(\n    plot.title=element_text(size=35),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=30),\n    axis.title=element_text(size=30)\n  )"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#visualizing-many-categories-badly",
+    "href": "02-data_visualization_page.html#visualizing-many-categories-badly",
+    "title": "Data Visualization",
+    "section": "Visualizing many categories (badly!)",
+    "text": "Visualizing many categories (badly!)\n\nWhat is the 5th smallest state?\nWhere does MO rank in terms of size?\n\n\n\nCode\nlibrary(datasets)\nlibrary(scales)\nggplot(data.frame(abb = state.abb, area = state.area), aes(x = abb, y = area)) +\n  geom_bar(stat = 'identity') +\n  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)),\n    labels = label_comma(suffix = \" sq mi\")) + \n  theme_bw() +\n    theme(\n    plot.title=element_text(size=35),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=20),\n    axis.title=element_text(size=30),\n    axis.title.x=element_blank()\n  )"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#visualizing-many-categories",
+    "href": "02-data_visualization_page.html#visualizing-many-categories",
+    "title": "Data Visualization",
+    "section": "Visualizing many categories",
+    "text": "Visualizing many categories\n\nWhat is the 5th smallest state?\nWhere does MO rank in terms of size?\n\n\n\nCode\nlibrary(colorspace)\nstate_areas &lt;- data.frame(abb = state.abb, area = state.area, name = state.name) |&gt;\n  mutate(abb = fct_reorder(abb, area))\nggplot(state_areas, aes(x = abb, y = area, \n  color = abb == 'MO', fill = abb == 'MO')) +\n  geom_bar(stat = 'identity') +\n  scale_y_continuous(\n    expand = expansion(c(0,0.05)), breaks = seq(50000,600000, by = 100000),\n    labels = label_comma(suffix = \" sq mi\")) + \n  scale_color_manual(values = c('gray85', 'red')) +\n  scale_fill_manual(values = c('gray20', 'red')) +\n  geom_text(\n    aes(label=abb, y = area), \n    position=position_dodge(width=0.9), \n    vjust=-0.50, \n    color = ifelse(state_areas$abb=='MO', 'red', 'gray20'),\n    size = 8)+\n  labs(title = \"US state areas\") +\n  theme_bw() +\n    theme(\n    plot.title=element_text(size=45),\n    axis.ticks.x=element_blank(),\n    axis.text=element_text(size=35),\n    axis.text.x=element_blank(),\n    axis.title=element_blank(),\n    legend.position='none'\n  )"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#color-intensity-provides-less-accurate-encoding",
+    "href": "02-data_visualization_page.html#color-intensity-provides-less-accurate-encoding",
+    "title": "Data Visualization",
+    "section": "Color intensity provides less accurate encoding",
+    "text": "Color intensity provides less accurate encoding\n\n\nCode\nlibrary(maps)\nlibrary(sf)\nlibrary(colorspace)\nus_map_data &lt;- map(\"state\", fill=TRUE, plot =FALSE)\n\nusa &lt;- st_as_sf(map(\"state\", fill=TRUE, plot =FALSE))\nusa &lt;- merge(\n  usa, \n  mutate(state_areas, ID = str_to_lower(name)),\n  )\nggplot(usa) +\n  geom_sf(aes(fill = area), color = \"#2b2b2b\", size=0.125) +\n  coord_sf(crs = st_crs(6350)) +\n  geom_sf_text(aes(label = abb, color = abb == 'MO')) +\n  scale_color_manual(values = c('gray20', 'red')) +\n  guides(color = 'none') + \n  ggthemes::theme_map() +\n  scale_fill_continuous_sequential(\n    palette = \"Heat\", \n    labels = label_comma(suffix = \" sq mi\") \n    )"
+  },
+  {
+    "objectID": "02-data_visualization_page.html#colors-are-useful-to-mark-targets-for-preattentive-processing",
+    "href": "02-data_visualization_page.html#colors-are-useful-to-mark-targets-for-preattentive-processing",
+    "title": "Data Visualization",
+    "section": "Colors are useful to mark targets for preattentive processing",
+    "text": "Colors are useful to mark targets for preattentive processing\n\nLarge scale spatial data needs to be “projected” to 2D\nMost well known projection is 4326 measured in degrees latitude and longitude\nHowever, there are more accurate projections for specific regions e.g, 3035 for EU+candidates\n\n\n\nCode\n## Example using \"shapefile\"\n### e.g. for EU download here https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts\neu &lt;- st_read(\"data/NUTS_RG_60M_2021_3035.shp/\", quiet = TRUE)\neu0 &lt;- filter(eu, LEVL_CODE == 0)\n## Transform to longitude and latitude\neu0 &lt;- eu0 |&gt; st_transform(4326)\neu0_box &lt;- eu0 |&gt; st_bbox()\neu0_box &lt;- eu0_box + c(50, 20, 0, -10)\nggplot(st_crop(eu0, eu0_box))+ \n  geom_sf(fill = 'white', lwd = 1) +\n  geom_sf(data = filter(eu0, CNTR_CODE == 'AT'), color = 'red', lwd =1.5) + \n  coord_sf(crs = st_crs(3035)) +\n  geom_sf_text(aes(label = CNTR_CODE, color = CNTR_CODE == 'AT'), size = 15) +\n  scale_color_manual(values = c('gray20', 'red')) +\n  guides(color = 'none') + \n  ggthemes::theme_map(base_size = 12)"
   },
   {
     "objectID": "01-introduction_to_r_page.html",
