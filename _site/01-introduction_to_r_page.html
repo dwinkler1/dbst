@@ -22,7 +22,60 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -69,6 +122,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -99,12 +181,8 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Introduction to R</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./02-data_visualization_page.html"> 
-<span class="menu-text">Data Visualization</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./03-model_visualization_page.html"> 
-<span class="menu-text">Model Visualization</span></a>
+    <a class="nav-link" href="./02-modeling_page.html"> 
+<span class="menu-text">Modeling</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -122,9 +200,55 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#todos" id="toc-todos" class="nav-link active" data-scroll-target="#todos">ToDos</a></li>
+  <li><a href="#the-basics" id="toc-the-basics" class="nav-link active" data-scroll-target="#the-basics">The Basics</a>
+  <ul class="collapse">
+  <li><a href="#why-r" id="toc-why-r" class="nav-link" data-scroll-target="#why-r">Why R?</a></li>
+  <li><a href="#what-do-we-need" id="toc-what-do-we-need" class="nav-link" data-scroll-target="#what-do-we-need">What do we need?</a></li>
+  <li><a href="#if-you-already-know-r" id="toc-if-you-already-know-r" class="nav-link" data-scroll-target="#if-you-already-know-r">If you already know R</a></li>
+  <li><a href="#basic-workflow-r-studio" id="toc-basic-workflow-r-studio" class="nav-link" data-scroll-target="#basic-workflow-r-studio">Basic Workflow (R Studio)</a></li>
+  <li><a href="#basic-workflow-vs-code" id="toc-basic-workflow-vs-code" class="nav-link" data-scroll-target="#basic-workflow-vs-code">Basic Workflow (VS Code)</a></li>
+  <li><a href="#r-syntax-comments-assignment" id="toc-r-syntax-comments-assignment" class="nav-link" data-scroll-target="#r-syntax-comments-assignment">R Syntax: comments, assignment</a></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a></li>
+  <li><a href="#r-syntax-indexing-logic" id="toc-r-syntax-indexing-logic" class="nav-link" data-scroll-target="#r-syntax-indexing-logic">R Syntax: indexing, logic</a></li>
+  <li><a href="#r-syntax-loops-ranges" id="toc-r-syntax-loops-ranges" class="nav-link" data-scroll-target="#r-syntax-loops-ranges">R Syntax: loops, ranges</a></li>
+  <li><a href="#r-syntax-conditional-logic" id="toc-r-syntax-conditional-logic" class="nav-link" data-scroll-target="#r-syntax-conditional-logic">R Syntax: conditional logic</a></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example 1</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2">Example 2</a></li>
+  </ul></li>
+  <li><a href="#rectangular-data-frames-creation-and-access" id="toc-rectangular-data-frames-creation-and-access" class="nav-link" data-scroll-target="#rectangular-data-frames-creation-and-access">Rectangular data frames: creation and access</a></li>
+  <li><a href="#rectangular-data-frames-overview" id="toc-rectangular-data-frames-overview" class="nav-link" data-scroll-target="#rectangular-data-frames-overview">Rectangular data frames: overview</a></li>
+  <li><a href="#rectangular-data-frames-indexing" id="toc-rectangular-data-frames-indexing" class="nav-link" data-scroll-target="#rectangular-data-frames-indexing">Rectangular data frames: Indexing</a></li>
+  <li><a href="#rectangular-data-adding-and-removing-variables" id="toc-rectangular-data-adding-and-removing-variables" class="nav-link" data-scroll-target="#rectangular-data-adding-and-removing-variables">Rectangular data: adding and removing variables</a></li>
+  <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise</a></li>
+  <li><a href="#reading-data" id="toc-reading-data" class="nav-link" data-scroll-target="#reading-data">Reading data</a></li>
+  <li><a href="#reading-data-solution" id="toc-reading-data-solution" class="nav-link" data-scroll-target="#reading-data-solution">Reading data: solution</a></li>
+  <li><a href="#reading-data-other-file-formats" id="toc-reading-data-other-file-formats" class="nav-link" data-scroll-target="#reading-data-other-file-formats">Reading data: other file formats</a></li>
+  <li><a href="#reading-data-other-file-formats-1" id="toc-reading-data-other-file-formats-1" class="nav-link" data-scroll-target="#reading-data-other-file-formats-1">Reading data: other file formats</a></li>
+  <li><a href="#reading-big-data-the-arrow-package" id="toc-reading-big-data-the-arrow-package" class="nav-link" data-scroll-target="#reading-big-data-the-arrow-package">Reading big data: the <code>arrow</code> package</a></li>
+  <li><a href="#reading-big-data-the-arrow-package-1" id="toc-reading-big-data-the-arrow-package-1" class="nav-link" data-scroll-target="#reading-big-data-the-arrow-package-1">Reading big data: the <code>arrow</code> package</a></li>
+  <li><a href="#benchmarks" id="toc-benchmarks" class="nav-link" data-scroll-target="#benchmarks">Benchmarks</a></li>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types">Data types</a></li>
+  <li><a href="#lets-clean-up-the-penguins" id="toc-lets-clean-up-the-penguins" class="nav-link" data-scroll-target="#lets-clean-up-the-penguins">Let’s clean up the penguins!</a></li>
+  <li><a href="#data-preprocessing-syntax" id="toc-data-preprocessing-syntax" class="nav-link" data-scroll-target="#data-preprocessing-syntax">Data-preprocessing: syntax</a></li>
+  <li><a href="#data-preprocessing-mutation" id="toc-data-preprocessing-mutation" class="nav-link" data-scroll-target="#data-preprocessing-mutation">Data preprocessing: mutation</a></li>
+  <li><a href="#data-preprocessing-multiple-columns" id="toc-data-preprocessing-multiple-columns" class="nav-link" data-scroll-target="#data-preprocessing-multiple-columns">Data preprocessing: multiple columns</a></li>
+  <li><a href="#hint-figuring-out-what-is-going-on" id="toc-hint-figuring-out-what-is-going-on" class="nav-link" data-scroll-target="#hint-figuring-out-what-is-going-on">Hint: figuring out what is going on</a></li>
+  <li><a href="#hint-read-the-source-code" id="toc-hint-read-the-source-code" class="nav-link" data-scroll-target="#hint-read-the-source-code">Hint: read the source code</a></li>
+  <li><a href="#aside-functions-and-variable-names" id="toc-aside-functions-and-variable-names" class="nav-link" data-scroll-target="#aside-functions-and-variable-names">Aside: functions and variable names</a></li>
+  <li><a href="#reducing-rows-filtering" id="toc-reducing-rows-filtering" class="nav-link" data-scroll-target="#reducing-rows-filtering">Reducing rows: filtering</a></li>
+  <li><a href="#reducing-rows-summarizing" id="toc-reducing-rows-summarizing" class="nav-link" data-scroll-target="#reducing-rows-summarizing">Reducing rows: summarizing</a></li>
+  <li><a href="#pivot-tables" id="toc-pivot-tables" class="nav-link" data-scroll-target="#pivot-tables">Pivot tables</a></li>
+  <li><a href="#exercise-2" id="toc-exercise-2" class="nav-link" data-scroll-target="#exercise-2">Exercise</a></li>
+  <li><a href="#merging-data-i" id="toc-merging-data-i" class="nav-link" data-scroll-target="#merging-data-i">Merging data I</a></li>
+  <li><a href="#merging-data-ii" id="toc-merging-data-ii" class="nav-link" data-scroll-target="#merging-data-ii">Merging data II</a></li>
+  <li><a href="#special-joins" id="toc-special-joins" class="nav-link" data-scroll-target="#special-joins">Special joins</a></li>
+  <li><a href="#exercise-3" id="toc-exercise-3" class="nav-link" data-scroll-target="#exercise-3">Exercise</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
   </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="01-introduction_to_r.html"><i class="bi bi-file-slides"></i>RevealJS</a></li><li><a href="01-introduction_to_r.pdf"><i class="bi bi-file-pdf"></i>Beamer</a></li><li><a href="01-introduction_to_r.ipynb" download="01-introduction_to_r.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div></nav>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="01-introduction_to_r.html"><i class="bi bi-file-slides"></i>RevealJS</a></li><li><a href="01-introduction_to_r.ipynb" download="01-introduction_to_r.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -170,16 +294,2039 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="todos" class="level1">
-<h1>ToDos</h1>
+<section id="the-basics" class="level1">
+<h1>The Basics</h1>
+<section id="why-r" class="level2">
+<h2 class="anchored" data-anchor-id="why-r">Why R?</h2>
 <ul>
-<li>Quarto website</li>
+<li>Well established in business and scientific computing</li>
+<li>Very powerful language
+<ul>
+<li>Express any operation in terms of</li>
+<li>Often complex functions are already implemented</li>
+</ul></li>
+<li>Very good package manager and ecosystem
+<ul>
+<li>We will use many tools created by companies, universities, and other R community members</li>
+</ul></li>
+<li>Very good for reproducibility
+<ul>
+<li>Code documents the process</li>
+<li>Should run the same on my and your machine</li>
+<li>Should be easily adaptable to changing data</li>
+</ul></li>
+<li>Open source
+<ul>
+<li>All packages can be inspected</li>
+<li>Free to install and use on any computer</li>
+</ul></li>
+<li>Developed (partly) and hosted at WU 😋</li>
 </ul>
+<p><img src="Graphics/Rlogo.png" class="absolute" data-bottom="40" data-right="60" width="400" height="400"></p>
+</section>
+<section id="what-do-we-need" class="level2">
+<h2 class="anchored" data-anchor-id="what-do-we-need">What do we need?</h2>
+<div class="columns">
+<div class="column">
+<ol type="1">
+<li>The <a href="https://cran.r-project.org">R interpreter</a>
+<ul>
+<li>The program that “interprets” R code and runs it</li>
+<li>Very bare-bones, essentially just a text field</li>
+<li>Does <strong>not</strong> store code files for reproducibility</li>
+</ul></li>
+</ol>
+<div class="cell" data-layout-align="center" data-output-location="fragment">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Hello, WU!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Hello, WU!"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">"One plus two is: "</span>, <span class="dv">1</span> <span class="sc">+</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "One plus two is: 3"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">p =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span> <span class="sc">*</span> pi, <span class="at">by =</span> <span class="fl">0.001</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>c<span class="sc">$</span>h_x <span class="ot">&lt;-</span> <span class="dv">16</span> <span class="sc">*</span> <span class="fu">sin</span>(c<span class="sc">$</span>p)<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>c<span class="sc">$</span>h_y <span class="ot">&lt;-</span> <span class="dv">13</span> <span class="sc">*</span> <span class="fu">cos</span>(c<span class="sc">$</span>p) <span class="sc">-</span> <span class="dv">5</span> <span class="sc">*</span> <span class="fu">cos</span>(<span class="dv">2</span> <span class="sc">*</span> c<span class="sc">$</span>p) <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">cos</span>(<span class="dv">3</span> <span class="sc">*</span> c<span class="sc">$</span>p) <span class="sc">-</span> <span class="fu">cos</span>(<span class="dv">4</span> <span class="sc">*</span> c<span class="sc">$</span>p)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(c<span class="sc">$</span>h_x, c<span class="sc">$</span>h_y, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">main =</span> <span class="st">"I &lt;3 R"</span>, <span class="at">frame =</span> F, <span class="at">xlab =</span> <span class="cn">NA</span>, <span class="at">ylab =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01-introduction_to_r_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="384"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<ol type="1">
+<li>An Integrated Development Environment (IDE)
+<ul>
+<li>Makes writing and storing R code easier (more fun!)</li>
+<li>Three options compatible with this course:
+<ul>
+<li><a href="https://posit.co/download/rstudio-desktop/">R Studio Desktop (Recommended)</a>
+<ul>
+<li>Focused on R</li>
+<li>Easiest option</li>
+</ul></li>
+<li><a href="https://code.visualstudio.com">VS Code</a>
+<ul>
+<li>Recommended if you (plan to) use other languages (Python, C++, Julia, etc.)</li>
+<li>Needs extension for R but works well</li>
+</ul></li>
+<li><a href="https://jupyter.org">JupyterLab</a>
+<ul>
+<li>“Notebooks” for R, Python, and Julia</li>
+<li>Output generated directly under code “cells”</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="if-you-already-know-r" class="level2">
+<h2 class="anchored" data-anchor-id="if-you-already-know-r">If you already know R</h2>
+<div class="callout callout-style-simple callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My favorite R package
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Download the presentation template <code>my_favorite_r_package.qmd</code> and the bibliography file <code>data_literacy.bib</code> from Canvas</li>
+<li>Select a package that was useful to you in the past</li>
+<li>Prepare a short presentation about the package
+<ul>
+<li>Include examples of how to use the package</li>
+<li>Show in which situations that is useful</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="basic-workflow-r-studio" class="level2">
+<h2 class="anchored" data-anchor-id="basic-workflow-r-studio">Basic Workflow (R Studio)</h2>
+<ul>
+<li><code>Ctrl + Enter</code> to run current line of code (any cursor position)</li>
+</ul>
+<p><img src="Graphics/rstudio.png" class="img-fluid"></p>
+</section>
+<section id="basic-workflow-vs-code" class="level2">
+<h2 class="anchored" data-anchor-id="basic-workflow-vs-code">Basic Workflow (VS Code)</h2>
+<ul>
+<li><code>Ctrl + Enter</code> to run current line of code (any cursor position)</li>
+</ul>
+<p><img src="Graphics/vscode.png" class="img-fluid"></p>
+</section>
+<section id="r-syntax-comments-assignment" class="level2">
+<h2 class="anchored" data-anchor-id="r-syntax-comments-assignment">R Syntax: comments, assignment</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a comment</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Hi"</span>) <span class="co"># also a comment</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Hi"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Assignment of varibale names</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Missing values</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Vectors</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1  2  3 NA</code></pre>
+</div>
+</div>
+</section>
+<section id="functions" class="level2">
+<h2 class="anchored" data-anchor-id="functions">Functions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## built-in</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(y, <span class="at">na.rm =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## User functions</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>a_plus_b <span class="ot">&lt;-</span> <span class="cf">function</span>(a, <span class="at">b =</span> <span class="dv">1</span>) {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(a <span class="sc">+</span> b)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">a_plus_b</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2  3  4 NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">a_plus_b</span>(y, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  3  4  5 NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">a_plus_b</span>(<span class="at">b =</span> <span class="dv">2</span>, <span class="at">a =</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  3  4  5 NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Functions provided by packages</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Installation</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("ineq")</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>ineq<span class="sc">::</span><span class="fu">Gini</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2222222</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="do">## or</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ineq)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Gini</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2222222</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Help </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>?Gini</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="r-syntax-indexing-logic" class="level2">
+<h2 class="anchored" data-anchor-id="r-syntax-indexing-logic">R Syntax: indexing, logic</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>y[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>y[<span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2  3 NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>y[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>y[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1  3 NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> y <span class="sc">/</span> <span class="dv">2</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(y))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(y, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      y          x
+[1,]  1 -0.1264538
+[2,]  2  1.1836433
+[3,]  3  0.6643714
+[4,] NA         NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>y <span class="sc">&gt;</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE    NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>y <span class="sc">&gt;</span> <span class="dv">2</span> <span class="sc">&amp;</span> x <span class="sc">&gt;</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE    NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>y <span class="sc">&gt;</span> <span class="dv">2</span> <span class="sc">|</span> x <span class="sc">&gt;</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE  TRUE  TRUE    NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>y[y <span class="sc">&gt;</span> <span class="dv">2</span> <span class="sc">|</span> x <span class="sc">&gt;</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  2  3 NA</code></pre>
+</div>
+</div>
+</section>
+<section id="r-syntax-loops-ranges" class="level2">
+<h2 class="anchored" data-anchor-id="r-syntax-loops-ranges">R Syntax: loops, ranges</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="do">## 'elem' is a temporary variable</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (elem <span class="cf">in</span> y) {</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Current y value is:"</span>, elem))</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Current y value is: 1"
+[1] "Current y value is: 2"
+[1] "Current y value is: 3"
+[1] "Current y value is: NA"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">## 'seq_along' returns a vector which indexes the argument</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(y)) {</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Current y value is:"</span>, y[i]))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Current y value is: 1"
+[1] "Current y value is: 2"
+[1] "Current y value is: 3"
+[1] "Current y value is: NA"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="do">## set.seed guarantees the same random numbers every time</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>total <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (total <span class="sc">&lt;</span> <span class="dv">1</span>) {</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="do">## runif generates random numbers between 0 and 1</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    total <span class="ot">&lt;-</span> total <span class="sc">+</span> <span class="fu">runif</span>(<span class="dv">1</span>)</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Current total value is:"</span>, total))</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Current total value is: 0.2655086631421"
+[1] "Current total value is: 0.63763256277889"
+[1] "Current total value is: 1.21048592613079"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="do">## ranges</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span><span class="sc">:</span><span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10  9  8  7  6  5  4  3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">3</span>, <span class="dv">11</span>, <span class="at">by =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  3  5  7  9 11</code></pre>
+</div>
+</div>
+</section>
+<section id="r-syntax-conditional-logic" class="level2">
+<h2 class="anchored" data-anchor-id="r-syntax-conditional-logic">R Syntax: conditional logic</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">2</span><span class="sc">:</span><span class="dv">3</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (x <span class="cf">in</span> z) {</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"x ="</span>, x))</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="st">"x is positive"</span>)</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">2</span>) {</span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="st">"x is greater than 2"</span>)</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (x <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="st">"x is negative"</span>)</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (x <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="st">"x is zero"</span>)</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "x = -2"
+[1] "x is negative"
+[1] "x = -1"
+[1] "x is negative"
+[1] "x = 0"
+[1] "x is zero"
+[1] "x = 1"
+[1] "x is positive"
+[1] "x = 2"
+[1] "x is positive"
+[1] "x = 3"
+[1] "x is positive"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>z[z <span class="sc">&lt;=</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2 -1  0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>z[z <span class="sc">&gt;=</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 1 2 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>z[z <span class="sc">!=</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2 -1  1  2  3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>z[<span class="sc">!</span> z <span class="sc">&lt;</span> <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 1 2 3</code></pre>
+</div>
+</div>
+</section>
+<section id="exercise" class="level2 scrollable">
+<h2 class="scrollable anchored" data-anchor-id="exercise">Exercise</h2>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Write your own function
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>The function should take two arguments <code>a</code> and <code>b</code></li>
+<li>First, check if <code>a</code> and <code>b</code> have the same number of elements (see <code>?length</code>)
+<ul>
+<li>If they have a different number of elements, return <code>NA</code></li>
+</ul></li>
+<li>Iterate over the elements of <code>a</code> and <code>b</code> and check which vector’s element is larger (or if they are equal)</li>
+<li>If they are equal print the index of the element and “equal”</li>
+<li>If the element in <code>a</code> is larger print the index of the elemnt and “a larger”</li>
+<li>If the element in <code>b</code> is larger print the index of the elemnt and “b larger”</li>
+</ul>
+</div>
+</div>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example 1</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"a is:"</span>, a, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>a is: 1 2 3 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b is:"</span>, b, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>b is: 1 2 3 4 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="cn">NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+</section>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example 2</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">4</span>)</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"a is:"</span>, a, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>a is: 1 2 3 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b is:"</span>, b, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>b is: 0 2 4 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"1 a larger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "1 a larger"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"2 equal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "2 equal"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"3 b larger"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "3 b larger"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="rectangular-data-frames-creation-and-access" class="level2">
+<h2 class="anchored" data-anchor-id="rectangular-data-frames-creation-and-access">Rectangular data frames: creation and access</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">z =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="cn">NA</span>))</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y    z
+1 -1 3    a
+2  0 2    b
+3  1 1 &lt;NA&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Variable access</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -1  0  1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>x <span class="sc">+</span> data<span class="sc">$</span>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 2 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>row_summaries <span class="ot">&lt;-</span> <span class="fu">with</span>(data, </span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rsum =</span> x <span class="sc">+</span> y,</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rdiff =</span> x <span class="sc">-</span> y</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>row_summaries</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  rsum rdiff
+1    2    -4
+2    2    -2
+3    2     0</code></pre>
+</div>
+</div>
+</section>
+<section id="rectangular-data-frames-overview" class="level2">
+<h2 class="anchored" data-anchor-id="rectangular-data-frames-overview">Rectangular data frames: overview</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   3 obs. of  3 variables:
+ $ x: int  -1 0 1
+ $ y: int  3 2 1
+ $ z: chr  "a" "b" NA</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       x              y            z            
+ Min.   :-1.0   Min.   :1.0   Length:3          
+ 1st Qu.:-0.5   1st Qu.:1.5   Class :character  
+ Median : 0.0   Median :2.0   Mode  :character  
+ Mean   : 0.0   Mean   :2.0                     
+ 3rd Qu.: 0.5   3rd Qu.:2.5                     
+ Max.   : 1.0   Max.   :3.0                     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y    z
+1 -1 3    a
+2  0 2    b
+3  1 1 &lt;NA&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="rectangular-data-frames-indexing" class="level2">
+<h2 class="anchored" data-anchor-id="rectangular-data-frames-indexing">Rectangular data frames: Indexing</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="do">## 2D structure of data</span></span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="do">## Empty argument means "all"#| </span></span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>data[, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y
+1 -1 3
+2  0 2
+3  1 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>data[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y
+1 -1 3
+2  0 2
+3  1 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>data[<span class="dv">1</span>, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y z
+1 -1 3 a</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>data[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>), <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"z"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x    z
+1 -1    a
+3  1 &lt;NA&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>data[data<span class="sc">$</span>x <span class="sc">&lt;</span> <span class="dv">3</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y    z
+1 -1 3    a
+2  0 2    b
+3  1 1 &lt;NA&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="rectangular-data-adding-and-removing-variables" class="level2">
+<h2 class="anchored" data-anchor-id="rectangular-data-adding-and-removing-variables">Rectangular data: adding and removing variables</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="do">## new data has to have the same number of elements</span></span>
+<span id="cb117-2"><a href="#cb117-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>a <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> data<span class="sc">$</span>x</span>
+<span id="cb117-3"><a href="#cb117-3" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y    z  a
+1 -1 3    a -2
+2  0 2    b  0
+3  1 1 &lt;NA&gt;  2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"one"</span>, <span class="st">"two"</span>, <span class="st">"three"</span>)</span>
+<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   x y    z  a     b
+1 -1 3    a -2   one
+2  0 2    b  0   two
+3  1 1 &lt;NA&gt;  2 three</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  y    z  a     b
+1 3    a -2   one
+2 2    b  0   two
+3 1 &lt;NA&gt;  2 three</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>a <span class="ot">&lt;-</span> <span class="fu">log</span>(data<span class="sc">$</span>a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in log(data$a): NaNs produced</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  y    z         a     b
+1 3    a       NaN   one
+2 2    b      -Inf   two
+3 1 &lt;NA&gt; 0.6931472 three</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>b[data<span class="sc">$</span>b <span class="sc">==</span> <span class="st">"two"</span>] <span class="ot">&lt;-</span> <span class="st">"TWO!"</span></span>
+<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>z[<span class="fu">is.na</span>(data<span class="sc">$</span>z)] <span class="ot">&lt;-</span> <span class="st">"c"</span></span>
+<span id="cb127-3"><a href="#cb127-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>a[<span class="fu">is.nan</span>(data<span class="sc">$</span>a)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb127-4"><a href="#cb127-4" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  y z         a     b
+1 3 a 0.0000000   one
+2 2 b      -Inf  TWO!
+3 1 c 0.6931472 three</code></pre>
+</div>
+</div>
+</section>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise</h2>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Generate your own data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Look at the helpfiles of <code>rnorm</code>, <code>runif</code>, and <code>ifelse</code></li>
+<li>Create a <code>data.frame</code> with 10 rows and variables <code>x</code>, generated using <code>runif</code> and <code>y</code>, generated using <code>rnorm</code></li>
+<li>Add variable <code>z</code> which takes the value <code>1</code> if <code>x</code> is larger than <code>y</code> and <code>0</code> otherwise</li>
+<li>Create a second <code>data.frame</code> that holds the rows of the original one for which <code>z == 1</code> is <code>TRUE</code>.</li>
+<li>Remove column <code>z</code> from the second <code>data.frame</code></li>
+<li>What happens if you try to create a <code>data.frame</code> when <code>x</code> and <code>y</code> have a differnent number of elements?</li>
+<li>What happens if you run the code you wrote for this exercise again (and again)?</li>
+<li>How can you ensure that each run yields the same results?</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="reading-data" class="level2">
+<h2 class="anchored" data-anchor-id="reading-data">Reading data</h2>
+<ul>
+<li>Please download &amp; unzip the folder found in “data” in Canvas</li>
+<li>We will first use the “penguins” folder which includes the <code>penguins_raw</code> data set in multiple file formats</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="do">## CSV</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/penguins/penguins_raw.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `` -&gt; `...1`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 345 Columns: 18
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (10): ...1, studyName, Species, Region, Island, Stage, Individual ID, C...
+dbl   (7): Sample Number, Culmen Length (mm), Culmen Depth (mm), Flipper Len...
+date  (1): Date Egg
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_raw, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 18
+  ...1     studyName `Sample Number` Species Region Island Stage `Individual ID`
+  &lt;chr&gt;    &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          
+1 # this … &lt;NA&gt;                   NA &lt;NA&gt;    &lt;NA&gt;   &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;           
+2 1        PAL0708                 1 Adelie… Anvers Torge… Adul… N1A1           
+# ℹ 10 more variables: `Clutch Completion` &lt;chr&gt;, `Date Egg` &lt;date&gt;,
+#   `Culmen Length (mm)` &lt;dbl&gt;, `Culmen Depth (mm)` &lt;dbl&gt;,
+#   `Flipper Length (mm)` &lt;dbl&gt;, `Body Mass (g)` &lt;dbl&gt;, Sex &lt;chr&gt;,
+#   `Delta 15 N (o/oo)` &lt;dbl&gt;, `Delta 13 C (o/oo)` &lt;dbl&gt;, Comments &lt;chr&gt;</code></pre>
+</div>
+</div>
+<p>. . .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a>penguins_raw[<span class="dv">1</span>,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  ...1                                              
+  &lt;chr&gt;                                             
+1 # this is a comment making the data harder to read</code></pre>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Fix the data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>The second row (after the column names) in the <code>penguins_raw.csv</code> file is a comment</li>
+<li>Look at the help file for the <code>readr::read_csv</code> function (<code>?readr::read_csv</code>)</li>
+<li>How can we ignore the comment row?</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="reading-data-solution" class="level2">
+<h2 class="anchored" data-anchor-id="reading-data-solution">Reading data: solution</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="do">## CSV</span></span>
+<span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
+<span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/penguins/penguins_raw.csv"</span>,</span>
+<span id="cb137-4"><a href="#cb137-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">comment =</span> <span class="st">"#"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+Rows: 344 Columns: 18
+── Column specification
+──────────────────────────────────────────────────────── Delimiter: "," chr
+(9): studyName, Species, Region, Island, Stage, Individual ID, Clutch C... dbl
+(8): ...1, Sample Number, Culmen Length (mm), Culmen Depth (mm), Flippe... date
+(1): Date Egg
+ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+Specify the column types or set `show_col_types = FALSE` to quiet this message.
+• `` -&gt; `...1`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_raw, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 18
+   ...1 studyName `Sample Number` Species    Region Island Stage `Individual ID`
+  &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          
+1     1 PAL0708                 1 Adelie Pe… Anvers Torge… Adul… N1A1           
+2     2 PAL0708                 2 Adelie Pe… Anvers Torge… Adul… N1A2           
+# ℹ 10 more variables: `Clutch Completion` &lt;chr&gt;, `Date Egg` &lt;date&gt;,
+#   `Culmen Length (mm)` &lt;dbl&gt;, `Culmen Depth (mm)` &lt;dbl&gt;,
+#   `Flipper Length (mm)` &lt;dbl&gt;, `Body Mass (g)` &lt;dbl&gt;, Sex &lt;chr&gt;,
+#   `Delta 15 N (o/oo)` &lt;dbl&gt;, `Delta 13 C (o/oo)` &lt;dbl&gt;, Comments &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>penguins_raw[<span class="dv">1</span>,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+   ...1
+  &lt;dbl&gt;
+1     1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(penguins_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [344 × 18] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ ...1               : num [1:344] 1 2 3 4 5 6 7 8 9 10 ...
+ $ studyName          : chr [1:344] "PAL0708" "PAL0708" "PAL0708" "PAL0708" ...
+ $ Sample Number      : num [1:344] 1 2 3 4 5 6 7 8 9 10 ...
+ $ Species            : chr [1:344] "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" ...
+ $ Region             : chr [1:344] "Anvers" "Anvers" "Anvers" "Anvers" ...
+ $ Island             : chr [1:344] "Torgersen" "Torgersen" "Torgersen" "Torgersen" ...
+ $ Stage              : chr [1:344] "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" ...
+ $ Individual ID      : chr [1:344] "N1A1" "N1A2" "N2A1" "N2A2" ...
+ $ Clutch Completion  : chr [1:344] "Yes" "Yes" "Yes" "Yes" ...
+ $ Date Egg           : Date[1:344], format: "2007-11-11" "2007-11-11" ...
+ $ Culmen Length (mm) : num [1:344] 39.1 39.5 40.3 NA 36.7 39.3 38.9 39.2 34.1 42 ...
+ $ Culmen Depth (mm)  : num [1:344] 18.7 17.4 18 NA 19.3 20.6 17.8 19.6 18.1 20.2 ...
+ $ Flipper Length (mm): num [1:344] 181 186 195 NA 193 190 181 195 193 190 ...
+ $ Body Mass (g)      : num [1:344] 3750 3800 3250 NA 3450 ...
+ $ Sex                : chr [1:344] "MALE" "FEMALE" "FEMALE" NA ...
+ $ Delta 15 N (o/oo)  : num [1:344] NA 8.95 8.37 NA 8.77 ...
+ $ Delta 13 C (o/oo)  : num [1:344] NA -24.7 -25.3 NA -25.3 ...
+ $ Comments           : chr [1:344] "Not enough blood for isotopes." NA NA "Adult not sampled." ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   ...1 = col_double(),
+  ..   studyName = col_character(),
+  ..   `Sample Number` = col_double(),
+  ..   Species = col_character(),
+  ..   Region = col_character(),
+  ..   Island = col_character(),
+  ..   Stage = col_character(),
+  ..   `Individual ID` = col_character(),
+  ..   `Clutch Completion` = col_character(),
+  ..   `Date Egg` = col_date(format = ""),
+  ..   `Culmen Length (mm)` = col_double(),
+  ..   `Culmen Depth (mm)` = col_double(),
+  ..   `Flipper Length (mm)` = col_double(),
+  ..   `Body Mass (g)` = col_double(),
+  ..   Sex = col_character(),
+  ..   `Delta 15 N (o/oo)` = col_double(),
+  ..   `Delta 13 C (o/oo)` = col_double(),
+  ..   Comments = col_character()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+</section>
+<section id="reading-data-other-file-formats" class="level2">
+<h2 class="anchored" data-anchor-id="reading-data-other-file-formats">Reading data: other file formats</h2>
+<ul>
+<li>The <code>readxl</code> package provides functions for reading Excel files</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"data/penguins/penguins_raw.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `` -&gt; `...1`</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_raw, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 18
+  ...1  studyName `Sample Number` Species    Region Island Stage `Individual ID`
+  &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          
+1 1     PAL0708                 1 Adelie Pe… Anvers Torge… Adul… N1A1           
+2 2     PAL0708                 2 Adelie Pe… Anvers Torge… Adul… N1A2           
+# ℹ 10 more variables: `Clutch Completion` &lt;chr&gt;, `Date Egg` &lt;dttm&gt;,
+#   `Culmen Length (mm)` &lt;dbl&gt;, `Culmen Depth (mm)` &lt;dbl&gt;,
+#   `Flipper Length (mm)` &lt;dbl&gt;, `Body Mass (g)` &lt;dbl&gt;, Sex &lt;chr&gt;,
+#   `Delta 15 N (o/oo)` &lt;dbl&gt;, `Delta 13 C (o/oo)` &lt;dbl&gt;, Comments &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Read a subset </span></span>
+<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>penguins_subset <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"data/penguins/penguins_raw.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Sheet1"</span>, <span class="at">range =</span> <span class="st">"B1:O345"</span>)</span>
+<span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_subset, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 14
+  studyName `Sample Number` Species          Region Island Stage `Individual ID`
+  &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          
+1 PAL0708                 1 Adelie Penguin … Anvers Torge… Adul… N1A1           
+2 PAL0708                 2 Adelie Penguin … Anvers Torge… Adul… N1A2           
+# ℹ 7 more variables: `Clutch Completion` &lt;chr&gt;, `Date Egg` &lt;dttm&gt;,
+#   `Culmen Length (mm)` &lt;dbl&gt;, `Culmen Depth (mm)` &lt;dbl&gt;,
+#   `Flipper Length (mm)` &lt;dbl&gt;, `Body Mass (g)` &lt;dbl&gt;, Sex &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="reading-data-other-file-formats-1" class="level2">
+<h2 class="anchored" data-anchor-id="reading-data-other-file-formats-1">Reading data: other file formats</h2>
+<ul>
+<li>The <code>haven</code> package provides functions for reading SPSS, Stata, and SAS files</li>
+<li>It looks like SPSS does not support spaces in column names so this is slightly different</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> haven<span class="sc">::</span><span class="fu">read_sav</span>(<span class="st">"data/penguins/penguins_raw.sav"</span>)</span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_raw, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 17
+  study_name sample_number species             region island stage individual_id
+  &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        
+1 PAL0708                1 Adelie Penguin (Py… Anvers Torge… Adul… N1A1         
+2 PAL0708                2 Adelie Penguin (Py… Anvers Torge… Adul… N1A2         
+# ℹ 10 more variables: clutch_completion &lt;chr&gt;, date_egg &lt;date&gt;,
+#   culmen_length_mm &lt;dbl&gt;, culmen_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;dbl&gt;,
+#   body_mass_g &lt;dbl&gt;, sex &lt;chr&gt;, delta_15_n_o_oo &lt;dbl&gt;, delta_13_c_o_oo &lt;dbl&gt;,
+#   comments &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="reading-big-data-the-arrow-package" class="level2">
+<h2 class="anchored" data-anchor-id="reading-big-data-the-arrow-package">Reading big data: the <code>arrow</code> package</h2>
+<ul>
+<li>The <code>arrow</code> package provides functions for reading Parquet and Feather files</li>
+<li>Optimized formats used in many data science projects</li>
+<li>Provides facility to read from “object storage” (e.g., Amazon S3)</li>
+</ul>
+<blockquote class="blockquote">
+<p>The major benefits of object storage are the virtually unlimited scalability and the lower cost of storing large volumes of data for use cases such as data lakes, cloud native applications, analytics, log files, and machine learning (ML). <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</blockquote>
+<ul>
+<li>Rule of thumb:
+<ul>
+<li>use <code>parquet</code> for large files and long term storage
+<ul>
+<li>optimized file size</li>
+</ul></li>
+<li>use <code>feather</code> for optimized reading and short term storage
+<ul>
+<li>memory layout the same as in the process</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="reading-big-data-the-arrow-package-1" class="level2">
+<h2 class="anchored" data-anchor-id="reading-big-data-the-arrow-package-1">Reading big data: the <code>arrow</code> package</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="st">"data/penguins/penguins_raw.parquet"</span>)</span>
+<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>penguins_raw <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_feather</span>(<span class="st">"data/penguins/penguins_raw.feather"</span>)</span>
+<span id="cb153-3"><a href="#cb153-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins_raw, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 17
+  studyName `Sample Number` Species          Region Island Stage `Individual ID`
+  &lt;chr&gt;               &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;          
+1 PAL0708                 1 Adelie Penguin … Anvers Torge… Adul… N1A1           
+2 PAL0708                 2 Adelie Penguin … Anvers Torge… Adul… N1A2           
+# ℹ 10 more variables: `Clutch Completion` &lt;chr&gt;, `Date Egg` &lt;date&gt;,
+#   `Culmen Length (mm)` &lt;dbl&gt;, `Culmen Depth (mm)` &lt;dbl&gt;,
+#   `Flipper Length (mm)` &lt;dbl&gt;, `Body Mass (g)` &lt;dbl&gt;, Sex &lt;chr&gt;,
+#   `Delta 15 N (o/oo)` &lt;dbl&gt;, `Delta 13 C (o/oo)` &lt;dbl&gt;, Comments &lt;chr&gt;</code></pre>
+</div>
+</div>
+<ul>
+<li>Support for complex data structures</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a>penguin_species_island <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="st">'data/penguins/penguin_species_nested.parquet'</span>)</span>
+<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguin_species_island, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Island                                 data
+  &lt;chr&gt;     &lt;list&lt;tbl_df&lt;Species:character&gt;&gt;&gt;
+1 Torgersen                          [52 × 1]
+2 Biscoe                            [168 × 1]</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tidyr<span class="sc">::</span><span class="fu">unnest</span>(penguin_species_island), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `cols` is now required when using `unnest()`.
+ℹ Please use `cols = c(data)`.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  Island    Species                            
+  &lt;chr&gt;     &lt;chr&gt;                              
+1 Torgersen Adelie Penguin (Pygoscelis adeliae)
+2 Torgersen Adelie Penguin (Pygoscelis adeliae)</code></pre>
+</div>
+</div>
+</section>
+<section id="benchmarks" class="level2">
+<h2 class="anchored" data-anchor-id="benchmarks">Benchmarks</h2>
+<div class="cell" data-warnings="false">
+<div class="sourceCode cell-code" id="cb160"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb160-1"><a href="#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb160-2"><a href="#cb160-2" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(</span>
+<span id="cb160-3"><a href="#cb160-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">csv =</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/penguins/penguins_raw.csv"</span>, </span>
+<span id="cb160-4"><a href="#cb160-4" aria-hidden="true" tabindex="-1"></a>   <span class="at">show_col_types =</span> <span class="cn">FALSE</span>, <span class="at">name_repair =</span> <span class="st">'minimal'</span>),</span>
+<span id="cb160-5"><a href="#cb160-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parquet =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="st">"data/penguins/penguins_raw.parquet"</span>),</span>
+<span id="cb160-6"><a href="#cb160-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">feather =</span> arrow<span class="sc">::</span><span class="fu">read_feather</span>(<span class="st">"data/penguins/penguins_raw.feather"</span>)</span>
+<span id="cb160-7"><a href="#cb160-7" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in microbenchmark(csv =
+readr::read_csv("data/penguins/penguins_raw.csv", : less accurate nanosecond
+times to avoid potential integer overflows</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat &lt;- vroom(...)
+  problems(dat)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Unit: milliseconds
+    expr     min       lq     mean   median       uq       max neval cld
+     csv 7.57926 7.868412 8.300206 7.994467 8.246842 11.847032   100 a  
+ parquet 1.71585 1.867591 1.974616 1.937373 2.024211  4.510369   100  b 
+ feather 1.33168 1.431679 1.559638 1.479936 1.540678  4.132226   100   c</code></pre>
+</div>
+</div>
+</section>
+<section id="data-types" class="level2">
+<h2 class="anchored" data-anchor-id="data-types">Data types</h2>
+<p>The most important types of data are:</p>
+<table class="table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Data type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Numeric</td>
+<td>Approximations of the real numbers, <span class="math inline">\(\normalsize\mathbb{R}\)</span> (e.g., mileage a car gets: 23.6, 20.9, etc.)</td>
+</tr>
+<tr class="even">
+<td>Integer</td>
+<td>Whole numbers, <span class="math inline">\(\normalsize\mathbb{Z}\)</span> (e.g., number of sales: 7, 0, 120, 63, etc.)</td>
+</tr>
+<tr class="odd">
+<td>Character</td>
+<td>Text data (strings, e.g., product names)</td>
+</tr>
+<tr class="even">
+<td>Factor</td>
+<td>Categorical data for classification (e.g., product groups)</td>
+</tr>
+<tr class="odd">
+<td>Logical</td>
+<td>TRUE, FALSE</td>
+</tr>
+<tr class="even">
+<td>Date</td>
+<td>Date variables (e.g., sales dates: 21-06-2015, 06-21-15, 21-Jun-2015, etc.)</td>
+</tr>
+</tbody>
+</table>
+<p>Variables can be converted from one type to another using the appropriate functions (e.g., <code>as.numeric()</code>, <code>as.integer()</code>, <code>as.character()</code>, <code>as.factor()</code>, <code>as.logical()</code>, <code>as.Date()</code>).</p>
+</section>
+<section id="lets-clean-up-the-penguins" class="level2">
+<h2 class="anchored" data-anchor-id="lets-clean-up-the-penguins">Let’s clean up the penguins!</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb164"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb164-1"><a href="#cb164-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(penguins_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [344 × 17] (S3: tbl_df/tbl/data.frame)
+ $ studyName          : chr [1:344] "PAL0708" "PAL0708" "PAL0708" "PAL0708" ...
+ $ Sample Number      : num [1:344] 1 2 3 4 5 6 7 8 9 10 ...
+ $ Species            : chr [1:344] "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" ...
+ $ Region             : chr [1:344] "Anvers" "Anvers" "Anvers" "Anvers" ...
+ $ Island             : chr [1:344] "Torgersen" "Torgersen" "Torgersen" "Torgersen" ...
+ $ Stage              : chr [1:344] "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" ...
+ $ Individual ID      : chr [1:344] "N1A1" "N1A2" "N2A1" "N2A2" ...
+ $ Clutch Completion  : chr [1:344] "Yes" "Yes" "Yes" "Yes" ...
+ $ Date Egg           : Date[1:344], format: "2007-11-11" "2007-11-11" ...
+ $ Culmen Length (mm) : num [1:344] 39.1 39.5 40.3 NA 36.7 39.3 38.9 39.2 34.1 42 ...
+ $ Culmen Depth (mm)  : num [1:344] 18.7 17.4 18 NA 19.3 20.6 17.8 19.6 18.1 20.2 ...
+ $ Flipper Length (mm): num [1:344] 181 186 195 NA 193 190 181 195 193 190 ...
+ $ Body Mass (g)      : num [1:344] 3750 3800 3250 NA 3450 ...
+ $ Sex                : chr [1:344] "MALE" "FEMALE" "FEMALE" NA ...
+ $ Delta 15 N (o/oo)  : num [1:344] NA 8.95 8.37 NA 8.77 ...
+ $ Delta 13 C (o/oo)  : num [1:344] NA -24.7 -25.3 NA -25.3 ...
+ $ Comments           : chr [1:344] "Not enough blood for isotopes." NA NA "Adult not sampled." ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   studyName = col_character(),
+  ..   `Sample Number` = col_double(),
+  ..   Species = col_character(),
+  ..   Region = col_character(),
+  ..   Island = col_character(),
+  ..   Stage = col_character(),
+  ..   `Individual ID` = col_character(),
+  ..   `Clutch Completion` = col_character(),
+  ..   `Date Egg` = col_date(format = ""),
+  ..   `Culmen Length (mm)` = col_double(),
+  ..   `Culmen Depth (mm)` = col_double(),
+  ..   `Flipper Length (mm)` = col_double(),
+  ..   `Body Mass (g)` = col_double(),
+  ..   Sex = col_character(),
+  ..   `Delta 15 N (o/oo)` = col_double(),
+  ..   `Delta 13 C (o/oo)` = col_double(),
+  ..   Comments = col_character()
+  .. )</code></pre>
+</div>
+</div>
+<ul>
+<li>Clean the column names</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb166"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb166-1"><a href="#cb166-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(penguins_raw)</span>
+<span id="cb166-2"><a href="#cb166-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(penguins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [344 × 17] (S3: tbl_df/tbl/data.frame)
+ $ study_name       : chr [1:344] "PAL0708" "PAL0708" "PAL0708" "PAL0708" ...
+ $ sample_number    : num [1:344] 1 2 3 4 5 6 7 8 9 10 ...
+ $ species          : chr [1:344] "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" "Adelie Penguin (Pygoscelis adeliae)" ...
+ $ region           : chr [1:344] "Anvers" "Anvers" "Anvers" "Anvers" ...
+ $ island           : chr [1:344] "Torgersen" "Torgersen" "Torgersen" "Torgersen" ...
+ $ stage            : chr [1:344] "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" "Adult, 1 Egg Stage" ...
+ $ individual_id    : chr [1:344] "N1A1" "N1A2" "N2A1" "N2A2" ...
+ $ clutch_completion: chr [1:344] "Yes" "Yes" "Yes" "Yes" ...
+ $ date_egg         : Date[1:344], format: "2007-11-11" "2007-11-11" ...
+ $ culmen_length_mm : num [1:344] 39.1 39.5 40.3 NA 36.7 39.3 38.9 39.2 34.1 42 ...
+ $ culmen_depth_mm  : num [1:344] 18.7 17.4 18 NA 19.3 20.6 17.8 19.6 18.1 20.2 ...
+ $ flipper_length_mm: num [1:344] 181 186 195 NA 193 190 181 195 193 190 ...
+ $ body_mass_g      : num [1:344] 3750 3800 3250 NA 3450 ...
+ $ sex              : chr [1:344] "MALE" "FEMALE" "FEMALE" NA ...
+ $ delta_15_n_o_oo  : num [1:344] NA 8.95 8.37 NA 8.77 ...
+ $ delta_13_c_o_oo  : num [1:344] NA -24.7 -25.3 NA -25.3 ...
+ $ comments         : chr [1:344] "Not enough blood for isotopes." NA NA "Adult not sampled." ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   studyName = col_character(),
+  ..   `Sample Number` = col_double(),
+  ..   Species = col_character(),
+  ..   Region = col_character(),
+  ..   Island = col_character(),
+  ..   Stage = col_character(),
+  ..   `Individual ID` = col_character(),
+  ..   `Clutch Completion` = col_character(),
+  ..   `Date Egg` = col_date(format = ""),
+  ..   `Culmen Length (mm)` = col_double(),
+  ..   `Culmen Depth (mm)` = col_double(),
+  ..   `Flipper Length (mm)` = col_double(),
+  ..   `Body Mass (g)` = col_double(),
+  ..   Sex = col_character(),
+  ..   `Delta 15 N (o/oo)` = col_double(),
+  ..   `Delta 13 C (o/oo)` = col_double(),
+  ..   Comments = col_character()
+  .. )</code></pre>
+</div>
+</div>
+</section>
+<section id="data-preprocessing-syntax" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing-syntax">Data-preprocessing: syntax</h2>
+<ul>
+<li><code>|&gt;</code> is the “pipe” operator
+<ul>
+<li>It takes the result of the left side and passes it to the right side as the first argument</li>
+<li>Very useful when “chaining” multiple operations</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb168"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb168-1"><a href="#cb168-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb168-2"><a href="#cb168-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 17
+  study_name sample_number species             region island stage individual_id
+  &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        
+1 PAL0708                1 Adelie Penguin (Py… Anvers Torge… Adul… N1A1         
+2 PAL0708                2 Adelie Penguin (Py… Anvers Torge… Adul… N1A2         
+# ℹ 10 more variables: clutch_completion &lt;chr&gt;, date_egg &lt;date&gt;,
+#   culmen_length_mm &lt;dbl&gt;, culmen_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;dbl&gt;,
+#   body_mass_g &lt;dbl&gt;, sex &lt;chr&gt;, delta_15_n_o_oo &lt;dbl&gt;, delta_13_c_o_oo &lt;dbl&gt;,
+#   comments &lt;chr&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb170"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 17
+  study_name sample_number species             region island stage individual_id
+  &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;               &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        
+1 PAL0708                1 Adelie Penguin (Py… Anvers Torge… Adul… N1A1         
+2 PAL0708                2 Adelie Penguin (Py… Anvers Torge… Adul… N1A2         
+# ℹ 10 more variables: clutch_completion &lt;chr&gt;, date_egg &lt;date&gt;,
+#   culmen_length_mm &lt;dbl&gt;, culmen_depth_mm &lt;dbl&gt;, flipper_length_mm &lt;dbl&gt;,
+#   body_mass_g &lt;dbl&gt;, sex &lt;chr&gt;, delta_15_n_o_oo &lt;dbl&gt;, delta_13_c_o_oo &lt;dbl&gt;,
+#   comments &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="data-preprocessing-mutation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing-mutation">Data preprocessing: mutation</h2>
+<ul>
+<li>Pkg: <code>dplyr</code> provides function for <code>data.frame</code> manipulation</li>
+<li>Pkg: <code>stringr</code> provides functions to manipulate strings (characters)</li>
+<li>fn: <code>mutate</code> takes each row and applies a function to create a new (or overwrite a) <strong>column</strong></li>
+<li>fn: <code>select</code> selects columns</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb172"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb172-1"><a href="#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb176"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a>penguins_subset <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span></span>
+<span id="cb176-3"><a href="#cb176-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb176-4"><a href="#cb176-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">species =</span> <span class="fu">str_split</span>(species, <span class="st">" "</span>, <span class="at">n =</span> <span class="dv">2</span>, <span class="at">simplify =</span> <span class="cn">TRUE</span>)[,<span class="dv">1</span>],</span>
+<span id="cb176-5"><a href="#cb176-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_adult =</span> <span class="fu">str_detect</span>(<span class="fu">str_to_lower</span>(stage), <span class="st">"adult"</span>),</span>
+<span id="cb176-6"><a href="#cb176-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_female =</span> <span class="fu">str_detect</span>(<span class="fu">str_to_lower</span>(sex), <span class="st">"female"</span>),</span>
+<span id="cb176-7"><a href="#cb176-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">sex =</span> <span class="fu">str_to_lower</span>(sex)) <span class="sc">|&gt;</span></span>
+<span id="cb176-8"><a href="#cb176-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(species, island, sex, is_adult,  culmen_length_mm, culmen_depth_mm, is_female)</span>
+<span id="cb176-9"><a href="#cb176-9" aria-hidden="true" tabindex="-1"></a>penguins_subset <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 7
+  species island    sex    is_adult culmen_length_mm culmen_depth_mm is_female
+  &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;  &lt;lgl&gt;               &lt;dbl&gt;           &lt;dbl&gt; &lt;lgl&gt;    
+1 Adelie  Torgersen male   TRUE                 39.1            18.7 FALSE    
+2 Adelie  Torgersen female TRUE                 39.5            17.4 TRUE     </code></pre>
+</div>
+</div>
+</section>
+<section id="data-preprocessing-multiple-columns" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing-multiple-columns">Data preprocessing: multiple columns</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb178"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb178-1"><a href="#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="co">#penguins_subset &lt;- </span></span>
+<span id="cb178-2"><a href="#cb178-2" aria-hidden="true" tabindex="-1"></a>penguins_subset <span class="ot">&lt;-</span> penguins_subset <span class="sc">|&gt;</span></span>
+<span id="cb178-3"><a href="#cb178-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb178-4"><a href="#cb178-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'culmen'</span>), \(x) x <span class="sc">/</span> <span class="dv">10</span>),</span>
+<span id="cb178-5"><a href="#cb178-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(species<span class="sc">:</span>sex, as.factor),</span>
+<span id="cb178-6"><a href="#cb178-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">'is_adult'</span>, <span class="st">'is_female'</span>), as.numeric)</span>
+<span id="cb178-7"><a href="#cb178-7" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb178-8"><a href="#cb178-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.numeric,</span>
+<span id="cb178-9"><a href="#cb178-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">scaled =</span> \(x) (x <span class="sc">-</span> <span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">/</span> <span class="fu">sd</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb178-10"><a href="#cb178-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb178-11"><a href="#cb178-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(</span>
+<span id="cb178-12"><a href="#cb178-12" aria-hidden="true" tabindex="-1"></a>    \(name) <span class="fu">str_replace</span>(name, <span class="st">"mm"</span>, <span class="st">"cm"</span>),</span>
+<span id="cb178-13"><a href="#cb178-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">starts_with</span>(<span class="st">'culmen'</span>))</span>
+<span id="cb178-14"><a href="#cb178-14" aria-hidden="true" tabindex="-1"></a>penguins_subset <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">starts_with</span>(<span class="st">'is'</span>)) <span class="sc">|&gt;</span> <span class="fu">str</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [344 × 6] (S3: tbl_df/tbl/data.frame)
+ $ species                : Factor w/ 3 levels "Adelie","Chinstrap",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ sex                    : Factor w/ 2 levels "female","male": 2 1 1 NA 1 2 1 2 NA NA ...
+ $ culmen_length_cm       : num [1:344] 3.91 3.95 4.03 NA 3.67 3.93 3.89 3.92 3.41 4.2 ...
+ $ culmen_depth_cm        : num [1:344] 1.87 1.74 1.8 NA 1.93 2.06 1.78 1.96 1.81 2.02 ...
+ $ culmen_length_cm_scaled: num [1:344] -0.883 -0.81 -0.663 NA -1.323 ...
+ $ culmen_depth_cm_scaled : num [1:344] 0.784 0.126 0.43 NA 1.088 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   studyName = col_character(),
+  ..   `Sample Number` = col_double(),
+  ..   Species = col_character(),
+  ..   Region = col_character(),
+  ..   Island = col_character(),
+  ..   Stage = col_character(),
+  ..   `Individual ID` = col_character(),
+  ..   `Clutch Completion` = col_character(),
+  ..   `Date Egg` = col_date(format = ""),
+  ..   `Culmen Length (mm)` = col_double(),
+  ..   `Culmen Depth (mm)` = col_double(),
+  ..   `Flipper Length (mm)` = col_double(),
+  ..   `Body Mass (g)` = col_double(),
+  ..   Sex = col_character(),
+  ..   `Delta 15 N (o/oo)` = col_double(),
+  ..   `Delta 13 C (o/oo)` = col_double(),
+  ..   Comments = col_character()
+  .. )</code></pre>
+</div>
+</div>
+</section>
+<section id="hint-figuring-out-what-is-going-on" class="level2">
+<h2 class="anchored" data-anchor-id="hint-figuring-out-what-is-going-on">Hint: figuring out what is going on</h2>
+<ol type="1">
+<li>Split the problem into smaller pieces</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb180"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb180-1"><a href="#cb180-1" aria-hidden="true" tabindex="-1"></a>\(name) <span class="fu">str_replace</span>(name, <span class="st">"mm"</span>, <span class="st">"cm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>\(name) str_replace(name, "mm", "cm")</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb182"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb182-1"><a href="#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_replace</span>(<span class="st">"ammm"</span>, <span class="st">"mm"</span>, <span class="st">"cm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "acmm"</code></pre>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Check help files</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb184"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb184-1"><a href="#cb184-1" aria-hidden="true" tabindex="-1"></a>?str_replace</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="3" type="1">
+<li>Check <code>typeof()</code> and <code>class()</code></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb185"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(\(name) <span class="fu">str_replace</span>(name, <span class="st">"mm"</span>, <span class="st">"cm"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "closure"</code></pre>
+</div>
+</div>
+<p><span class="math inline">\(\rightarrow\)</span> <code>closure</code>s are functions</p>
+<ol start="3" type="1">
+<li>See if you can produce some outcome on the reduced problem</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb187"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" aria-hidden="true" tabindex="-1"></a>my_function <span class="ot">&lt;-</span> \(name) <span class="fu">str_replace</span>(name, <span class="st">"mm"</span>, <span class="st">"cm"</span>)</span>
+<span id="cb187-2"><a href="#cb187-2" aria-hidden="true" tabindex="-1"></a><span class="fu">my_function</span>(<span class="st">'here are some mms'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "here are some cms"</code></pre>
+</div>
+</div>
+</section>
+<section id="hint-read-the-source-code" class="level2">
+<h2 class="anchored" data-anchor-id="hint-read-the-source-code">Hint: read the source code</h2>
+<ul>
+<li>This is only useful if a function is pure R code</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb189"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a>str_replace</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function (string, pattern, replacement) 
+{
+    if (!missing(replacement) &amp;&amp; is_replacement_fun(replacement)) {
+        replacement &lt;- as_function(replacement)
+        return(str_transform(string, pattern, replacement))
+    }
+    check_lengths(string, pattern, replacement)
+    switch(type(pattern), empty = no_empty(), bound = no_boundary(), 
+        fixed = stri_replace_first_fixed(string, pattern, replacement, 
+            opts_fixed = opts(pattern)), coll = stri_replace_first_coll(string, 
+            pattern, replacement, opts_collator = opts(pattern)), 
+        regex = stri_replace_first_regex(string, pattern, fix_replacement(replacement), 
+            opts_regex = opts(pattern)))
+}
+&lt;bytecode: 0x13a6a6e40&gt;
+&lt;environment: namespace:stringr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="aside-functions-and-variable-names" class="level2">
+<h2 class="anchored" data-anchor-id="aside-functions-and-variable-names">Aside: functions and variable names</h2>
+<ul>
+<li>Common mistake that leads to cryptic error:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb191"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>)</span>
+<span id="cb191-2"><a href="#cb191-2" aria-hidden="true" tabindex="-1"></a>mean[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in mean[1]: object of type 'closure' is not subsettable</code></pre>
+</div>
+</div>
+<div style="text-align: center">
+<iframe src="https://mastodon.social/@kjhealy/111930405065848105/embed" class="mastodon-embed" style="max-width: 100%; border: 0" width="800" allowfullscreen="allowfullscreen">
+</iframe>
+<script src="https://mastodon.social/embed.js" async="async"></script>
+</div>
+</section>
+<section id="reducing-rows-filtering" class="level2">
+<h2 class="anchored" data-anchor-id="reducing-rows-filtering">Reducing rows: filtering</h2>
+<ul>
+<li>Create different subsets of data</li>
+<li>“Filter in” (not out) <span class="math inline">\(\rightarrow\)</span> <code>TRUE</code> rows remain</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb193"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a>adelies <span class="ot">&lt;-</span> penguins_subset <span class="sc">|&gt;</span></span>
+<span id="cb193-2"><a href="#cb193-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Adelie"</span>)</span>
+<span id="cb193-3"><a href="#cb193-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(adelies<span class="sc">$</span>species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Adelie
+Levels: Adelie Chinstrap Gentoo</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb195"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a>female_adelies <span class="ot">&lt;-</span> penguins_subset <span class="sc">|&gt;</span></span>
+<span id="cb195-2"><a href="#cb195-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Adelie"</span>, is_female <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb195-3"><a href="#cb195-3" aria-hidden="true" tabindex="-1"></a>female_adelies <span class="sc">|&gt;</span> <span class="fu">select</span>(species, sex) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      species       sex    
+ Adelie   :73   female:73  
+ Chinstrap: 0   male  : 0  
+ Gentoo   : 0              </code></pre>
+</div>
+</div>
+</section>
+<section id="reducing-rows-summarizing" class="level2">
+<h2 class="anchored" data-anchor-id="reducing-rows-summarizing">Reducing rows: summarizing</h2>
+<ul>
+<li>Calculate any appropriate summary for a variable</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb197"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb197-1"><a href="#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb197-2"><a href="#cb197-2" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb197-3"><a href="#cb197-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(body_mass_g) <span class="sc">|&gt;</span></span>
+<span id="cb197-4"><a href="#cb197-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_weight =</span> <span class="fu">mean</span>(body_mass_g))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  avg_weight
+       &lt;dbl&gt;
+1      4202.</code></pre>
+</div>
+</div>
+<ul>
+<li>Calculate the summary for each group</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb199"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb199-1"><a href="#cb199-1" aria-hidden="true" tabindex="-1"></a>penguins_summary <span class="ot">&lt;-</span> penguins_subset <span class="sc">|&gt;</span></span>
+<span id="cb199-2"><a href="#cb199-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(culmen_length_cm) <span class="sc">|&gt;</span></span>
+<span id="cb199-3"><a href="#cb199-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species, sex) <span class="sc">|&gt;</span></span>
+<span id="cb199-4"><a href="#cb199-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">avg_clength =</span> <span class="fu">mean</span>(culmen_length_cm))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'species'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb201"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb201-1"><a href="#cb201-1" aria-hidden="true" tabindex="-1"></a>penguins_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 3
+# Groups:   species [3]
+  species   sex    avg_clength
+  &lt;fct&gt;     &lt;fct&gt;        &lt;dbl&gt;
+1 Adelie    female        3.73
+2 Adelie    male          4.04
+3 Adelie    &lt;NA&gt;          3.78
+4 Chinstrap female        4.66
+5 Chinstrap male          5.11
+6 Gentoo    female        4.56
+7 Gentoo    male          4.95
+8 Gentoo    &lt;NA&gt;          4.56</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot-tables" class="level2">
+<h2 class="anchored" data-anchor-id="pivot-tables">Pivot tables</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb203"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb203-1"><a href="#cb203-1" aria-hidden="true" tabindex="-1"></a>penguins_summary <span class="sc">|&gt;</span></span>
+<span id="cb203-2"><a href="#cb203-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> species, <span class="at">values_from =</span> avg_clength) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  sex    Adelie Chinstrap Gentoo
+  &lt;fct&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+1 female   3.73      4.66   4.56
+2 male     4.04      5.11   4.95
+3 &lt;NA&gt;     3.78     NA      4.56</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb205"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb205-1"><a href="#cb205-1" aria-hidden="true" tabindex="-1"></a>penguins_wide <span class="ot">&lt;-</span> penguins_subset <span class="sc">|&gt;</span></span>
+<span id="cb205-2"><a href="#cb205-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(culmen_length_cm) <span class="sc">|&gt;</span></span>
+<span id="cb205-3"><a href="#cb205-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(culmen_length_cm, species, sex) <span class="sc">|&gt;</span></span>
+<span id="cb205-4"><a href="#cb205-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">values_from =</span> culmen_length_cm, <span class="at">names_from =</span> species, <span class="at">values_fn =</span> mean) <span class="sc">|&gt;</span></span>
+<span id="cb205-5"><a href="#cb205-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(sex) <span class="sc">|&gt;</span></span>
+<span id="cb205-6"><a href="#cb205-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sex, Adelie, Chinstrap, Gentoo)</span>
+<span id="cb205-7"><a href="#cb205-7" aria-hidden="true" tabindex="-1"></a>penguins_wide</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  sex    Adelie Chinstrap Gentoo
+  &lt;fct&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+1 female   3.73      4.66   4.56
+2 male     4.04      5.11   4.95
+3 &lt;NA&gt;     3.78     NA      4.56</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb207"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb207-1"><a href="#cb207-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_longer</span>(penguins_wide, <span class="at">cols =</span> <span class="sc">-</span>sex, <span class="at">names_to =</span> <span class="st">"species"</span>, <span class="at">values_to =</span> <span class="st">"avg_clength"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+  sex    species   avg_clength
+  &lt;fct&gt;  &lt;chr&gt;           &lt;dbl&gt;
+1 female Adelie           3.73
+2 female Chinstrap        4.66
+3 female Gentoo           4.56
+4 male   Adelie           4.04
+5 male   Chinstrap        5.11
+6 male   Gentoo           4.95
+7 &lt;NA&gt;   Adelie           3.78
+8 &lt;NA&gt;   Chinstrap       NA   
+9 &lt;NA&gt;   Gentoo           4.56</code></pre>
+</div>
+</div>
+</section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise</h2>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Become the Ornithologist
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Read the <code>penguins_raw.feather</code> file</li>
+<li>Remove all whitespace and special characters from the column names</li>
+<li>Calculate the body mass for each penguin in kg</li>
+<li>Create a pivot-table with the median (<code>?median</code>) body mass for each species on each island
+<ul>
+<li>the island names should be in the first column</li>
+<li>the species names should be the remaining columns</li>
+</ul></li>
+<li>Repeat the analysis but only for female penguins</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Become the music manager
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Read the <code>top10_charts.csv</code> in <code>chart_data</code></li>
+<li>What is the range of dates in this dataset? (Hint: <code>?min</code>, <code>?max</code>)</li>
+<li>What is the top region in terms of streams overall? (Hint: <code>?slice_max</code>)</li>
+<li>Create a pivot-table of the total streams (in this dataset) within a region on a given day (1st column day, remaining columns region names, values total streams)</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="merging-data-i" class="level2">
+<h2 class="anchored" data-anchor-id="merging-data-i">Merging data I</h2>
+<ul>
+<li>Often we have two separate datasets with corresponding groups of rows
+<ul>
+<li>Streams, trackID in <code>top10_charts.csv</code> and Song metadata, trackID in <code>top10_meta.csv</code></li>
+<li>purchaseid, customerid in <code>noahs-orders.csv</code> and productid, purchaseid in <code>noahs-orders_items.csv</code> and customerid, customer metadata in <code>noahs-customers.csv</code></li>
+</ul></li>
+<li>Combine data using <code>join</code>s</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb209"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb209-1"><a href="#cb209-1" aria-hidden="true" tabindex="-1"></a>charts <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/chart_data/top10_charts.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 7320 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (3): trackID, region, isrc
+dbl  (3): rank, streams, dayNumber
+date (1): day
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb211"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb211-1"><a href="#cb211-1" aria-hidden="true" tabindex="-1"></a>songs <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/chart_data/top10_meta.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 347 Columns: 29
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (12): trackID, trackName, artistName, artistIds, isrc, primary_artistNa...
+dbl  (16): explicit, trackPopularity, n_available_markets, danceability, ene...
+date  (1): releaseDate
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb213"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb213-1"><a href="#cb213-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(charts, <span class="at">give.attr=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [7,320 × 7] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ trackID  : chr [1:7320] "012iHyRvQQquWQGUTYvDxy" "017PF4Q3l4DBUiWoXk4OWT" "017PF4Q3l4DBUiWoXk4OWT" "017PF4Q3l4DBUiWoXk4OWT" ...
+ $ rank     : num [1:7320] 7 6 7 7 7 8 9 9 10 10 ...
+ $ streams  : num [1:7320] 26234 4276985 3688979 3255639 3478044 ...
+ $ day      : Date[1:7320], format: "2020-08-14" "2020-03-27" ...
+ $ dayNumber: num [1:7320] 1318 1178 1179 1180 1181 ...
+ $ region   : chr [1:7320] "at" "global" "global" "global" ...
+ $ isrc     : chr [1:7320] "DEUM72004523" "GBAHT1901303" "GBAHT1901303" "GBAHT1901303" ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb215"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb215-1"><a href="#cb215-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(songs, <span class="at">give.attr=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [347 × 29] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ trackID              : chr [1:347] "012iHyRvQQquWQGUTYvDxy" "017PF4Q3l4DBUiWoXk4OWT" "01I9AEz658sQnQzCL3K3QG" "033if6Adj8fwBYsQzHOfQ8" ...
+ $ trackName            : chr [1:347] "Fall Auf" "Break My Heart" "HOES UP G'S DOWN" "100k Cash" ...
+ $ artistName           : chr [1:347] "Cro feat. badchieff" "Dua Lipa" "Shirin David" "Capital Bra feat. Samra" ...
+ $ artistIds            : chr [1:347] "3utZ2yeQk0Z3BCOBWP7Vlu,6GoNVmYCl0yUm4pEp80vn6" "6M2wZ9GZgrQXHCFfjv46we" "0JBdTCGs111JKKYfLqOEBa" "4WZGDpNwrC0vNQyl9QzF7d,6h1s4i4XKIYv4ErDelLDN0" ...
+ $ isrc                 : chr [1:347] "DEUM72004523" "GBAHT1901303" "DECE72000379" "DECE72000176" ...
+ $ explicit             : num [1:347] 0 0 1 0 0 0 0 1 0 0 ...
+ $ trackPopularity      : num [1:347] 64 83 75 71 69 82 70 74 89 79 ...
+ $ primary_artistName   : chr [1:347] "Cro" "Dua Lipa" "Shirin David" "Capital Bra" ...
+ $ primary_artistID     : chr [1:347] "3utZ2yeQk0Z3BCOBWP7Vlu" "6M2wZ9GZgrQXHCFfjv46we" "0JBdTCGs111JKKYfLqOEBa" "4WZGDpNwrC0vNQyl9QzF7d" ...
+ $ artistIDs            : chr [1:347] "3utZ2yeQk0Z3BCOBWP7Vlu,6GoNVmYCl0yUm4pEp80vn6" "6M2wZ9GZgrQXHCFfjv46we" "0JBdTCGs111JKKYfLqOEBa" "4WZGDpNwrC0vNQyl9QzF7d,6h1s4i4XKIYv4ErDelLDN0" ...
+ $ albumName            : chr [1:347] "Fall Auf" "Future Nostalgia" "HOES UP G'S DOWN" "100k Cash" ...
+ $ albumID              : chr [1:347] "1qdHQo41Vkkgs8HtMk5b96" "7fJJK56U9fHixgO0HQkhtI" "15Njx2PcwnNsI65fnbM7Pw" "5cqwoGrjFr3VKYZ9ZC0eL2" ...
+ $ available_markets    : chr [1:347] "AD, AE, AL, AR, AT, AU, BA, BE, BG, BH, BO, BR, BY, CA, CH, CL, CO, CR, CY, CZ, DE, DK, DO, DZ, EC, EE, EG, ES,"| __truncated__ "AD, AE, AR, AU, BE, BG, BH, BO, BR, CA, CL, CO, CR, CY, CZ, DK, DO, DZ, EC, EE, EG, ES, FI, FR, GB, GR, GT, HK,"| __truncated__ "AD, AE, AR, AT, AU, BE, BG, BH, BO, BR, CA, CH, CL, CO, CR, CY, CZ, DE, DK, DO, DZ, EC, EE, EG, ES, FI, FR, GB,"| __truncated__ "AD, AE, AR, AT, AU, BE, BG, BH, BO, BR, CA, CH, CL, CO, CR, CY, CZ, DE, DK, DO, DZ, EC, EE, EG, ES, FI, FR, GB,"| __truncated__ ...
+ $ n_available_markets  : num [1:347] 92 76 79 79 87 79 3 79 92 92 ...
+ $ releaseDate          : Date[1:347], format: "2020-08-13" "2020-03-27" ...
+ $ releaseDate_precision: chr [1:347] "day" "day" "day" "day" ...
+ $ danceability         : num [1:347] 0.5 0.73 0.73 0.701 0.84 0.795 0.814 0.774 0.641 0.571 ...
+ $ energy               : num [1:347] 0.743 0.729 0.777 0.714 0.648 0.607 0.794 0.805 0.324 0.693 ...
+ $ key                  : num [1:347] 2 4 1 10 10 7 7 11 11 6 ...
+ $ loudness             : num [1:347] -6.65 -3.43 -6.38 -5.91 -5.54 ...
+ $ mode                 : num [1:347] 1 0 0 1 0 1 1 0 1 0 ...
+ $ speechiness          : num [1:347] 0.0373 0.0886 0.29 0.524 0.0489 0.23 0.0887 0.302 0.0299 0.0545 ...
+ $ acousticness         : num [1:347] 0.307 0.167 0.0455 0.289 0.101 0.128 0.119 0.0509 0.698 0.0054 ...
+ $ instrumentalness     : num [1:347] 0.00 1.39e-06 1.10e-03 0.00 1.00e-04 1.90e-01 9.00e-04 0.00 0.00 0.00 ...
+ $ liveness             : num [1:347] 0.133 0.349 0.0759 0.0883 0.0996 0.111 0.348 0.149 0.328 0.173 ...
+ $ valence              : num [1:347] 0.332 0.467 0.578 0.604 0.431 0.25 0.647 0.261 0.273 0.393 ...
+ $ tempo                : num [1:347] 166.3 113 177.9 86.9 103 ...
+ $ duration_ms          : num [1:347] 191827 221820 130307 173353 124690 ...
+ $ time_signature       : num [1:347] 4 4 4 4 4 4 4 4 4 4 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="merging-data-ii" class="level2">
+<h2 class="anchored" data-anchor-id="merging-data-ii">Merging data II</h2>
+<ul>
+<li>The name of the join determines which “ids” are kept</li>
+<li><code>left_join</code> keeps all rows that have an id in the left dataset</li>
+<li><code>inner_join</code> only keeps rows with ids in both datasets</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb217"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb217-1"><a href="#cb217-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group =</span> <span class="fu">c</span>(<span class="st">'a'</span>, <span class="st">'a'</span>, <span class="st">'b'</span>,<span class="st">'c'</span>), <span class="at">value =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>)) <span class="co"># missing group 'd'</span></span>
+<span id="cb217-2"><a href="#cb217-2" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group2 =</span> <span class="fu">c</span>(<span class="st">'a'</span>, <span class="st">'c'</span>, <span class="st">'d'</span>), <span class="at">value2 =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"abc"</span>, <span class="st">"def"</span>, <span class="st">"ghi"</span>))) <span class="co"># missing group 'b'</span></span>
+<span id="cb217-3"><a href="#cb217-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb217-4"><a href="#cb217-4" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value value2
+1     a     1    abc
+2     a     2    abc
+3     b     3   &lt;NA&gt;
+4     c     4    def</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb219"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb219-1"><a href="#cb219-1" aria-hidden="true" tabindex="-1"></a><span class="fu">right_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value value2
+1     a     1    abc
+2     a     2    abc
+3     c     4    def
+4     d    NA    ghi</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb221"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb221-1"><a href="#cb221-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inner_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value value2
+1     a     1    abc
+2     a     2    abc
+3     c     4    def</code></pre>
+</div>
+</div>
+</section>
+<section id="special-joins" class="level2">
+<h2 class="anchored" data-anchor-id="special-joins">Special joins</h2>
+<ul>
+<li><code>full_join</code> returns all rows from both datasets</li>
+<li><code>semi_join</code> returns only the columns of the left dataset and filters rows with id in the right dataset</li>
+<li><code>anti_join</code> keeps only rows that <strong>do not</strong> have an id in the right table</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb223"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb223-1"><a href="#cb223-1" aria-hidden="true" tabindex="-1"></a><span class="fu">full_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value value2
+1     a     1    abc
+2     a     2    abc
+3     b     3   &lt;NA&gt;
+4     c     4    def
+5     d    NA    ghi</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb225"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1" aria-hidden="true" tabindex="-1"></a><span class="fu">semi_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value
+1     a     1
+2     a     2
+3     c     4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb227"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb227-1"><a href="#cb227-1" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(data1, group <span class="sc">%in%</span> data2<span class="sc">$</span>group2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value
+1     a     1
+2     a     2
+3     c     4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb229"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb229-1"><a href="#cb229-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anti_join</span>(data1, data2, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group"</span> <span class="ot">=</span> <span class="st">"group2"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group value
+1     b     3</code></pre>
+</div>
+</div>
+</section>
+<section id="exercise-3" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3">Exercise</h2>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+BE the music manager
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Who are the top 10 artists in terms of total global streams?</li>
+<li>What is their most succesful song?</li>
+<li>For how many songs are do we not have meta data?</li>
+<li>How many songs are there in the data? (Hint: <code>?n_distinct</code>, or <code>?length</code>, <code>?unique</code>)</li>
+<li>Save the combined data as <code>top10_all.parquet</code></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="references" class="level2 scrollable">
+<h2 class="scrollable anchored" data-anchor-id="references">References</h2>
+<p><strong>Links</strong></p>
+<ul>
+<li><a href="https://www.r-project.org">R Logo</a></li>
+<li><a href="https://hanukkah.bluebird.sh/5783/data/">Noah’s Database</a></li>
+</ul>
+<p><strong>Bibliography</strong></p>
+<div id="refs" role="list">
+
+</div>
 
 
 </section>
+</section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>https://aws.amazon.com/what-is/object-storage/<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://dwinkler.org/dbst/02-data_visualization.html</loc>
-    <lastmod>2024-02-29T17:47:56.456Z</lastmod>
+    <loc>https://dwinkler.org/dbst/02-modeling.html</loc>
+    <lastmod>2024-03-20T18:09:01.866Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dwinkler.org/dbst/02-modeling_page.html</loc>
+    <lastmod>2024-03-20T18:09:01.866Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dwinkler.org/dbst/03-data_visualization.html</loc>
+    <lastmod>2024-03-20T18:09:23.642Z</lastmod>
   </url>
   <url>
     <loc>https://dwinkler.org/dbst/02-data_visualization_page.html</loc>
-    <lastmod>2024-02-29T17:47:56.456Z</lastmod>
+    <lastmod>2024-03-20T18:09:23.642Z</lastmod>
   </url>
   <url>
-    <loc>https://dwinkler.org/dbst/01-introduction_to_r.html</loc>
-    <lastmod>2024-02-28T13:57:21.222Z</lastmod>
-  </url>
-  <url>
-    <loc>https://dwinkler.org/dbst/01-introduction_to_r_page.html</loc>
-    <lastmod>2024-02-28T13:57:21.222Z</lastmod>
+    <loc>https://dwinkler.org/dbst/04-model_visualization.html</loc>
+    <lastmod>2024-03-20T18:10:03.370Z</lastmod>
   </url>
   <url>
     <loc>https://dwinkler.org/dbst/03-model_visualization_page.html</loc>
-    <lastmod>2024-02-27T14:00:05.060Z</lastmod>
+    <lastmod>2024-03-20T18:10:03.370Z</lastmod>
   </url>
   <url>
-    <loc>https://dwinkler.org/dbst/03-model_visualization.html</loc>
-    <lastmod>2024-02-27T14:00:05.060Z</lastmod>
+    <loc>https://dwinkler.org/dbst/01-introduction_to_r_page.html</loc>
+    <lastmod>2024-03-20T18:09:07.374Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dwinkler.org/dbst/01-introduction_to_r.html</loc>
+    <lastmod>2024-03-20T18:09:07.374Z</lastmod>
   </url>
   <url>
     <loc>https://dwinkler.org/dbst/index.html</loc>
-    <lastmod>2024-02-27T15:03:45.458Z</lastmod>
+    <lastmod>2024-03-20T18:04:27.196Z</lastmod>
+  </url>
+  <url>
+    <loc>https://dwinkler.org/dbst/Graphics/readme.html</loc>
+    <lastmod>2024-03-15T19:00:13.096Z</lastmod>
   </url>
 </urlset>
