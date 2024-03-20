@@ -24,10 +24,6 @@ format:
         code-link: true
         code-overflow: wrap
         incremental: false
-    beamer:
-        incremental: false
-        aspectratio: 169
-        center-title-slide: false
     html:
         output-file: 03-model_visualization_page.html 
         code-tools:

@@ -2,13 +2,12 @@
 title: "Welcome!"
 ---
 
-This webiste covers the [R](https://www.r-project.org) implementation of some of the concepts discussed in class.
+This website covers the [R](https://www.r-project.org) implementation of some of the concepts discussed in class.
 We automatically generate multiple versions of the content for your convenience.
 However, only the [RevealJS](https://revealjs.com) slides are presented in class and are therefore checked for rendering issues.
 
-1. [Introduction to R](01-introduction_to_r_page.html)
-2. [Data Visualization](02-data_visualization_page.html)
-3. [Visualizing Uncertainty](03-model_visualization_page.html)
+1. [Introduction to R](01-introduction_to_r.qmd)
+2. [Modeling](02-modeling.qmd)
 
 # Getting started with R
 

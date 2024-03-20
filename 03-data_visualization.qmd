@@ -32,15 +32,7 @@ format:
         toc-location: body
         fig-width: 12
         fig-height: 6
-    beamer:
-        incremental: false
-        aspectratio: 169
-        center-title-slide: false
-        slide-level: 2
-        echo: false
-        keep-tex: false
-        fig-width: 8
-        fig-height: 4
+        fig-align: center
     html:
         output-file: 02-data_visualization_page.html 
         code-tools: 
@@ -223,7 +215,7 @@ filter(datasaurus_dozen, dataset %in% c('x_shape', 'bullseye')) |>
 library(palmerpenguins)
 library(forcats)
 fct_revfreq <- \(x) fct_rev(fct_infreq(x))
-xx <- ggplot(penguins, aes(x = fct_revfreq(species))) +
+ggplot(penguins, aes(x = fct_revfreq(species))) +
   geom_bar(stat = "count") +
   scale_y_continuous(
     expand = expansion(c(0,0.05)),
@@ -240,6 +232,82 @@ xx <- ggplot(penguins, aes(x = fct_revfreq(species))) +
     axis.title=element_text(size=30)
   )
 ```
+
+## Lengths of unaligned segments are harder to compare
+
+- Are there more female Gentoo or female Adelie penguins?
+- Are there more male or female Gentoo penuins?
+
+```{r}
+#| fig-width: 18
+#| fig-height: 9
+#| fig-align: center
+ggplot(penguins, aes(x = fct_revfreq(species), color = sex, fill = sex)) +
+  geom_bar(stat = "count") +
+  scale_y_continuous(
+    expand = expansion(c(0,0.05)),
+    breaks = seq(10,150, by = 20)) + 
+  labs(
+    title = "Number of observations by species and sex",
+    x = "Penguin Species"
+    ) +
+  theme_bw() +
+    theme(
+    plot.title=element_text(size=35),
+    axis.ticks.x=element_blank(),
+    axis.text=element_text(size=30),
+    axis.title=element_text(size=30),
+    legend.position='top',
+    legend.text=element_text(size=25),
+    legend.title=element_blank()
+  )
+```
+
+
+## If the total number is not important but sub-group numbers are...
+
+- Are there more female Gentoo or female Adelie penguins?
+- Are there more male or female Gentoo penuins?
+
+```{r}
+#| code-line-numbers: "2"
+#| fig-width: 18
+#| fig-height: 9
+#| fig-align: center
+ggplot(penguins, aes(x = fct_revfreq(species), color = sex, fill = sex)) +
+  geom_bar(stat = "count", position = 'dodge') +
+  scale_y_continuous(
+    expand = expansion(c(0,0.05)),
+    breaks = seq(10,150, by = 20)) + 
+  labs(
+    title = "Number of observations by species and sex",
+    x = "Penguin Species"
+    ) +
+  theme_bw() +
+    theme(
+    plot.title=element_text(size=35),
+    axis.ticks.x=element_blank(),
+    axis.text=element_text(size=30),
+    axis.title=element_text(size=30),
+    legend.position='top',
+    legend.text=element_text(size=25),
+    legend.title=element_blank()
+  )
+```
+
+
+## Exercise 
+
+::: {.callout-tip}
+## Perceptual accuracy
+
+- 
+- Create a table showing the following statistics for the two `dataset`s:
+  - mean of `x` and `y`,
+  - standard deviation of `x` and `y`, and
+  - covariance between `x` and `y`
+- Create a plot showing the two `dataset`s
+:::
 
 ## Visualizing many categories (badly!)
 

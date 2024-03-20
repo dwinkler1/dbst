@@ -24,10 +24,6 @@ format:
         code-link: true
         code-overflow: wrap
         incremental: false
-    beamer:
-        incremental: false
-        aspectratio: 169
-        center-title-slide: false
     html:
         output-file: 01-introduction_to_r_page.html
         code-tools:
@@ -40,6 +36,727 @@ format:
               name: ir
 ---
 
-# ToDos
+# The Basics
 
-- Quarto website
+## Why R?
+
+- Well established in business and scientific computing
+- Very powerful language
+  - Express any operation in terms of
+  - Often complex functions are already implemented
+- Very good package manager and ecosystem
+  - We will use many tools created by companies, universities, and other R community members
+- Very good for reproducibility
+  - Code documents the process
+  - Should run the same on my and your machine
+  - Should be easily adaptable to changing data
+- Open source
+  - All packages can be inspected
+  - Free to install and use on any computer
+- Developed (partly) and hosted at WU 😋
+
+
+![](Graphics/Rlogo.png){.absolute bottom=40 right=60 width="400" height="400"}
+
+## What do we need?
+
+:::: {.columns}
+::: {.column}
+1. The [R interpreter](https://cran.r-project.org)
+   - The program that "interprets" R code and runs it
+   - Very bare-bones, essentially just a text field
+   - Does **not** store code files for reproducibility 
+
+```{r}
+#| output-location: fragment
+#| echo: true
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+print("Hello, WU!")
+paste0("One plus two is: ", 1 + 2)
+c <- data.frame(p = seq(0, 2 * pi, by = 0.001))
+c$h_x <- 16 * sin(c$p)^3
+c$h_y <- 13 * cos(c$p) - 5 * cos(2 * c$p) - 2 * cos(3 * c$p) - cos(4 * c$p)
+plot(c$h_x, c$h_y, type = "l", main = "I <3 R", frame = F, xlab = NA, ylab = NA)
+```
+
+:::
+::: {.column}
+1. An Integrated Development Environment (IDE)
+    - Makes writing and storing R code easier (more fun!)
+    - Three options compatible with this course:
+      - [R Studio Desktop (Recommended)](https://posit.co/download/rstudio-desktop/)
+        - Focused on R
+        - Easiest option
+      - [VS Code](https://code.visualstudio.com)
+        - Recommended if you (plan to) use other languages (Python, C++, Julia, etc.)
+        - Needs extension for R but works well
+      - [JupyterLab](https://jupyter.org)
+        - "Notebooks" for R, Python, and Julia 
+        - Output generated directly under code "cells"
+:::
+::::
+
+## If you already know R
+
+::: {.callout-important appearance="minimal"}
+## My favorite R package
+
+- Download the presentation template `my_favorite_r_package.qmd` and the bibliography file `data_literacy.bib` from Canvas
+- Select a package that was useful to you in the past
+- Prepare a short presentation about the package
+  - Include examples of how to use the package
+  - Show in which situations that is useful
+:::
+
+## Basic Workflow (R Studio)
+
+- `Ctrl + Enter` to run current line of code (any cursor position)
+
+![](Graphics/rstudio.png)
+
+## Basic Workflow (VS Code)
+
+- `Ctrl + Enter` to run current line of code (any cursor position)
+
+![](Graphics/vscode.png)
+
+## R Syntax: comments, assignment
+
+```{r}
+#| echo: true
+# This is a comment
+print("Hi") # also a comment
+## Assignment of varibale names
+x <- 1
+x
+## Missing values
+NA
+## Vectors
+y <- c(1, 2, 3, NA)
+y
+```
+
+## Functions
+
+```{r}
+#| echo: true
+## built-in
+sum(y)
+sum(y, na.rm = FALSE)
+sum(y, na.rm = TRUE)
+## User functions
+a_plus_b <- function(a, b = 1) {
+    return(a + b)
+}
+a_plus_b(y)
+a_plus_b(y, 2)
+a_plus_b(b = 2, a = y)
+## Functions provided by packages
+## Installation
+#install.packages("ineq")
+ineq::Gini(y)
+## or
+library(ineq)
+Gini(y)
+## Help 
+?Gini
+```
+
+## R Syntax: indexing, logic
+
+```{r}
+#| echo: true
+y[1]
+y[-1]
+y[2:3]
+y[c(1, 3, 4)]
+
+set.seed(1)
+x <- y / 2 + rnorm(length(y))
+cbind(y, x)
+y > 2
+y > 2 & x > 0
+y > 2 | x > 0
+
+y[y > 2 | x > 0]
+```
+
+
+## R Syntax: loops, ranges
+
+```{r}
+#| echo: true
+## 'elem' is a temporary variable
+for (elem in y) {
+    print(paste("Current y value is:", elem))
+}
+## 'seq_along' returns a vector which indexes the argument
+for (i in seq_along(y)) {
+    print(paste("Current y value is:", y[i]))
+}
+## set.seed guarantees the same random numbers every time
+set.seed(1)
+total <- 0
+while (total < 1) {
+    ## runif generates random numbers between 0 and 1
+    total <- total + runif(1)
+    print(paste("Current total value is:", total))
+}
+## ranges
+1:3
+10:3
+seq(3, 11, by = 2)
+```
+
+
+## R Syntax: conditional logic
+
+```{r}
+#| echo: true
+z <- -2:3
+for (x in z) {
+  print(paste("x =", x))
+    if (x > 0) {
+        print("x is positive")
+    } else if (x > 2) {
+        print("x is greater than 2")
+    } else if (x < 0) {
+        print("x is negative")
+    } else if (x == 0) {
+        print("x is zero")
+    }
+}
+z[z <= 0]
+z[z >= 0]
+z[z != 0]
+z[! z < 0]
+```
+
+
+
+## Exercise {.scrollable}
+
+::: {.callout-caution appearance="minimal"}
+## Write your own function
+
+- The function should take two arguments `a` and `b`
+- First, check if `a` and `b` have the same number of elements (see `?length`)
+  - If they have a different number of elements, return `NA`
+- Iterate over the elements of `a` and `b` and check which vector's element is larger (or if they are equal)
+- If they are equal print the index of the element and "equal"
+- If the element in `a` is larger print the index of the elemnt and "a larger"
+- If the element in `b` is larger print the index of the elemnt and "b larger"
+:::
+
+### Example 1
+```{r}
+a <- c(1, 2, 3)
+b <- c(1, 2, 3, 4)
+cat("a is:", a, "\n")
+cat("b is:", b, "\n")
+cat("Result:\n")
+NA
+```
+
+### Example 2 
+
+```{r}
+a <- c(1, 2, 3)
+b <- c(0, 2, 4)
+cat("a is:", a, "\n")
+cat("b is:", b, "\n")
+cat("Result:\n")
+print("1 a larger")
+print("2 equal")
+print("3 b larger")
+```
+
+## Rectangular data frames: creation and access
+
+```{r}
+#| echo: true
+data <- data.frame(x = -1:1, y = 3:1, z = c("a", "b", NA))
+data
+class(data)
+## Variable access
+data$x
+data$x + data$y
+
+row_summaries <- with(data, 
+  data.frame(
+    rsum = x + y,
+    rdiff = x - y
+  ))
+row_summaries
+```
+
+## Rectangular data frames: overview
+
+```{r}
+#| echo: true
+str(data)
+summary(data)
+head(data)
+```
+
+## Rectangular data frames: Indexing
+
+```{r}
+#| echo: true
+## 2D structure of data
+## Empty argument means "all"#| 
+data[, c("x", "y")]
+data[1:3, c("x", "y")]
+data[1, ]
+data[c(1, 3), c("x", "z")]
+data[data$x < 3,]
+```
+
+## Rectangular data: adding and removing variables
+
+```{r}
+#| echo: true
+
+## new data has to have the same number of elements
+data$a <- 2 * data$x
+data
+data$b <- c("one", "two", "three")
+data
+
+data$x <- NULL
+data
+
+data$a <- log(data$a)
+data
+
+data$b[data$b == "two"] <- "TWO!"
+data$z[is.na(data$z)] <- "c"
+data$a[is.nan(data$a)] <- 0
+data
+```
+
+
+## Exercise
+
+::: {.callout-caution appearance="minimal"}
+## Generate your own data
+
+- Look at the helpfiles of `rnorm`, `runif`, and `ifelse`
+- Create a `data.frame` with 10 rows and variables `x`, generated using `runif` and `y`, generated using `rnorm`
+- Add variable `z` which takes the value `1` if `x` is larger than `y` and `0` otherwise
+- Create a second `data.frame` that holds the rows of the original one for which `z == 1` is `TRUE`.
+- Remove column `z` from the second `data.frame`
+- What happens if you try to create a `data.frame` when `x` and `y` have a differnent number of elements?
+- What happens if you run the code you wrote for this exercise again (and again)?
+- How can you ensure that each run yields the same results?
+:::
+
+## Reading data
+
+- Please download & unzip the folder found in "data" in Canvas
+- We will first use the "penguins" folder which includes the `penguins_raw` data set in multiple file formats
+
+```{r}
+#| echo: true
+## CSV
+penguins_raw <- readr::read_csv("data/penguins/penguins_raw.csv")
+head(penguins_raw, 2)
+```
+
+. . .
+
+```{r}
+#| echo: true
+penguins_raw[1,1]
+```
+
+::: {.callout-caution appearance="minimal"}
+## Fix the data
+
+- The second row (after the column names) in the `penguins_raw.csv` file is a comment
+- Look at the help file for the `readr::read_csv` function (`?readr::read_csv`)
+- How can we ignore the comment row?
+:::
+
+## Reading data: solution
+
+```{r}
+#| echo: true
+## CSV
+penguins_raw <- readr::read_csv(
+  "data/penguins/penguins_raw.csv",
+  comment = "#")
+head(penguins_raw, 2)
+penguins_raw[1,1]
+str(penguins_raw)
+```
+
+## Reading data: other file formats
+
+- The `readxl` package provides functions for reading Excel files
+
+```{r}
+#| echo: true
+penguins_raw <- readxl::read_excel("data/penguins/penguins_raw.xlsx")
+head(penguins_raw, 2)
+## Read a subset 
+penguins_subset <- readxl::read_excel("data/penguins/penguins_raw.xlsx", sheet = "Sheet1", range = "B1:O345")
+head(penguins_subset, 2)
+```
+
+## Reading data: other file formats
+
+- The `haven` package provides functions for reading SPSS, Stata, and SAS files
+- It looks like SPSS does not support spaces in column names so this is slightly different
+
+```{r}
+#| echo: true
+penguins_raw <- haven::read_sav("data/penguins/penguins_raw.sav")
+head(penguins_raw, 2)
+```
+
+## Reading big data: the `arrow` package
+
+- The `arrow` package provides functions for reading Parquet and Feather files 
+- Optimized formats used in many data science projects
+- Provides facility to read from "object storage" (e.g., Amazon S3)
+
+> The major benefits of object storage are the virtually unlimited scalability and the lower cost of storing large volumes of data for use cases such as data lakes, cloud native applications, analytics, log files, and machine learning (ML).
+^[https://aws.amazon.com/what-is/object-storage/]
+
+- Rule of thumb: 
+  - use `parquet` for large files and long term storage
+    - optimized file size
+  - use `feather` for optimized reading and short term storage
+    - memory layout the same as in the process
+
+## Reading big data: the `arrow` package
+
+
+```{r}
+#| echo: true
+penguins_raw <- arrow::read_parquet("data/penguins/penguins_raw.parquet")
+penguins_raw <- arrow::read_feather("data/penguins/penguins_raw.feather")
+head(penguins_raw, 2)
+```
+
+- Support for complex data structures
+
+```{r}
+#| echo: true
+penguin_species_island <- arrow::read_parquet('data/penguins/penguin_species_nested.parquet')
+head(penguin_species_island, 2)
+head(tidyr::unnest(penguin_species_island), 2)
+```
+
+## Benchmarks
+
+```{r}
+#| echo: true
+#| warnings: false
+#| cache: true
+library(microbenchmark)
+microbenchmark(
+  csv = readr::read_csv("data/penguins/penguins_raw.csv", 
+   show_col_types = FALSE, name_repair = 'minimal'),
+  parquet = arrow::read_parquet("data/penguins/penguins_raw.parquet"),
+  feather = arrow::read_feather("data/penguins/penguins_raw.feather")
+) 
+```
+
+## Data types
+
+The most important types of data are:
+
+
+Data type   | Description	 
+-------------   | --------------------------------------------------------------------------
+Numeric   | Approximations of the real numbers,  $\normalsize\mathbb{R}$ (e.g., mileage a car gets: 23.6, 20.9, etc.)
+Integer   | Whole numbers,  $\normalsize\mathbb{Z}$ (e.g., number of sales: 7, 0, 120, 63, etc.)
+Character   | Text data (strings, e.g., product names)
+Factor    | Categorical data for classification (e.g., product groups)
+Logical   | TRUE, FALSE
+Date    | Date variables (e.g., sales dates: 21-06-2015, 06-21-15, 21-Jun-2015, etc.)
+
+Variables can be converted from one type to another using the appropriate functions (e.g., ```as.numeric()```, ```as.integer()```, ```as.character()```, ```as.factor()```, ```as.logical()```, ```as.Date()```).
+
+## Let's clean up the penguins!
+
+```{r}
+#| echo: true
+str(penguins_raw)
+```
+
+- Clean the column names
+
+```{r}
+#| echo: true
+penguins <- janitor::clean_names(penguins_raw)
+str(penguins)
+```
+
+## Data-preprocessing: syntax
+
+- `|>` is the "pipe" operator
+  - It takes the result of the left side and passes it to the right side as the first argument
+  - Very useful when "chaining" multiple operations
+
+```{r}
+#| echo: true
+penguins |>
+  head(2)
+head(penguins, 2)
+```
+
+## Data preprocessing: mutation
+
+- Pkg: `dplyr` provides function for `data.frame` manipulation
+- Pkg: `stringr` provides functions to manipulate strings (characters)
+- fn: `mutate` takes each row and applies a function to create a new (or overwrite a) **column**
+- fn: `select` selects columns
+
+```{r}
+#| echo: true
+library(dplyr)
+library(stringr)
+penguins_subset <- penguins |>
+  mutate(
+    species = str_split(species, " ", n = 2, simplify = TRUE)[,1],
+    is_adult = str_detect(str_to_lower(stage), "adult"),
+    is_female = str_detect(str_to_lower(sex), "female"),
+    sex = str_to_lower(sex)) |>
+  select(species, island, sex, is_adult,  culmen_length_mm, culmen_depth_mm, is_female)
+penguins_subset |> head(2)
+```
+
+## Data preprocessing: multiple columns
+
+```{r}
+#| echo: true
+#penguins_subset <- 
+penguins_subset <- penguins_subset |>
+  mutate(
+    across(starts_with('culmen'), \(x) x / 10),
+    across(species:sex, as.factor),
+    across(c('is_adult', 'is_female'), as.numeric)
+    ) |>
+  mutate_if(is.numeric,
+    list(scaled = \(x) (x - mean(x, na.rm=TRUE)) / sd(x, na.rm=TRUE))
+  ) |>
+  rename_with(
+    \(name) str_replace(name, "mm", "cm"),
+    starts_with('culmen'))
+penguins_subset |> select(-starts_with('is')) |> str()
+```
+
+## Hint: figuring out what is going on
+
+1. Split the problem into smaller pieces
+
+```{r}
+#| echo: true
+\(name) str_replace(name, "mm", "cm")
+str_replace("ammm", "mm", "cm")
+```
+
+2. Check help files
+
+```{r}
+#| echo: true
+?str_replace
+```
+
+3. Check `typeof()` and `class()`
+
+```{r}
+#| echo: true
+typeof(\(name) str_replace(name, "mm", "cm"))
+```
+
+$\rightarrow$ `closure`s are functions
+
+3. See if you can produce some outcome on the reduced problem
+
+```{r}
+#| echo: true
+my_function <- \(name) str_replace(name, "mm", "cm")
+my_function('here are some mms')
+``` 
+
+## Hint: read the source code
+
+- This is only useful if a function is pure R code 
+
+```{r}
+#| echo: true
+str_replace
+```
+
+## Aside: functions and variable names
+
+- Common mistake that leads to cryptic error:
+
+```{r}
+#| error: true
+#| echo: true
+means <- c(4,5,6)
+mean[1]
+```
+
+::: {style="text-align: center"}
+
+![](Graphics/object_closure.png)
+
+:::
+
+## Reducing rows: filtering
+
+- Create different subsets of data
+- "Filter in" (not out) $\rightarrow$ `TRUE` rows remain
+
+```{r}
+#| echo: true
+adelies <- penguins_subset |>
+  filter(species == "Adelie")
+unique(adelies$species)
+female_adelies <- penguins_subset |>
+  filter(species == "Adelie", is_female == 1)
+female_adelies |> select(species, sex) |> summary()
+```
+
+## Reducing rows: summarizing
+
+- Calculate any appropriate summary for a variable
+
+```{r}
+#| echo: true
+library(tidyr)
+penguins |>
+  drop_na(body_mass_g) |>
+  summarize(avg_weight = mean(body_mass_g))
+```
+
+- Calculate the summary for each group
+
+```{r}
+#| echo: true
+penguins_summary <- penguins_subset |>
+  drop_na(culmen_length_cm) |>
+  group_by(species, sex) |>
+  summarize(avg_clength = mean(culmen_length_cm))
+penguins_summary
+```
+
+## Pivot tables
+
+```{r}
+#| echo: true
+penguins_summary |>
+  pivot_wider(names_from = species, values_from = avg_clength) 
+
+penguins_wide <- penguins_subset |>
+  drop_na(culmen_length_cm) |>
+  select(culmen_length_cm, species, sex) |>
+  pivot_wider(values_from = culmen_length_cm, names_from = species, values_fn = mean) |>
+  arrange(sex) |>
+  select(sex, Adelie, Chinstrap, Gentoo)
+penguins_wide
+
+pivot_longer(penguins_wide, cols = -sex, names_to = "species", values_to = "avg_clength")
+```
+
+## Exercise
+
+::: {.callout-caution appearance="minimal"}
+## Become the Ornithologist
+
+- Read the `penguins_raw.feather` file
+- Remove all whitespace and special characters from the column names
+- Calculate the body mass for each penguin in kg
+- Create a pivot-table with the median (`?median`) body mass for each species on each island
+  - the island names should be in the first column
+  - the species names should be the remaining columns
+- Repeat the analysis but only for female penguins
+:::
+
+::: {.callout-caution appearance="minimal"}
+## Become the music manager
+
+- Read the `top10_charts.csv` in `chart_data`
+- What is the range of dates in this dataset? (Hint: `?min`, `?max`)
+- What is the top  region in terms of streams overall? (Hint: `?slice_max`)
+- Create a pivot-table of the total streams (in this dataset) within a region on a given day (1st column day, remaining columns region names, values total streams) 
+:::
+
+
+## Merging data I
+
+- Often we have two separate datasets with corresponding groups of rows
+  - Streams, trackID in `top10_charts.csv` and Song metadata, trackID in `top10_meta.csv`
+  - purchaseid, customerid in `noahs-orders.csv` and productid, purchaseid in `noahs-orders_items.csv` and customerid, customer metadata in `noahs-customers.csv`
+- Combine data using `join`s
+
+```{r}
+#| echo: true
+charts <- readr::read_csv("data/chart_data/top10_charts.csv")
+songs <- readr::read_csv("data/chart_data/top10_meta.csv")
+str(charts, give.attr=FALSE)
+str(songs, give.attr=FALSE)
+```
+
+## Merging data II
+
+- The name of the join determines which "ids" are kept
+- `left_join` keeps all rows that have an id in the left dataset
+- `inner_join` only keeps rows with ids in both datasets
+
+```{r}
+#| echo: true
+data1 <- data.frame(group = c('a', 'a', 'b','c'), value = c(1,2,3,4)) # missing group 'd'
+data2 <- data.frame(group2 = c('a', 'c', 'd'), value2 = factor(c("abc", "def", "ghi"))) # missing group 'b'
+
+left_join(data1, data2, by = c("group" = "group2"))
+right_join(data1, data2, by = c("group" = "group2"))
+inner_join(data1, data2, by = c("group" = "group2"))
+```
+
+## Special joins
+
+- `full_join` returns all rows from both datasets
+- `semi_join` returns only the columns of the left dataset and filters rows with id in the right dataset 
+- `anti_join` keeps only rows that **do not** have an id in the right table
+
+```{r}
+#| echo: true
+full_join(data1, data2, by = c("group" = "group2"))
+semi_join(data1, data2, by = c("group" = "group2"))
+filter(data1, group %in% data2$group2)
+anti_join(data1, data2, by = c("group" = "group2"))
+```
+
+
+## Exercise 
+
+::: {.callout-caution appearance="minimal"}
+## BE the music manager
+
+- Who are the top 10 artists in terms of total global streams?
+- What is their most succesful song?
+- For how many songs are do we not have meta data?
+- How many songs are there in the data? (Hint: `?n_distinct`, or `?length`, `?unique`)
+- Save the combined data as `top10_all.parquet`
+:::
+
+## References {.scrollable}
+
+**Links**
+
+- [R Logo](https://www.r-project.org)
+- [Noah's Database](https://hanukkah.bluebird.sh/5783/data/)
+
+**Bibliography**
+
+::: {#refs}
+:::

@@ -1,0 +1,705 @@
+---
+title: 'Modeling'
+subtitle: '[Data-based Storytelling](./index.html)'
+title-slide-attributes: 
+  data-background-image: Graphics/D2.jpg
+author: 
+- Daniel Winkler
+- Stephan Fally
+institute: 
+- 'Institute for Retailing & Data Science'
+- 'Department Marketing'
+bibliography: src/data_storytelling.bib  
+format: 
+    revealjs:
+        theme: [simple, src/rds_theme.scss]
+        logo: Graphics/WU_logo.png
+        footer: "[Data-based Storytelling](./index.html)"
+        center-title-slide: false
+        height: 1080
+        width: 1920
+        center: false
+        progress: false
+        embed-resources: true # slower compile -> activate later
+        code-link: true
+        code-overflow: wrap
+        incremental: false
+        echo: true
+        code-fold: true
+        fig-align: center
+        fig-width: 18
+        fig-height: 8
+    html:
+        output-file: 02-modeling_page.html
+        code-tools:
+            source: repo
+---
+
+
+## Getting into modelling!
+
+
+::: {style="text-align: center"}
+![[source](https://commons.wikimedia.org/wiki/File:ModelsCatwalk.jpg#/media/Archivo:ModelsCatwalk.jpg)](Graphics/ModelsCatwalk.jpg){width=70%}
+:::
+
+## Required skills
+
+- Data-science teams have different skill requirements:
+
+::: {style="text-align: center"}
+![[Data Science and the Art of Persuasion](https://hbr.org/2019/01/data-science-and-the-art-of-persuasion)](Graphics/talents.png){width=80%}
+:::
+
+## Types of analyses
+
+::: {.center-screen}
+- Four types of data stories:
+- Descriptive - *What has happened?*
+- Predictive - *What will happen?*
+- Causal - *Why does it happen?*
+- Prescriptive - *What actions should be taken?*
+:::
+
+## Setup: `ggplot2`
+
+- Import required packages
+- Define a list of layers for consistent styling throughout the project
+
+```{r}
+#| code-fold: false
+#| echo: true
+library(ggplot2)
+library(scales)
+time_series_ggstyle <- list(
+  scale_y_continuous(labels = label_number(scale_cut = cut_si(' ')), expand = c(0, 0.1)),
+  theme_bw(base_size = 20),
+  theme(
+    axis.title.x = element_blank(),
+    panel.border = element_blank(),
+    axis.line = element_line(color = "black"),
+    legend.position = 'top'
+  )
+)
+```
+
+
+## Descriptive
+
+```{r}
+#| code-line-numbers: "14,19,22-23"
+#| fig-align: center
+#| fig-width: 18
+#| fig-height: 8
+library(readr)
+library(stringr)
+library(tidyverse)
+library(data.table)
+options(scipen = 99999)
+charts <- fread("data/charts_at_global.csv.gz")
+ts <- str_detect(tolower(charts$artistName), "taylor swift")
+charts_ts <- charts[ts, ]
+filter(charts_ts, format(day, "%Y") == "2019" & region == "global") |>
+  group_by(day) |>
+  mutate(streams = sum(streams)) |>
+  ggplot(aes(x = day, y = streams)) +
+  geom_line() +
+  scale_x_date(
+    breaks = seq(as.Date("2019-01-01"), as.Date("2019-12-31"), "month"),
+    date_labels = "%b"
+  ) +
+  geom_vline(xintercept = as.Date("2019-08-23"), color = "red") +
+  annotate("text", x = as.Date("2019-08-20"), label = "Release of 'Lover'", y = 40000000, colour = "red", angle = 90, size = 8) +
+  ggtitle("Taylor Swift Streams", subtitle = "Songs in top 200 - 2019") +
+  time_series_ggstyle
+```
+
+## Predictive
+
+```{r}
+#| cache: true
+library(zoo)
+library(prophet)
+total_streams <- charts |>
+  filter(region == "global") |>
+  group_by(day) |>
+  summarize(y = sum(streams)) |>
+  mutate(ds = as.Date(day)) |>
+  select(-day)
+total_streams_model <- filter(total_streams, ds <= as.Date("2020-12-31"), ds >= as.Date("2019-01-01")) 
+total_streams_holdout <- filter(total_streams, ds >= as.Date("2021-01-01"))
+mod <- prophet(total_streams_model,
+               holidays = data.frame(
+                 holiday = "christmas",
+                 ds = c(
+                    as.Date("2019-12-25"), 
+                    as.Date("2020-12-25"), 
+                    as.Date("2021-12-25")),
+                 lower_window = -1, upper_window = 0
+               ),
+               daily.seasonality = FALSE
+)
+future <- make_future_dataframe(mod, periods = 365)
+forecast <- predict(mod, future)
+plot(mod, forecast) +
+  labs(
+    y = "Streams",
+    title = "Prediction of total global streams of top 200",
+    subtitle = "Observed: 2019-2020, forecast: 2021 (holdout: red)"
+  ) +
+  time_series_ggstyle +
+  geom_point(data = total_streams_holdout, 
+  aes(x = as.POSIXct(ds), y = y), color = 'red')
+```
+
+## What about Causality?
+
+![](Graphics/corr_cause.svg){.r-stretch}
+
+## Causal inference and Prediction
+
+- Variables can be *predictive* without a causal relationship 
+- *Correlation does not imply causation*
+- Arcade revenue predicts CS doctorates (and vice versa)
+
+. . .
+
+- Variables can be bad predictors but have a causal relationship 
+- *No correlation does not imply no causation*
+- Fuel used and speed on cruise control (uphill vs. flat)
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+
+:::: {.columns}
+::: {.column width="25%"}
+![](Graphics/car_straight.png){width=80%}
+:::
+::: {.column width="25%"}
+![](Graphics/car_uphill.png){width=80%}
+:::
+::::
+
+:::
+
+::: {.fragment}
+
+- Variables can be predictive while not being *predictive*
+
+> [*Correlation does not even imply correlation*](https://statmodeling.stat.columbia.edu/2014/08/04/correlation-even-imply-correlation/)
+
+Andrew Gelman
+ 
+:::
+:::
+
+## Selection bias
+
+::: {.fragment}
+- For which "population" is the sample representative?
+:::
+
+![](Graphics/Survivorship-bias.svg.png){width=50%}
+
+## Causal but no correlation 
+
+```{r}
+#| code-line-numbers: "3"
+set.seed(123)
+xy <- data.frame(x = rnorm(100000))
+xy$y <- 0.5 * xy$x^2 + 2 * xy$x^4
+ggplot(xy, aes(x = x, y = y)) +
+geom_line() +
+geom_smooth(method = "lm", color = "blue") +
+labs(title = expression(y == 0.5 * x^2 + 2 * x^4), subtitle = "Non-linear relation") +
+annotate("text",
+x = -1, y = 25,
+label = paste0(
+"Best linear fit. Correlation: ",
+round(cor(xy$x, xy$y), 3)
+), hjust = 0, color = "blue", size =8
+) +
+time_series_ggstyle
+```
+
+## Correlation without Correlation
+
+```{r}
+set.seed(42)
+xy <- data.frame(x = rnorm(1000), y = rnorm(1000))
+xy$obs <- abs(xy$x + xy$y) < 0.5 + runif(1000,0,2)
+ggplot(xy, aes(x=x, y=y)) +
+    geom_point(aes(color=obs)) +
+    geom_smooth(data = xy[xy$obs,], 
+    method = 'lm', se = FALSE, color = "#00BFC4") +
+    geom_smooth(method = 'lm', se = FALSE) +
+    time_series_ggstyle +
+    labs(color = "Observed",
+        title = "Restaurant and location quality", 
+        subtitle="Survivor bias",
+        y = "Restaurant Quality", x = "Location Quality") +
+    annotate('text', 
+            x = 2, y = -0.2, hjust=0,
+            label = "Population regression line",
+            color = "blue", size = 8 ) +
+    theme(axis.title.x = element_text())
+```
+
+## Correlation but different but still Correlation
+
+:::: {.columns}
+::: {.column width="50%"}
+
+**Equivalent datasets based on estimate**
+
+```{r}
+library(datasauRus)
+library(kableExtra)
+suppressPackageStartupMessages(library(dplyr))
+data <- datasaurus_dozen %>%
+filter(dataset %in% c(
+"away",
+"bullseye",
+"circle",
+"dino",
+"high_lines",
+"wide_lines",
+"x_shape",
+"star"
+))
+data %>%
+group_by(dataset) %>%
+summarize(
+mean_x    = round(mean(x), 2),
+mean_y    = round(mean(y), 2),
+std_dev_x = round(sd(x), 2),
+std_dev_y = round(sd(y), 2),
+corr_x_y  = round(cor(x, y), 2)
+) %>%
+mutate(dataset = stringr::str_replace(dataset, "_", " ")) %>%
+kbl(
+col.names =
+c("data", "mean x", "mean y", "sd x", "sd y", "corr x,y"),
+format = "html", table.attr = "style='width:100%;'"
+) %>%
+column_spec(1, width = "3cm")
+```
+
+
+:::
+::: {.column width="50%"}
+
+::: {.fragment}
+**Always visualize**
+```{r}
+#| fig-height: 14
+library(ggplot2)
+library(colorspace)
+ggplot(data, aes(x = x, y = y, colour = dataset)) +
+geom_point(size = 4.5) +
+theme_void() +
+theme(
+legend.position = "none",
+strip.text.x = element_text(size = 30)
+) +
+facet_wrap(~dataset, nrow = 4) +
+scale_color_discrete_qualitative(palette = "Dynamic")
+```
+:::
+:::
+::::
+
+## Quality of music and income
+
+- Data: Ratings by music experts, genre, streams
+- Question: Causal effect of rating on income
+ 
+```{r}
+library(modelsummary)
+library(gt)
+set.seed(1)
+N <- 5000
+genre <- rbinom(N, 1, 0.5)
+perfect_rating <- as.factor(rbinom(N, 5, 0.8 - 0.7 * genre)>4)
+streams <- rexp(N, 0.01 - 0.003 * genre) |> floor()
+modelsummary(
+    list(lm(streams~perfect_rating),
+    lm(streams~genre),
+    lm(streams~perfect_rating + genre)),
+    coef_rename = c("perfect_ratingTRUE" = "perfect rating"),
+    stars = TRUE,
+    output = 'gt',
+    statistic = "{p.value}",
+    gof_map = NA) |>
+    tab_style(style = cell_fill(color='lavenderblush3'),
+              locations = cells_body(rows = 3)
+    )
+```
+
+## Grades and happyness
+
+- Data: grades, self_esteem index, happyness index
+- Question: Causal effect of grades on happyness
+
+```{r}
+set.seed(42)
+range_normalize <- function(x, min_range = 0, max_range = 100){
+  x_norm <- min_range + (x - min(x)) * (max_range - min_range) / (max(x) - min(x))
+}
+grades <- 1 + rbinom(N, 4, 0.04)
+self_esteem <- range_normalize(100 * (1/grades + rnorm(N)))
+happyness <- range_normalize(5 + self_esteem + rnorm(N))
+modelsummary(
+    list(lm(happyness~grades),
+    lm(happyness~self_esteem),
+    lm(happyness~grades+self_esteem)),
+    coef_rename = c("self_esteem" = "self esteem"),
+    stars = TRUE,
+    output = 'gt',
+    statistic = "{p.value}",
+    gof_map = NA) |>
+    tab_style(style = cell_fill(color='lavenderblush3'),
+              locations = cells_body(rows = 3)
+    )
+```
+
+## Restaurant and location ratings
+
+- Data: Restaurant ratings, location ratings, restaurant survival prob. 
+- Question: Causal effect of location rating on restaurant rating
+
+
+```{r}
+set.seed(14)
+restaurant_rating <- 25 + 10*rnorm(N)
+location_rating <- 5*rnorm(N)
+survival_probability <- range_normalize(0.8*restaurant_rating + 0.8 * location_rating + 10*rnorm(N), 0, 100)
+modelsummary(
+    list(lm(restaurant_rating~location_rating),
+    lm(restaurant_rating~survival_probability),
+    lm(restaurant_rating~survival_probability + location_rating)),
+    coef_rename = c(
+                    "location_rating" = "location rating",
+                    "survival_probability" = "survival prob."
+                    ),
+    stars = TRUE,
+    output = 'gt',
+    statistic = "{p.value}",
+    gof_map = NA) |>
+    tab_style(style = cell_fill(color='lavenderblush3'),
+              locations = cells_body(rows = 3)
+    )
+```
+
+## Causal Inference: two approaches [@imbens_causal]
+
+::: {.footer}
+
+:::
+
+:::: {.columns}
+::: {.column width="50%"}
+- **Directed Acyclic Graphs (DAGs)**
+- Concerned with identification of causal relationships
+- Shows direction of causality and important variables
+- Graphical representation:
+```{r first-merm, fig.width=5, fig.height=2.5}
+library(ggdag)
+library(dagitty)
+library(tidyverse)
+dagify(y ~ x, x ~ z, exposure = "x", outcome = "y",
+       coords = list(x = c(x = 1, y = 1.5, z = 1), y = c(x=1, y = 1, z=0))
+) %>% 
+  tidy_dagitty() %>%
+  ggdag(text_size = 8, node_size = 10) +
+  geom_dag_edges() +
+  annotate("text", x = 1.2, y = 1, vjust=1, label= "x causes y", size=5 ) + 
+  annotate("text", x = 1, y = 0.5, hjust=-0.1, label="z causes x", size = 5) +
+  theme_dag()
+```
+:::
+::: {.column width="50%"}
+- **Potential Outcome**
+- Multiple Treatments / Causes <br>
+<font size="5">e.g., exposure to ad</font>
+- Potential outcomes f. treatments <br>
+<font size="5">e.g., Purchase given exposure / no exposure</font>
+- Multiple observations with different treatments <br>
+<font size="5">e.g., A/B test</font>
+- Focus on assignment of treatment <br>
+<font size="5">e.g., randomized experiment, selection on (un)observables</font>
+
+
+$$
+\begin{aligned}
+y_i(0)& \ldots \text{outcome of individual }i\text{ without treatment} \\
+y_i(1)& \ldots \text{outcome of individual }i\text{ with treatment} \\
+\delta_i = y&_i(1) - y_i(0) \ldots \text{treatment effect of individual }i
+\end{aligned}
+$$
+
+- Observed: $y_i = D_i * y_i(1) + (1-D_i) * y_i(0)$ where $D_i$ is the treatment indicator
+
+:::
+::::
+
+## 
+
+::: {style="font-size: 10em" .center-screen}
+[Causal Pitchfork](./CausalPitchfork.html)
+:::
+
+# Analyzing DAGs: **d-separation** 
+
+- Necessary to decide which variables to use in model
+- "d" stands for "directional"
+- Usually we are dealing with more than two variables
+- Complication: causation flows only directed - association might flow against 
+
+
+```{r, fig.height=1.8, fig.width=6}
+dagify(z ~ x, y2 ~ z, a ~ x, a ~ y3, x ~ d, y1 ~ d,
+       coords = list(x = c(x = 1, z = 1.5, y2 = 2, a = 1.5, y3 = 2, d = 1.5, y1 = 2), 
+                     y = c(x = 1, y2 = 1, z = 1, a = 0, y3 = 0, d = 2, y1 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  ggdag(text_size = 3, node_size = 5) +
+  geom_dag_edges() +
+  theme_dag() +
+  labs(title= "Causal Pitchfork", subtitle = "x and y2 are d-connected but x and y1/y3 are not") +
+  theme(title = element_text(size = 8))
+```
+
+
+# Analyzing DAGs: Fork
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| fig-width: 10
+#| fig-height: 3
+med <- dagify( x ~ d, y1 ~ d,
+       coords = list(x = c(x = 1, z = 1.5, y = 2, a = 1.5, b = 2, d = 1.5, y1 = 2), 
+                     y = c(x = 1, y = 1, z = 1, a = 0, b = 0, d = 2, y1 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  mutate(fill = ifelse(name == "d", "Confounder", "variables of interest")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=12, aes(color = fill)) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "top") 
+med
+```
+:::
+::: {.column width="50%"}
+- d causes both x and y1
+- Arrows pointing to x are called "back-door" paths 
+- Eliminated by randomized experiment! Why?
+- Controlling for d "blocks" the non-causal association x $\rightarrow$ y1
+:::
+::::
+
+# Analyzing DAGs: Pipe
+
+```{r}
+#| fig-width: 6
+#| fig-height: 2
+med <- dagify(z ~ x, y2 ~ z,
+       coords = list(x = c(x = 1, z = 1.5, y2 = 2), y = c(x=1, y2 = 1, z=1))
+) %>% 
+  tidy_dagitty() %>%
+  mutate(fill = ifelse(name == "z", "Mediator", "variables of interest")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=7, aes(color = fill)) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "top") 
+med
+```
+
+- x causes y through z
+- Controlling for z blocks the causal association x $\rightarrow$ y2
+
+
+
+## Exercise
+
+::: {style="text-align: center"}
+**Which variables should be included?**
+:::
+
+::: {.incremental}
+- Effect of x on y
+- Effect of z on y
+:::
+
+```{r}
+#| fig-align: center
+library(ggdag)
+library(dagitty)
+library(tidyverse)
+dagify(y ~ n + z + b + c, 
+       x ~  z + a + c,
+       n ~ x,
+       z ~ a + b, exposure = "x", outcome = "y",
+       coords = list(x = c(n = 2, x = 1, y = 3, a = 1, z = 2, c = 2, b = 3), y = c(x = 2, y = 2, a = 3, z = 3, c = 1, b = 3, n = 2))) %>% 
+  tidy_dagitty() %>%
+  ggdag(text_size = 8, node_size = 12) +
+  geom_dag_edges() +
+  theme_dag()
+```
+
+::: {.notes}
+For x -> y:
+
+  Add the following to model:
+ 
+  - c (confounder)
+  - z (confounder) but opens collider
+  - a or b to block collider path (b statistically more efficient)
+ 
+  Mediator:
+ 
+  - n
+
+For z -> y:
+
+  Add the following to model:
+
+  - b (confounder)
+  - a (confounder)
+  - c (not necessary but not harmful)
+  
+  Mediators:
+  
+  - x (also include c) 
+  - n (also include c)
+
+:::
+
+## Common bad controls [@cinelli2020crash]
+
+
+```{r}
+#| fig-align: center
+library(ggpubr)
+p1 <- dagify(y ~ x + U2,
+       a ~ U1 + U2,
+       x ~ U1,
+      coords = list(x = c(x = 1, y = 2, a = 1.5, b = 1.5, U1 = 1, U2 = 2), y = c(x=1, y = 1,  a = 1.5, b = 0, U1 = 2, U2 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=12, 
+                 aes(color = fill)
+                 ) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "bottom") +
+  labs(title = "M-Bias")
+p2 <- dagify(y ~ a + U,
+       a ~ x + U,
+      coords = list(x = c(x = 1, y = 2, a = 1.5, b = 1.5, U = 1.7, U2 = 2), y = c(x=1, y = 1,  a = 1, b = 0, U = 2, U2 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  mutate(fill = ifelse(name %in% c("U"), "Unobserved", "Observed")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=12, 
+                 aes(color = fill)
+                 ) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "bottom") +
+  labs(title = "Post-treatment Bias")
+ggarrange(p1, p2)
+```
+
+::: {.notes}
+
+left: M-Bias
+
+  - Do not adjust for z since it would open the collider path
+
+right: Post-treatment Bias
+
+  - Do not include post treatment variable "a" since it would open the confounder path (cannot control since u is unobserved)
+
+:::
+
+## Common bad controls
+
+
+```{r}
+#| fig-align: center
+p1 <- dagify(y ~ x ,
+       a ~ x + y,
+      coords = list(x = c(x = 1, y = 2, a = 1.5, b = 1.5, U1 = 1, U2 = 2), y = c(x=1, y = 1,  a = 1.5, b = 0, U1 = 2, U2 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  #mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=12, 
+                 #aes(color = fill)
+                 ) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "bottom") +
+  labs(title = "Selection Bias")
+p2 <-  dagify(y ~ x ,
+       a ~ y,
+      coords = list(x = c(x = 1, y = 2, a = 1.5, b = 1.5, U1 = 1, U2 = 2), y = c(x=1, y = 1,  a = 1.5, b = 0, U1 = 2, U2 = 2))
+) %>% 
+  tidy_dagitty() %>%
+  #mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %>% 
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
+  geom_dag_point(size=12, 
+                 #aes(color = fill)
+                 ) + 
+  geom_dag_edges(show.legend = FALSE)+
+  geom_dag_text() +
+  theme_dag() +
+  theme(legend.title  = element_blank(),
+        legend.position = "bottom") +
+  labs(title = "Case-control Bias")
+ggarrange(p1, p2)
+```
+:::: {.columns}
+::: {.column width="50%"}
+Intelligence, education, income
+:::
+::: {.column width="50%"}
+Case-control study: Observation ex-post. Ex.: Smoking $\rightarrow$ lung cancer 
+:::
+::::
+
+::: {.notes}
+
+Left: Selection Bias
+
+  - Do not include "a" since it would open the collider path
+
+Right: Case-control Bias
+
+  - Do not include "a" since it is caused by y. Would bias effect of x on y.
+:::
+
+## Exercise
+
+::: {style="text-align: center"}
+**Prepare a short presentation of a (potential) DAG for your thesis**
+:::
+
+## References
