@@ -8,6 +8,7 @@ However, only the [RevealJS](https://revealjs.com) slides are presented in class
 
 1. [Introduction to R](01-introduction_to_r.qmd)
 2. [Modeling](02-modeling.qmd)
+   1. [Causal Pitchfork](CausalPitchfork.qmd)
 
 # Getting started with R
 

@@ -1,0 +1,557 @@
+---
+title: "Causal Pitchfork - The Data"
+subtitle: '[Data-based Storytelling](./index.html)'
+author: 
+- Daniel Winkler
+- Stephan Fally
+institute: 
+- 'Institute for Retailing & Data Science'
+- 'Department Marketing'
+bibliography: src/data_storytelling.bib  
+date: "Updated: `r Sys.Date()`"
+---
+
+```{r}
+#| include = FALSE
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warnings = FALSE,
+  fig.width = 6, fig.height = 6, fig.align = "center"
+)
+```
+
+# Introduction
+
+
+This document deals with a fundamental question of causal inference: **Which variables should be included in a causal model?** [see @cinelli2020crash] To answer this question two points need to be clear:
+
+1. In general each causal model only investigates the causal effect of a single independent variable, $x_k$, on the dependent variable $y$. The coefficients associated with all other variables, $x_{j\neq k}$, cannot (automatically) be interpreted as causal relationships. As regression coefficients are commonly presented in a single table, it is often unclear to the reader which coefficients can be interpreted as causal [see @westreich2013table].
+2. Statistical significance (or any other statistical test) does not give us any idea about the causal model. To illustrate this, the following figure shows three statistically significant relationships between the variables $x$ and $y$ (all t-stats $> 9$). However, by construction there is no causal relationship between them in two of these examples. Even more concerning: In one case the _exclusion_ of a control variable leads to spurious correlation (leftmost plot) while in the other the _inclusion_ of the control variable does the same (rightmost plot).
+
+
+```{r intro}
+#| fig-width: 12
+library(tidyverse)
+library(patchwork)
+set.seed(11)
+## Fork
+# n ... number of observations
+n <- 500
+# d ... binary confounder
+d <- rbinom(n, 1, 0.5)
+x <- 1.5 * d + rnorm(n)
+y <- 0.4 + 2 * d + rnorm(n)
+data_fork <- data.frame(x, y, d = factor(d, levels = c(0, 1), labels = c("Yes", "No")))
+plt_fork <- ggplot(data_fork, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  ggtitle("Relation due to omitted confounder")
+## Pipe
+set.seed(11)
+x <- 1 * rnorm(n)
+z <- rbinom(n, 1, boot::inv.logit(2 * x + rnorm(n)))
+y <- 2 * z + rnorm(n)
+data_pipe <- data.frame(x, z = factor(z, levels = c(0, 1), labels = c("Yes", "No")), y)
+plt_pipe <- ggplot(data_pipe, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  ggtitle("Relation through mediator")
+## Collider
+set.seed(11)
+x <- rnorm(n)
+y <- rnorm(n)
+a <- rbinom(n, 1, boot::inv.logit(9 * x - 9 * y + rnorm(n)))
+data_collider <- data.frame(x, y, a = factor(a, levels = c(0, 1), labels = c("No", "Yes")))
+data_collider$x_a <- resid(lm(x ~ 0 + a))
+data_collider$y_a <- resid(lm(y ~ 0 + a))
+plt_collider <- ggplot(data_collider, aes(x_a, y_a)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(x = "x", y = "y") +
+  theme(legend.position = "top") +
+  ggtitle("Relation due to included collider")
+plt_fork + plt_pipe + plt_collider
+```
+
+
+# The Fork (Good control)
+
+```{r fork}
+#| fig.height = 2.5
+set.seed(42)
+library(ggdag)
+library(gt)
+library(dagitty)
+confounder <- dagify(x ~ d, y ~ d,
+  coords = list(
+    x = c(x = 1, y = 2, d = 1.5),
+    y = c(x = 1, y = 2, d = 2)
+  )
+) |>
+  tidy_dagitty() |>
+  mutate(fill = ifelse(name == "d", "Confounder", "variables of interest")) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size = 7, aes(color = fill)) +
+  geom_dag_edges(show.legend = FALSE) +
+  geom_dag_text() +
+  theme_dag() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
+confounder
+```
+
+A typical dataset with a confounder will exhibit correlation between the treatment $X$ and outcome $y.$ This relationship is not causal! In the example below we have a binary confounder $d$ (Yes/No) that is d-connected with both $X$ and $y$ ($X$ and $y$ are not d-connected) 
+
+```{r fork_no}
+set.seed(11)
+# n ... number of observations
+n <- 500
+# d ... binary confounder
+d <- rbinom(n, 1, 0.5)
+x <- 1.5 * d + rnorm(n)
+y <- 0.4 + 2 * d + rnorm(n)
+data_fork <- data.frame(x, y, d = factor(d, levels = c(0, 1), labels = c("Yes", "No")))
+ggplot(data_fork, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal()
+lm(y ~ x) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(
+    columns = estimate:p.value,
+    decimals = 4
+  )
+```
+
+However once we take the confounder into account the association vanishes which reflects the lack of a causal relationship in this case (note that for simplicity the regression lines in the plot are not the same as the model output shown). 
+
+```{r fork_yes}
+# options(scipen = 10)
+ggplot(data_fork, aes(x, y, color = d)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "top")
+lm(y ~ x * d, data_fork) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(
+    columns = estimate:p.value,
+    decimals = 4
+  )
+```
+
+# The Pipe (Bad control)
+
+```{r pipe, fig.height = 2}
+med <- dagify(z ~ x, y ~ z,
+  coords = list(x = c(x = 1, z = 1.5, y = 2), y = c(x = 1, y = 1, z = 1))
+) |>
+  tidy_dagitty() |>
+  mutate(fill = ifelse(name == "z", "Mediator", "variables of interest")) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size = 7, aes(color = fill)) +
+  geom_dag_edges(show.legend = FALSE) +
+  geom_dag_text() +
+  theme_dag() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
+med
+```
+
+If we have a mediator in our data the picture looks very similar to the previous one. In addition, taking the mediator into account also has a similar effect: we remove the association between $X$ and $y$. However, in this case that is not what we want since $X$ and $y$ are d-connected. $X$ causes $y$ through $z$ (note that for simplicity the regression lines in the second plot are not the same as the model output shown).
+
+
+```{r pipe_no}
+set.seed(11)
+x <- 1 * rnorm(n)
+z <- rbinom(n, 1, boot::inv.logit(2 * x + rnorm(n)))
+y <- 2 * z + rnorm(n)
+data_pipe <- data.frame(x, z = factor(z, levels = c(0, 1), labels = c("Yes", "No")), y)
+ggplot(data_pipe, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal()
+lm(y ~ x) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(
+    columns = estimate:p.value,
+    decimals = 4
+  )
+```
+
+
+```{r pipe_yes}
+ggplot(data_pipe, aes(x, y, color = z)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "top")
+lm(y ~ x * z) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(
+    columns = estimate:p.value,
+    decimals = 4
+  )
+```
+
+# The Collider (Bad control)
+
+```{r}
+#| fig.height = 2.5
+dagify(a ~ x, a ~ y,
+  coords = list(x = c(x = 1, y = 2, a = 1.5), y = c(x = 1, y = 0,  a = 0))
+) |>
+  tidy_dagitty() |>
+  mutate(fill = ifelse(name == "a", "Collider", "variables of interest")) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size = 7, aes(color = fill)) +
+  geom_dag_edges(show.legend = FALSE) +
+  geom_dag_text() +
+  theme_dag() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
+```
+
+The collider is a special case. There is no association between $X$ and $y$ as long as we do **not** account for the collider in the model. However, by accounting for the collider we implicitly learn about $y$ as well (we use $X$ as the predictor). Since the collider is caused by $X$ and $y$, we can figure out what $y$ must be once we know $X$ and the collider similar to solving a simple equation you would see in high-school.
+
+```{r}
+set.seed(11)
+x <- rnorm(n)
+y <- rnorm(n)
+a <- rbinom(n, 1, boot::inv.logit(9 * x - 9 * y + rnorm(n)))
+data_collider <- data.frame(x, y, a = factor(a, levels = c(0, 1), labels = c("No", "Yes")))
+ggplot(data_collider, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal()
+lm(y ~ x) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(columns = estimate:p.value, decimals = 4)
+```
+
+```{r}
+data_collider$x_a <- resid(lm(x ~ 0 + a))
+data_collider$y_a <- resid(lm(y ~ 0 + a))
+ggplot(data_collider, aes(x_a, y_a)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal() +
+  labs(x = "x after accounting for a", y = "y after accounting for a") +
+  theme(legend.position = "top")
+lm(y ~ x + a, data_collider) |>
+  broom::tidy() |>
+  gt() |>
+  fmt_number(columns = estimate:p.value, decimals = 4)
+```
+
+# Connections to related concepts
+
+## Omitted Variable Bias (OVB)
+
+[Recall](https://wu-rds.github.io/MA2022/regression.html#omitted-variables) that variables that influence both the outcome and other independent variables will bias the coefficients of those other independent variables if left out of a model. This bias is referred to as "Omitted Variable Bias" (short OVB) since it occurs due to the omission of a crucial variable. OVB occurs whenever a confounder (see [The Fork](#the-fork-good-control)) is left out of the model. The magnitude of the bias depends on how strongly correlated the confounder is with the included variable $x$. To illustrate this take a look at the equations representing the situation in [The Fork](#the-fork-good-control):
+
+$$
+\begin{aligned}
+x &= \alpha_0 + \alpha_1 d + \varepsilon_x \\
+y &= \beta_0 + \beta_1 d + \varepsilon_y
+\end{aligned}
+$$
+
+However, we might be unaware of the confounder $d$ but still be interested in the causal effect of $x$ on $y$. Therefore, we might be inclined to estimate the following (misspecified) model
+
+$$
+y = \gamma_0 + \gamma_1 x + \epsilon_y
+$$
+We know (based on the equations above) that the true effect of $x$ on $y$ is $0$ as it is entirely caused by $d$. In order to investigate the magnitude of the OVB we mistakenly view $d$ as a function of $x$ (see [Mediation analysis](#mediation-analysis)):
+
+$$
+d = \theta_0 + \theta_1 x + \varepsilon_d,
+$$
+
+plug the incorrectly specified model for $d$ into the correctly specified model for $y$, and take the derivative with respect to $x$:
+
+$$
+\begin{aligned}
+y &= \tilde \beta_0 + \beta_1 (\theta_0 + \theta_1 x + \varepsilon_d) + \epsilon_y \\
+  &= \tilde \beta_0 + \beta_1 \theta_0 + \beta_1 \theta_1 x + \beta_1 \varepsilon_d + \epsilon_y \\
+{\delta \over \delta x}  &= \beta_1 \theta_1
+\end{aligned}
+$$
+
+Note that $\gamma_1 = \beta_1 \theta_1$. 
+
+```{r}
+#| code-fold: false
+#| results: asis
+library(stargazer)
+set.seed(11)
+d <- 100 * rnorm(n)
+x <- -4 + 0.5 * d + 10 * rnorm(n)
+y <- 25 + 10 * d + 10 * rnorm(n)
+stargazer(
+  lm(y ~ d + x),
+  lm(y ~ x), ## gamma
+  lm(y ~ d), ## beta
+  lm(d ~ x), ## theta
+  type = 'html')
+## See coef of regression y ~ x
+beta1 <- coef(lm(y~d))['d']
+theta1 <- coef(lm(d~x))['x']
+beta1 * theta1
+```
+
+Notice that without theoretical knowledge about the data it is not clear which variable should be the "outcome" and which the "independent" variable since we could estimate either direction using OLS. In the example above we know ("from theory") that $d$ causes $x$ and $y$ but we estimate models where $x$ is the explanatory variable. As one might guess there is a clear relationship between coefficients estimated with one or the other variable on the left hand side. 
+
+```{r}
+#| code-fold: false
+theta_1 <- coef(lm(d~x))['x']
+alpha_1 <- coef(lm(x~d))['d']
+```
+
+To be exact we have to adjust for the respective variances of the variables:
+
+```{r}
+#| code-fold: false
+alpha_1 * var(d)/var(x)
+theta_1
+```
+
+## Mediation analysis
+
+As the total causal effect a variable $x$ has on the outcome $y$ can be (partly) mediated through another variable $m$, we cannot just include $m$ in the model. However, we can decompose the effect into a direct and mediated part. Either of part can be $0$ but we can easily test whether that is the case. The decomposition has two parts: First, calculate the effect the variable of interest ($x$) has on the mediator ($m$):
+
+$$
+m = \alpha_0 + \alpha_1 x + \varepsilon_m
+$$
+
+Note that we use "alpha" ($\alpha$) for the regression coefficients to distinguish them from the parameters below. They can nonetheless be estimated using OLS.
+
+Second, calculate the full model for the outcome ($y$) including both $x$ and $m$:
+
+$$
+y = \beta_0 + \beta_1 x + \beta_2 m + \varepsilon_y
+$$
+
+Now $\beta_1$ is the _average direct effect_ (ADE) of $x$ on $y$. That is the part that is not mediated through $m$. In [The Pipe](#the-pipe-bad-control), $\beta_1=0$ since there is no direct connection from $x$ to $y$. The _average causal mediation effect_ (ACME) can be calculated as $\alpha_1 * \beta_2$. Intuitively, "how much would a unit increase in $x$ change $m$" times "how much would an increase in $m$ change $y$". The total effect of $x$ on $y$ can be seen more clearly by plugging in the model for $m$ in the second equation and taking the derivative with respect to $x$:
+
+
+$$
+\begin{aligned}
+y &= \beta_0 + \beta_1 x + \beta_2 m + \varepsilon_y \\
+  &= \beta_0 + \beta_1 x + \beta_2 (\alpha_0 + \alpha_1 x + \varepsilon_m) + \varepsilon_y \\
+  &= \beta_0 + \beta_1 x + \beta_2 \alpha_0 + \beta_2 \alpha_1 x + \beta_2 \varepsilon_m + \varepsilon_y \\
+\text{total effect} := \frac{\delta y}{\delta x} &= \underbrace{\beta_1}_{\text{ADE}} + \underbrace{\beta_2 \alpha_1}_{\text{ACME}}
+\end{aligned}
+$$
+
+Note that if we are only interested in the _total effect_ we can omit the mediator $m$ from the model and estimate:
+
+$$
+y = \gamma_0 + \gamma_1 x + \epsilon_y
+$$
+where $\gamma_1 = \beta_1 + \beta_2 \alpha_1$ (again: all these equations can be estimated using OLS). In that case we are using OVB in our favor: By omitting $m$ its effect on $y$ is picked up by $x$ to exactly the degree that $x$ and $m$ are correlated. However, in contrast to the previous example that is exactly what we want since $m$ is caused by $x$ as well!
+
+
+Notable changes to [The Pipe](#the-pipe-bad-control): 
+
+- We have both direct and indirect effects of $x$ on $y$
+- The mediator $m$ is continuous instead of binary
+
+
+```{r}
+#| fig-height: 2.5
+med2 <- dagify(m ~ x, y ~ m + x,
+  coords = list(x = c(x = 1, m = 1.5, y = 2), y = c(x = 1, y = 1, m = 1.5))
+) |>
+  tidy_dagitty() |>
+  mutate(fill = ifelse(name == "m", "Mediator", "variables of interest")) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size = 7, aes(color = fill)) +
+  geom_dag_edges(show.legend = FALSE) +
+  geom_dag_text() +
+  theme_dag() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
+med2
+```
+
+
+```{r}
+#| code-fold: false
+#| results: asis
+set.seed(11)
+X <- 100 * rnorm(n)
+M <- 10 + 0.5 * X + 5 * rnorm(n)
+Y <- -25 + 4 * X + 3 * M + 10 * rnorm(n)
+X_on_M <- lm(M ~ X)
+avg_direct_effect <- lm(Y ~ X + M)
+total_effect <- lm(Y ~ X)
+stargazer(
+  X_on_M, 
+  avg_direct_effect, 
+  total_effect, 
+  type = 'html')
+```
+
+```{r}
+#| code-fold: false
+avg_causal_mediation_effect <- coef(X_on_M)['X'] * coef(avg_direct_effect)['M']
+total_effect_alternative <- coef(avg_direct_effect)['X'] + avg_causal_mediation_effect
+proportion_mediated <- avg_causal_mediation_effect / total_effect_alternative
+```
+
+```{r}
+mediation_effects <- tribble(
+        ~effect,                                  ~value,
+        "Average Causal Mediation Effect (ACME):", avg_causal_mediation_effect,
+        "Average Direct Effect (ADE):",            coef(avg_direct_effect)['X'],
+        "Total Effect:",                           coef(total_effect)['X'],
+        "Total Effect (alternative):",             total_effect_alternative,
+        "Proportion Mediated:",                    proportion_mediated)
+
+gt(mediation_effects, rowname_col = 'effect')  |>
+  tab_options(column_labels.hidden = TRUE) |>
+  fmt_number(columns = value, decimals = 3) |>
+  tab_header(title = "Causal Mediation Analysis")
+```
+
+Alternatively, the mediation analysis can be performed using the `mediation` package:
+
+
+```{r}
+#| message: false
+#| code-fold: false
+library(mediation)
+mediation_result <- mediate(X_on_M, avg_direct_effect, 
+                            treat = 'X', mediator = 'M',
+                            boot = TRUE, sims = 1000)
+summary(mediation_result)
+```
+### Estimation using Process
+
+In research settings the PROCESS macro by Andrew Hayes is very popular. 
+The following code _should_ download and source the macro for you but will definitely break in the future (try changing the `v42` part of the link to `v43` or `v44` etc. or obtain a new link from [the website](https://haskayne.ucalgary.ca/CCRAM/resource-hub) if it does):
+
+```{r}
+#| eval: false
+#| code-fold: false
+temp <- tempfile()
+download.file("https://www.afhayes.com/public/processv42.zip",temp)
+files <- unzip(temp, list = TRUE)
+fname <- files$Name[endsWith(files$Name, "process.R")]
+source(unz(temp, fname))
+unlink(temp)
+```
+
+Alternatively download the program from [here](https://haskayne.ucalgary.ca/CCRAM/resource-hub) and source the `process.R` file manually. 
+
+PROCESS model 4 (not run):
+
+```{r}
+#| eval: false
+#| code-fold: false
+process(data.frame(Y, X, M), y = 'Y', x = 'X', m = 'M', model = 4)
+```
+
+
+
+
+# Appendix: How the sausage is made
+
+The fork, mediator, and collider were generated as binary variables to make visualization easier. Binary variables can be drawn from a so-called Bernoulli distribution which is a special case of the binomial distribution with size = 1.
+The distribution takes the probability of getting a $1$ as input.
+
+## The Fork
+
+```{r}
+#| code-fold: false
+## Make code reproducible
+set.seed(11)
+## Number of observations
+n <- 1500
+## Random draw from Bernoulli with p(1) = 0.5, p(0) = 0.5
+d <- rbinom(n, 1, 0.5)
+## X is caused by d
+x <- 2 * d + rnorm(n)
+## y is caused by d
+y <- 0.4 + 2.5 * d + rnorm(n)
+fork <- data.frame(x, y, d = factor(d,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+))
+ggplot(fork, aes(x, y, color = d)) +
+  geom_point() +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+## The Pipe
+
+```{r, echo = TRUE, fig.height = 4}
+## Generate random X
+x <- rnorm(n)
+## inv.logit ensures that values are between 0 and 1
+ggplot(data.frame()) +
+  stat_function(fun = boot::inv.logit, xlim = c(-10, 10)) +
+  theme_minimal() +
+  labs(title = "Inverse Logit function", x = "x", y = "inv.logit(x)")
+```
+
+```{r, echo = TRUE}
+## z is caused by X
+z <- rbinom(n, 1, boot::inv.logit(2 * x + rnorm(n)))
+## y is caused by z
+y <- 2 * z + rnorm(n)
+pipe <- data.frame(x, y, z = factor(z,
+  levels = c(0, 1),
+  labels = c("Yes", "No")
+))
+ggplot(pipe, aes(x, y, color = z)) +
+  geom_point() +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+## The Collider
+
+```{r, echo = TRUE}
+## Generate random x
+x <- rnorm(n)
+## Generate random y
+y <- rnorm(n)
+## a is caused by both X and y
+a <- rbinom(n, 1, boot::inv.logit(9 * x - 9 * y + rnorm(n)))
+collider <- data.frame(x, y, a = factor(a,
+  levels = c(0, 1),
+  labels = c("No", "Yes")
+))
+ggplot(collider, aes(x, y)) +
+  geom_point() +
+  theme_minimal()
+```
+
+In order to get the partial correlation of $X$ and $y$ after accounting for $a$ we first regress both $X$ and $y$ on $a$ and use the unexplained part (residual) in the plot. This is equivalent to a regression that has both $X$ and $a$ as explanatory variables.
+
+```{r, echo = TRUE, fig.width=7, fig.height=7}
+collider$x_a <- residuals(lm(x ~ 0 + a))
+collider$y_a <- residuals(lm(y ~ 0 + a))
+ggplot(collider, aes(x_a, y_a)) +
+  geom_point() +
+  theme_minimal() +
+  labs(x = "x after accounting for a", y = "y after accounting for a")
+```

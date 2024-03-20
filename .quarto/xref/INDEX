@@ -37,5 +37,30 @@
     "02-data_visualization.tex": "0f9946f5",
     "02-data_visualization_page.html": "df48ec91",
     "02-data_visualization.ipynb": "3ec35be2"
+  },
+  "02-Modeling.qmd": {
+    "02-Modeling.html": "a3cd033a"
+  },
+  "04-model_visualization.qmd": {
+    "04-model_visualization.html": "4e3f6f40",
+    "04-model_visualization.tex": "b770c65a",
+    "03-model_visualization_page.html": "c9f6455d",
+    "04-model_visualization.ipynb": "5c25ecd7"
+  },
+  "03-data_visualization.qmd": {
+    "03-data_visualization.html": "22170198",
+    "03-data_visualization.tex": "fc5441f5",
+    "02-data_visualization_page.html": "68d70b3f",
+    "03-data_visualization.ipynb": "98f482f4"
+  },
+  "Graphics/readme.md": {
+    "readme.html": "af936f82"
+  },
+  "02-modeling.qmd": {
+    "02-modeling.html": "41b3381a",
+    "02-modeling_page.html": "a8e9abf4"
+  },
+  "CausalPitchfork.qmd": {
+    "CausalPitchfork.html": "1cd50860"
   }
 }
