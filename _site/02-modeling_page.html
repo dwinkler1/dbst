@@ -222,14 +222,13 @@ window.Quarto = {
   <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
   <li><a href="#analyzing-dags-d-separation" id="toc-analyzing-dags-d-separation" class="nav-link" data-scroll-target="#analyzing-dags-d-separation">Analyzing DAGs: <strong>d-separation</strong></a></li>
   <li><a href="#analyzing-dags-fork" id="toc-analyzing-dags-fork" class="nav-link" data-scroll-target="#analyzing-dags-fork">Analyzing DAGs: Fork</a></li>
-  <li><a href="#analyzing-dags-pipe" id="toc-analyzing-dags-pipe" class="nav-link" data-scroll-target="#analyzing-dags-pipe">Analyzing DAGs: Pipe</a>
-  <ul class="collapse">
+  <li><a href="#analyzing-dags-pipe" id="toc-analyzing-dags-pipe" class="nav-link" data-scroll-target="#analyzing-dags-pipe">Analyzing DAGs: Pipe</a></li>
+  <li><a href="#analyzing-dags-collider" id="toc-analyzing-dags-collider" class="nav-link" data-scroll-target="#analyzing-dags-collider">Analyzing DAGs: Collider</a></li>
   <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
   <li><a href="#common-bad-controls-cinelli2020crash" id="toc-common-bad-controls-cinelli2020crash" class="nav-link" data-scroll-target="#common-bad-controls-cinelli2020crash">Common bad controls <span class="citation" data-cites="cinelli2020crash">(Cinelli, Forney, and Pearl 2020)</span></a></li>
   <li><a href="#common-bad-controls" id="toc-common-bad-controls" class="nav-link" data-scroll-target="#common-bad-controls">Common bad controls</a></li>
   <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="02-modeling.html"><i class="bi bi-file-slides"></i>RevealJS</a></li></ul></div></nav>
     </div>
@@ -773,509 +772,67 @@ Attaching package: 'kableExtra'</code></pre>
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lm</span>(streams<span class="sc">~</span>perfect_rating <span class="sc">+</span> genre)),</span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">coef_rename =</span> <span class="fu">c</span>(<span class="st">"perfect_ratingTRUE"</span> <span class="ot">=</span> <span class="st">"perfect rating"</span>),</span>
 <span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">output =</span> <span class="st">'gt'</span>,</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{p.value}"</span>,</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">gof_map =</span> <span class="cn">NA</span>) <span class="sc">|&gt;</span></span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(<span class="at">style =</span> <span class="fu">cell_fill</span>(<span class="at">color=</span><span class="st">'lavenderblush3'</span>),</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">locations =</span> <span class="fu">cells_body</span>(<span class="at">rows =</span> <span class="dv">3</span>)</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{p.value}"</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">gof_map =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="jawcqpqxqt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jawcqpqxqt table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#jawcqpqxqt thead, #jawcqpqxqt tbody, #jawcqpqxqt tfoot, #jawcqpqxqt tr, #jawcqpqxqt td, #jawcqpqxqt th {
-  border-style: none;
-}
-
-#jawcqpqxqt p {
-  margin: 0;
-  padding: 0;
-}
-
-#jawcqpqxqt .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#jawcqpqxqt .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#jawcqpqxqt .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#jawcqpqxqt .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#jawcqpqxqt .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#jawcqpqxqt .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#jawcqpqxqt .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#jawcqpqxqt .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#jawcqpqxqt .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#jawcqpqxqt .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#jawcqpqxqt .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#jawcqpqxqt .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#jawcqpqxqt .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#jawcqpqxqt .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#jawcqpqxqt .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jawcqpqxqt .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#jawcqpqxqt .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#jawcqpqxqt .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#jawcqpqxqt .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jawcqpqxqt .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#jawcqpqxqt .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jawcqpqxqt .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#jawcqpqxqt .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jawcqpqxqt .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jawcqpqxqt .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jawcqpqxqt .gt_left {
-  text-align: left;
-}
-
-#jawcqpqxqt .gt_center {
-  text-align: center;
-}
-
-#jawcqpqxqt .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#jawcqpqxqt .gt_font_normal {
-  font-weight: normal;
-}
-
-#jawcqpqxqt .gt_font_bold {
-  font-weight: bold;
-}
-
-#jawcqpqxqt .gt_font_italic {
-  font-style: italic;
-}
-
-#jawcqpqxqt .gt_super {
-  font-size: 65%;
-}
-
-#jawcqpqxqt .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#jawcqpqxqt .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#jawcqpqxqt .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#jawcqpqxqt .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#jawcqpqxqt .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#jawcqpqxqt .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#jawcqpqxqt .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
-<tr class="header gt_col_headings">
-<th id=" " class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
-<th id="(1)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(1)</th>
-<th id="(2)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(2)</th>
-<th id="(3)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(3)</th>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;(1)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;&nbsp;(2)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;&nbsp;(3)</th>
 </tr>
 </thead>
-<tbody class="gt_table_body">
+<tbody>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" ">(Intercept)</td>
-<td class="gt_row gt_center" headers="(1)">122.711***</td>
-<td class="gt_row gt_center" headers="(2)">97.408***</td>
-<td class="gt_row gt_center" headers="(3)">97.314***</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: center;">122.711***</td>
+<td style="text-align: center;">97.408***</td>
+<td style="text-align: center;">97.314***</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(2)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(3)">&lt;0.001</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" " style="background-color: #CDC1C5">perfect rating</td>
-<td class="gt_row gt_center" headers="(1)" style="background-color: #CDC1C5">-25.112***</td>
-<td class="gt_row gt_center" headers="(2)" style="background-color: #CDC1C5"></td>
-<td class="gt_row gt_center" headers="(3)" style="background-color: #CDC1C5">0.285</td>
+<td style="text-align: left;">perfect rating</td>
+<td style="text-align: center;">−25.112***</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.285</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(2)"></td>
-<td class="gt_row gt_center" headers="(3)">0.956</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.956</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" ">genre</td>
-<td class="gt_row gt_center" headers="(1)"></td>
-<td class="gt_row gt_center" headers="(2)">43.268***</td>
-<td class="gt_row gt_center" headers="(3)">43.361***</td>
+<td style="text-align: left;">genre</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">43.268***</td>
+<td style="text-align: center;">43.361***</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)"></td>
-<td class="gt_row gt_center" headers="(2)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(3)">&lt;0.001</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
 </tr>
-</tbody><tfoot class="gt_sourcenotes">
+</tbody><tfoot>
 <tr class="odd">
-<td colspan="4" class="gt_sourcenote">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td>
+<td style="text-align: left; padding: 0;"><sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 </tfoot>
 
 </table>
 
-</div>
+
 </div>
 </div>
 </section>
@@ -1299,509 +856,67 @@ Attaching package: 'kableExtra'</code></pre>
 <span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lm</span>(happyness<span class="sc">~</span>grades<span class="sc">+</span>self_esteem)),</span>
 <span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">coef_rename =</span> <span class="fu">c</span>(<span class="st">"self_esteem"</span> <span class="ot">=</span> <span class="st">"self esteem"</span>),</span>
 <span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">output =</span> <span class="st">'gt'</span>,</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{p.value}"</span>,</span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">gof_map =</span> <span class="cn">NA</span>) <span class="sc">|&gt;</span></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tab_style</span>(<span class="at">style =</span> <span class="fu">cell_fill</span>(<span class="at">color=</span><span class="st">'lavenderblush3'</span>),</span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">locations =</span> <span class="fu">cells_body</span>(<span class="at">rows =</span> <span class="dv">3</span>)</span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">statistic =</span> <span class="st">"{p.value}"</span>,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">gof_map =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="rrkeawcmwt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#rrkeawcmwt table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#rrkeawcmwt thead, #rrkeawcmwt tbody, #rrkeawcmwt tfoot, #rrkeawcmwt tr, #rrkeawcmwt td, #rrkeawcmwt th {
-  border-style: none;
-}
-
-#rrkeawcmwt p {
-  margin: 0;
-  padding: 0;
-}
-
-#rrkeawcmwt .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#rrkeawcmwt .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#rrkeawcmwt .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#rrkeawcmwt .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#rrkeawcmwt .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#rrkeawcmwt .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#rrkeawcmwt .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#rrkeawcmwt .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#rrkeawcmwt .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#rrkeawcmwt .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#rrkeawcmwt .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#rrkeawcmwt .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#rrkeawcmwt .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#rrkeawcmwt .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#rrkeawcmwt .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#rrkeawcmwt .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#rrkeawcmwt .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#rrkeawcmwt .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#rrkeawcmwt .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#rrkeawcmwt .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#rrkeawcmwt .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#rrkeawcmwt .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#rrkeawcmwt .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#rrkeawcmwt .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#rrkeawcmwt .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#rrkeawcmwt .gt_left {
-  text-align: left;
-}
-
-#rrkeawcmwt .gt_center {
-  text-align: center;
-}
-
-#rrkeawcmwt .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#rrkeawcmwt .gt_font_normal {
-  font-weight: normal;
-}
-
-#rrkeawcmwt .gt_font_bold {
-  font-weight: bold;
-}
-
-#rrkeawcmwt .gt_font_italic {
-  font-style: italic;
-}
-
-#rrkeawcmwt .gt_super {
-  font-size: 65%;
-}
-
-#rrkeawcmwt .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#rrkeawcmwt .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#rrkeawcmwt .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#rrkeawcmwt .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#rrkeawcmwt .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#rrkeawcmwt .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#rrkeawcmwt .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
-<tr class="header gt_col_headings">
-<th id=" " class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
-<th id="(1)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(1)</th>
-<th id="(2)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(2)</th>
-<th id="(3)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">(3)</th>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;(1)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;&nbsp;(2)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">&nbsp;&nbsp;(3)</th>
 </tr>
 </thead>
-<tbody class="gt_table_body">
+<tbody>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" ">(Intercept)</td>
-<td class="gt_row gt_center" headers="(1)">61.393***</td>
-<td class="gt_row gt_center" headers="(2)">1.510***</td>
-<td class="gt_row gt_center" headers="(3)">1.551***</td>
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: center;">61.393***</td>
+<td style="text-align: center;">1.510***</td>
+<td style="text-align: center;">1.551***</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(2)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(3)">&lt;0.001</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" " style="background-color: #CDC1C5">grades</td>
-<td class="gt_row gt_center" headers="(1)" style="background-color: #CDC1C5">-5.958***</td>
-<td class="gt_row gt_center" headers="(2)" style="background-color: #CDC1C5"></td>
-<td class="gt_row gt_center" headers="(3)" style="background-color: #CDC1C5">-0.029</td>
+<td style="text-align: left;">grades</td>
+<td style="text-align: center;">−5.958***</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">−0.029</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(2)"></td>
-<td class="gt_row gt_center" headers="(3)">0.430</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.430</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers=" ">self esteem</td>
-<td class="gt_row gt_center" headers="(1)"></td>
-<td class="gt_row gt_center" headers="(2)">0.989***</td>
-<td class="gt_row gt_center" headers="(3)">0.988***</td>
+<td style="text-align: left;">self esteem</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0.989***</td>
+<td style="text-align: center;">0.988***</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers=" "></td>
-<td class="gt_row gt_center" headers="(1)"></td>
-<td class="gt_row gt_center" headers="(2)">&lt;0.001</td>
-<td class="gt_row gt_center" headers="(3)">&lt;0.001</td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">&lt;0.001</td>
+<td style="text-align: center;">&lt;0.001</td>
 </tr>
-</tbody><tfoot class="gt_sourcenotes">
+</tbody><tfoot>
 <tr class="odd">
-<td colspan="4" class="gt_sourcenote">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td>
+<td style="text-align: left; padding: 0;"><sup></sup> + p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
 </tr>
 </tfoot>
 
 </table>
 
-</div>
+
 </div>
 </div>
 </section>
@@ -2401,8 +1516,8 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <p><a href="./CausalPitchfork.html">Causal Pitchfork</a></p>
 </div>
 </section>
-<section id="analyzing-dags-d-separation" class="level1">
-<h1>Analyzing DAGs: <strong>d-separation</strong></h1>
+<section id="analyzing-dags-d-separation" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-dags-d-separation">Analyzing DAGs: <strong>d-separation</strong></h2>
 <ul>
 <li>Necessary to decide which variables to use in model</li>
 <li>“d” stands for “directional”</li>
@@ -2429,10 +1544,9 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 </div>
 </div>
 </section>
-<section id="analyzing-dags-fork" class="level1">
-<h1>Analyzing DAGs: Fork</h1>
-<div class="columns">
-<div class="column" style="width:50%;">
+<section id="analyzing-dags-fork" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-dags-fork">Analyzing DAGs: Fork</h2>
+<p><strong>Good Control</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">dagify</span>( x <span class="sc">~</span> d, y1 <span class="sc">~</span> d,</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="fl">1.5</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">d =</span> <span class="fl">1.5</span>, <span class="at">y1 =</span> <span class="dv">2</span>), </span>
@@ -2441,7 +1555,7 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"d"</span>, <span class="st">"Confounder"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span> </span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span> </span>
 <span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
@@ -2451,23 +1565,21 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-modeling_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="02-modeling_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
 <ul>
 <li>d causes both x and y1</li>
 <li>Arrows pointing to x are called “back-door” paths</li>
 <li>Eliminated by randomized experiment! Why?</li>
 <li>Controlling for d “blocks” the non-causal association x <span class="math inline">\(\rightarrow\)</span> y1</li>
 </ul>
-</div>
-</div>
 </section>
-<section id="analyzing-dags-pipe" class="level1">
-<h1>Analyzing DAGs: Pipe</h1>
+<section id="analyzing-dags-pipe" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-dags-pipe">Analyzing DAGs: Pipe</h2>
+<p><strong>Bad Control (possibly use mediation analysis)</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">dagify</span>(z <span class="sc">~</span> x, y2 <span class="sc">~</span> z,</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="fl">1.5</span>, <span class="at">y2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y2 =</span> <span class="dv">1</span>, <span class="at">z=</span><span class="dv">1</span>))</span>
@@ -2494,6 +1606,39 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <li>x causes y through z</li>
 <li>Controlling for z blocks the causal association x <span class="math inline">\(\rightarrow\)</span> y2</li>
 </ul>
+</section>
+<section id="analyzing-dags-collider" class="level2">
+<h2 class="anchored" data-anchor-id="analyzing-dags-collider">Analyzing DAGs: Collider</h2>
+<p><strong>Bad control</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(a <span class="sc">~</span> x, a <span class="sc">~</span> y,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>,  <span class="at">a =</span> <span class="dv">0</span>))</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">|&gt;</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"a"</span>, <span class="st">"Collider"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size =</span> <span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="02-modeling_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>x &amp; y cause a</li>
+<li>x &amp; y are d-separated and uncorrelated</li>
+<li>By adding a to the model spurious correlation between x &amp; y is introduced</li>
+</ul>
+</section>
 <section id="exercise" class="level2">
 <h2 class="anchored" data-anchor-id="exercise">Exercise</h2>
 <div style="text-align: center">
@@ -2506,22 +1651,22 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 </ul>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(y <span class="sc">~</span> n <span class="sc">+</span> z <span class="sc">+</span> b <span class="sc">+</span> c, </span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>       x <span class="sc">~</span>  z <span class="sc">+</span> a <span class="sc">+</span> c,</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>       n <span class="sc">~</span> x,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>       z <span class="sc">~</span> a <span class="sc">+</span> b, <span class="at">exposure =</span> <span class="st">"x"</span>, <span class="at">outcome =</span> <span class="st">"y"</span>,</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">3</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">2</span>, <span class="at">b =</span> <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="dv">3</span>, <span class="at">z =</span> <span class="dv">3</span>, <span class="at">c =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">3</span>, <span class="at">n =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span> </span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggdag</span>(<span class="at">text_size =</span> <span class="dv">8</span>, <span class="at">node_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>() <span class="sc">+</span></span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dagify</span>(y <span class="sc">~</span> n <span class="sc">+</span> z <span class="sc">+</span> b <span class="sc">+</span> c, </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>       x <span class="sc">~</span>  z <span class="sc">+</span> a <span class="sc">+</span> c,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>       n <span class="sc">~</span> x,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>       z <span class="sc">~</span> a <span class="sc">+</span> b, <span class="at">exposure =</span> <span class="st">"x"</span>, <span class="at">outcome =</span> <span class="st">"y"</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">n =</span> <span class="dv">2</span>, <span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">3</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">2</span>, <span class="at">b =</span> <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="dv">3</span>, <span class="at">z =</span> <span class="dv">3</span>, <span class="at">c =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">3</span>, <span class="at">n =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggdag</span>(<span class="at">text_size =</span> <span class="dv">8</span>, <span class="at">node_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>() <span class="sc">+</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="02-modeling_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="02-modeling_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2555,45 +1700,45 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <section id="common-bad-controls-cinelli2020crash" class="level2">
 <h2 class="anchored" data-anchor-id="common-bad-controls-cinelli2020crash">Common bad controls <span class="citation" data-cites="cinelli2020crash">(<a href="#ref-cinelli2020crash" role="doc-biblioref">Cinelli, Forney, and Pearl 2020</a>)</span></h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> x <span class="sc">+</span> U2,</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> U1 <span class="sc">+</span> U2,</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>       x <span class="sc">~</span> U1,</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U1"</span>, <span class="st">"U2"</span>), <span class="st">"Unobserved"</span>, <span class="st">"Observed"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">color =</span> fill)</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"M-Bias"</span>)</span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> a <span class="sc">+</span> U,</span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> x <span class="sc">+</span> U,</span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U =</span> <span class="fl">1.7</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U"</span>), <span class="st">"Unobserved"</span>, <span class="st">"Observed"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
-<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
-<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">color =</span> fill)</span>
-<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
-<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
-<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
-<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
-<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Post-treatment Bias"</span>)</span>
-<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> x <span class="sc">+</span> U2,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> U1 <span class="sc">+</span> U2,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>       x <span class="sc">~</span> U1,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U1"</span>, <span class="st">"U2"</span>), <span class="st">"Unobserved"</span>, <span class="st">"Observed"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">color =</span> fill)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"M-Bias"</span>)</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> a <span class="sc">+</span> U,</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> x <span class="sc">+</span> U,</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U =</span> <span class="fl">1.7</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"U"</span>), <span class="st">"Unobserved"</span>, <span class="st">"Observed"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">aes</span>(<span class="at">color =</span> fill)</span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Post-treatment Bias"</span>)</span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="02-modeling_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="02-modeling_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2612,43 +1757,43 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 <section id="common-bad-controls" class="level2">
 <h2 class="anchored" data-anchor-id="common-bad-controls">Common bad controls</h2>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> x ,</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> x <span class="sc">+</span> y,</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %&gt;% </span></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>                 <span class="co">#aes(color = fill)</span></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Selection Bias"</span>)</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span>  <span class="fu">dagify</span>(y <span class="sc">~</span> x ,</span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> y,</span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %&gt;% </span></span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
-<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>                 <span class="co">#aes(color = fill)</span></span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
-<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
-<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
-<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Case-control Bias"</span>)</span>
-<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">dagify</span>(y <span class="sc">~</span> x ,</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> x <span class="sc">+</span> y,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %&gt;% </span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>                 <span class="co">#aes(color = fill)</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Selection Bias"</span>)</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span>  <span class="fu">dagify</span>(y <span class="sc">~</span> x ,</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>       a <span class="sc">~</span> y,</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="fl">1.5</span>, <span class="at">U1 =</span> <span class="dv">1</span>, <span class="at">U2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>,  <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">U1 =</span> <span class="dv">2</span>, <span class="at">U2 =</span> <span class="dv">2</span>))</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(fill = ifelse(name %in% c("U1", "U2"), "Unobserved", "Observed")) %&gt;% </span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">12</span>, </span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>                 <span class="co">#aes(color = fill)</span></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>                 ) <span class="sc">+</span> </span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Case-control Bias"</span>)</span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(p1, p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="02-modeling_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+<p><img src="02-modeling_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -2682,7 +1827,6 @@ y_i(1)&amp; \ldots \text{outcome of individual }i\text{ with treatment} \\
 
 
 
-</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">

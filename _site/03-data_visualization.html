@@ -95,7 +95,27 @@
     code span.va { color: #111111; } /* Variable */
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
 <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css">
 <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
 <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -417,68 +437,71 @@ Stephan Fally
 <ul>
 <li><a href="#/always-visualize" id="/toc-always-visualize">Always Visualize!</a></li>
 <li><a href="#/visual-channels" id="/toc-visual-channels">Visual Channels</a></li>
-<li><a href="#/mapping-visual-ratios" id="/toc-mapping-visual-ratios">Mapping visual ratios</a></li>
+<li><a href="#/visualizing-uncertainty" id="/toc-visualizing-uncertainty">Visualizing Uncertainty</a></li>
 </ul></nav></section><section><section id="always-visualize" class="title-slide slide level1"><h1>Always Visualize!</h1>
 
 </section><section id="processing-numbers-is-hard" class="slide level2 scrollable"><h2>Processing numbers is hard</h2>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(datasauRus)</span>
 <span id="cb1-2"><a></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-4"><a></a><span class="fu">library</span>(gt)</span>
-<span id="cb1-5"><a></a><span class="fu">library</span>(stringr)</span>
-<span id="cb1-6"><a></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb1-7"><a></a></span>
-<span id="cb1-8"><a></a>tab_ds_data <span class="ot">&lt;-</span> datasaurus_dozen <span class="sc">|&gt;</span></span>
-<span id="cb1-9"><a></a>  <span class="fu">filter</span>(dataset <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'dino'</span>, <span class="st">'star'</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb1-10"><a></a>  <span class="fu">group_by</span>(dataset) <span class="sc">|&gt;</span></span>
-<span id="cb1-11"><a></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb1-12"><a></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb1-13"><a></a>    <span class="at">names_from =</span> dataset, </span>
-<span id="cb1-14"><a></a>    <span class="at">values_from =</span> <span class="fu">c</span>(x,y),</span>
-<span id="cb1-15"><a></a>    <span class="at">names_vary =</span> <span class="st">'slowest'</span></span>
-<span id="cb1-16"><a></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb1-17"><a></a>  <span class="fu">select</span>(<span class="sc">-</span>id) <span class="sc">|&gt;</span> </span>
-<span id="cb1-18"><a></a>  <span class="fu">head</span>(<span class="dv">10</span>) </span>
-<span id="cb1-19"><a></a>tab_ds_data <span class="sc">|&gt;</span>  </span>
-<span id="cb1-20"><a></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
-<span id="cb1-21"><a></a>  <span class="fu">cols_label</span>(</span>
-<span id="cb1-22"><a></a>    <span class="at">x_dino =</span> <span class="st">'x'</span>,</span>
-<span id="cb1-23"><a></a>    <span class="at">y_dino =</span> <span class="st">'y'</span>,</span>
-<span id="cb1-24"><a></a>    <span class="at">x_star =</span> <span class="st">'x'</span>,</span>
-<span id="cb1-25"><a></a>    <span class="at">y_star =</span> <span class="st">'y'</span></span>
-<span id="cb1-26"><a></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb1-27"><a></a>  <span class="fu">fmt_number</span>() <span class="sc">|&gt;</span></span>
-<span id="cb1-28"><a></a>  <span class="fu">tab_spanner</span>(</span>
-<span id="cb1-29"><a></a>    <span class="at">label =</span> <span class="st">"Dino"</span>,</span>
-<span id="cb1-30"><a></a>    <span class="at">columns =</span> <span class="fu">ends_with</span>(<span class="st">"dino"</span>)</span>
-<span id="cb1-31"><a></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb1-32"><a></a>  <span class="fu">cols_align</span>(<span class="st">'center'</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-33"><a></a>  <span class="fu">tab_spanner</span>(</span>
-<span id="cb1-34"><a></a>    <span class="at">label =</span> <span class="st">"Star"</span>,</span>
-<span id="cb1-35"><a></a>    <span class="at">columns =</span> <span class="fu">ends_with</span>(<span class="st">"star"</span>)</span>
-<span id="cb1-36"><a></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb1-37"><a></a>  <span class="fu">tab_options</span>(</span>
-<span id="cb1-38"><a></a>    <span class="at">table.width =</span> <span class="fu">pct</span>(<span class="dv">85</span>),</span>
-<span id="cb1-39"><a></a>    <span class="at">table.font.size =</span> <span class="dv">35</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a></a><span class="fu">library</span>(dagitty)</span>
+<span id="cb1-4"><a></a><span class="fu">library</span>(ggdag)</span>
+<span id="cb1-5"><a></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-7"><a></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-8"><a></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-9"><a></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-10"><a></a></span>
+<span id="cb1-11"><a></a>tab_ds_data <span class="ot">&lt;-</span> datasaurus_dozen <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a></a>  <span class="fu">filter</span>(dataset <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'dino'</span>, <span class="st">'star'</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb1-13"><a></a>  <span class="fu">group_by</span>(dataset) <span class="sc">|&gt;</span></span>
+<span id="cb1-14"><a></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb1-15"><a></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb1-16"><a></a>    <span class="at">names_from =</span> dataset, </span>
+<span id="cb1-17"><a></a>    <span class="at">values_from =</span> <span class="fu">c</span>(x,y),</span>
+<span id="cb1-18"><a></a>    <span class="at">names_vary =</span> <span class="st">'slowest'</span></span>
+<span id="cb1-19"><a></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-20"><a></a>  <span class="fu">select</span>(<span class="sc">-</span>id) <span class="sc">|&gt;</span> </span>
+<span id="cb1-21"><a></a>  <span class="fu">head</span>(<span class="dv">10</span>) </span>
+<span id="cb1-22"><a></a>tab_ds_data <span class="sc">|&gt;</span>  </span>
+<span id="cb1-23"><a></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-24"><a></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb1-25"><a></a>    <span class="at">x_dino =</span> <span class="st">'x'</span>,</span>
+<span id="cb1-26"><a></a>    <span class="at">y_dino =</span> <span class="st">'y'</span>,</span>
+<span id="cb1-27"><a></a>    <span class="at">x_star =</span> <span class="st">'x'</span>,</span>
+<span id="cb1-28"><a></a>    <span class="at">y_star =</span> <span class="st">'y'</span></span>
+<span id="cb1-29"><a></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-30"><a></a>  <span class="fu">fmt_number</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-31"><a></a>  <span class="fu">tab_spanner</span>(</span>
+<span id="cb1-32"><a></a>    <span class="at">label =</span> <span class="st">"Dino"</span>,</span>
+<span id="cb1-33"><a></a>    <span class="at">columns =</span> <span class="fu">ends_with</span>(<span class="st">"dino"</span>)</span>
+<span id="cb1-34"><a></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-35"><a></a>  <span class="fu">cols_align</span>(<span class="st">'center'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-36"><a></a>  <span class="fu">tab_spanner</span>(</span>
+<span id="cb1-37"><a></a>    <span class="at">label =</span> <span class="st">"Star"</span>,</span>
+<span id="cb1-38"><a></a>    <span class="at">columns =</span> <span class="fu">ends_with</span>(<span class="st">"star"</span>)</span>
+<span id="cb1-39"><a></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-40"><a></a>  <span class="fu">tab_options</span>(</span>
+<span id="cb1-41"><a></a>    <span class="at">table.width =</span> <span class="fu">pct</span>(<span class="dv">85</span>),</span>
+<span id="cb1-42"><a></a>    <span class="at">table.font.size =</span> <span class="dv">35</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
-<div id="ftkzeryfer" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ftkzeryfer table {
+<div id="wrmberkhbv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wrmberkhbv table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ftkzeryfer thead, #ftkzeryfer tbody, #ftkzeryfer tfoot, #ftkzeryfer tr, #ftkzeryfer td, #ftkzeryfer th {
+#wrmberkhbv thead, #wrmberkhbv tbody, #wrmberkhbv tfoot, #wrmberkhbv tr, #wrmberkhbv td, #wrmberkhbv th {
   border-style: none;
 }
 
-#ftkzeryfer p {
+#wrmberkhbv p {
   margin: 0;
   padding: 0;
 }
 
-#ftkzeryfer .gt_table {
+#wrmberkhbv .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -504,12 +527,12 @@ Stephan Fally
   border-left-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_caption {
+#wrmberkhbv .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ftkzeryfer .gt_title {
+#wrmberkhbv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -521,7 +544,7 @@ Stephan Fally
   border-bottom-width: 0;
 }
 
-#ftkzeryfer .gt_subtitle {
+#wrmberkhbv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -533,7 +556,7 @@ Stephan Fally
   border-top-width: 0;
 }
 
-#ftkzeryfer .gt_heading {
+#wrmberkhbv .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -545,13 +568,13 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_bottom_border {
+#wrmberkhbv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_col_headings {
+#wrmberkhbv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -566,7 +589,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_col_heading {
+#wrmberkhbv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -586,7 +609,7 @@ Stephan Fally
   overflow-x: hidden;
 }
 
-#ftkzeryfer .gt_column_spanner_outer {
+#wrmberkhbv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -598,15 +621,15 @@ Stephan Fally
   padding-right: 4px;
 }
 
-#ftkzeryfer .gt_column_spanner_outer:first-child {
+#wrmberkhbv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ftkzeryfer .gt_column_spanner_outer:last-child {
+#wrmberkhbv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ftkzeryfer .gt_column_spanner {
+#wrmberkhbv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -618,11 +641,11 @@ Stephan Fally
   width: 100%;
 }
 
-#ftkzeryfer .gt_spanner_row {
+#wrmberkhbv .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ftkzeryfer .gt_group_heading {
+#wrmberkhbv .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -648,7 +671,7 @@ Stephan Fally
   text-align: left;
 }
 
-#ftkzeryfer .gt_empty_group_heading {
+#wrmberkhbv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -663,15 +686,15 @@ Stephan Fally
   vertical-align: middle;
 }
 
-#ftkzeryfer .gt_from_md > :first-child {
+#wrmberkhbv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ftkzeryfer .gt_from_md > :last-child {
+#wrmberkhbv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ftkzeryfer .gt_row {
+#wrmberkhbv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -690,7 +713,7 @@ Stephan Fally
   overflow-x: hidden;
 }
 
-#ftkzeryfer .gt_stub {
+#wrmberkhbv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -703,7 +726,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#ftkzeryfer .gt_stub_row_group {
+#wrmberkhbv .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -717,15 +740,15 @@ Stephan Fally
   vertical-align: top;
 }
 
-#ftkzeryfer .gt_row_group_first td {
+#wrmberkhbv .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ftkzeryfer .gt_row_group_first th {
+#wrmberkhbv .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ftkzeryfer .gt_summary_row {
+#wrmberkhbv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -735,16 +758,16 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#ftkzeryfer .gt_first_summary_row {
+#wrmberkhbv .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_first_summary_row.thick {
+#wrmberkhbv .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ftkzeryfer .gt_last_summary_row {
+#wrmberkhbv .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -754,7 +777,7 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_grand_summary_row {
+#wrmberkhbv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -764,7 +787,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#ftkzeryfer .gt_first_grand_summary_row {
+#wrmberkhbv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -774,7 +797,7 @@ Stephan Fally
   border-top-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_last_grand_summary_row_top {
+#wrmberkhbv .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -784,11 +807,11 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_striped {
+#wrmberkhbv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ftkzeryfer .gt_table_body {
+#wrmberkhbv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -797,7 +820,7 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_footnotes {
+#wrmberkhbv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -811,7 +834,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_footnote {
+#wrmberkhbv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -820,7 +843,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#ftkzeryfer .gt_sourcenotes {
+#wrmberkhbv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -834,7 +857,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#ftkzeryfer .gt_sourcenote {
+#wrmberkhbv .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -842,63 +865,63 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#ftkzeryfer .gt_left {
+#wrmberkhbv .gt_left {
   text-align: left;
 }
 
-#ftkzeryfer .gt_center {
+#wrmberkhbv .gt_center {
   text-align: center;
 }
 
-#ftkzeryfer .gt_right {
+#wrmberkhbv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ftkzeryfer .gt_font_normal {
+#wrmberkhbv .gt_font_normal {
   font-weight: normal;
 }
 
-#ftkzeryfer .gt_font_bold {
+#wrmberkhbv .gt_font_bold {
   font-weight: bold;
 }
 
-#ftkzeryfer .gt_font_italic {
+#wrmberkhbv .gt_font_italic {
   font-style: italic;
 }
 
-#ftkzeryfer .gt_super {
+#wrmberkhbv .gt_super {
   font-size: 65%;
 }
 
-#ftkzeryfer .gt_footnote_marks {
+#wrmberkhbv .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ftkzeryfer .gt_asterisk {
+#wrmberkhbv .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ftkzeryfer .gt_indent_1 {
+#wrmberkhbv .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ftkzeryfer .gt_indent_2 {
+#wrmberkhbv .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ftkzeryfer .gt_indent_3 {
+#wrmberkhbv .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ftkzeryfer .gt_indent_4 {
+#wrmberkhbv .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ftkzeryfer .gt_indent_5 {
+#wrmberkhbv .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1005,23 +1028,23 @@ Stephan Fally
 <span id="cb2-20"><a></a>    <span class="at">table.width =</span> <span class="fu">pct</span>(<span class="dv">85</span>),</span>
 <span id="cb2-21"><a></a>    <span class="at">table.font.size =</span> <span class="dv">35</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
-<div id="haagngjcbb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#haagngjcbb table {
+<div id="wtpmbfasrn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wtpmbfasrn table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#haagngjcbb thead, #haagngjcbb tbody, #haagngjcbb tfoot, #haagngjcbb tr, #haagngjcbb td, #haagngjcbb th {
+#wtpmbfasrn thead, #wtpmbfasrn tbody, #wtpmbfasrn tfoot, #wtpmbfasrn tr, #wtpmbfasrn td, #wtpmbfasrn th {
   border-style: none;
 }
 
-#haagngjcbb p {
+#wtpmbfasrn p {
   margin: 0;
   padding: 0;
 }
 
-#haagngjcbb .gt_table {
+#wtpmbfasrn .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1047,12 +1070,12 @@ Stephan Fally
   border-left-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_caption {
+#wtpmbfasrn .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#haagngjcbb .gt_title {
+#wtpmbfasrn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1064,7 +1087,7 @@ Stephan Fally
   border-bottom-width: 0;
 }
 
-#haagngjcbb .gt_subtitle {
+#wtpmbfasrn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1076,7 +1099,7 @@ Stephan Fally
   border-top-width: 0;
 }
 
-#haagngjcbb .gt_heading {
+#wtpmbfasrn .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1088,13 +1111,13 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_bottom_border {
+#wtpmbfasrn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_col_headings {
+#wtpmbfasrn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1109,7 +1132,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_col_heading {
+#wtpmbfasrn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1129,7 +1152,7 @@ Stephan Fally
   overflow-x: hidden;
 }
 
-#haagngjcbb .gt_column_spanner_outer {
+#wtpmbfasrn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1141,15 +1164,15 @@ Stephan Fally
   padding-right: 4px;
 }
 
-#haagngjcbb .gt_column_spanner_outer:first-child {
+#wtpmbfasrn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#haagngjcbb .gt_column_spanner_outer:last-child {
+#wtpmbfasrn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#haagngjcbb .gt_column_spanner {
+#wtpmbfasrn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1161,11 +1184,11 @@ Stephan Fally
   width: 100%;
 }
 
-#haagngjcbb .gt_spanner_row {
+#wtpmbfasrn .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#haagngjcbb .gt_group_heading {
+#wtpmbfasrn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1191,7 +1214,7 @@ Stephan Fally
   text-align: left;
 }
 
-#haagngjcbb .gt_empty_group_heading {
+#wtpmbfasrn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1206,15 +1229,15 @@ Stephan Fally
   vertical-align: middle;
 }
 
-#haagngjcbb .gt_from_md > :first-child {
+#wtpmbfasrn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#haagngjcbb .gt_from_md > :last-child {
+#wtpmbfasrn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#haagngjcbb .gt_row {
+#wtpmbfasrn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1233,7 +1256,7 @@ Stephan Fally
   overflow-x: hidden;
 }
 
-#haagngjcbb .gt_stub {
+#wtpmbfasrn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1246,7 +1269,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#haagngjcbb .gt_stub_row_group {
+#wtpmbfasrn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1260,15 +1283,15 @@ Stephan Fally
   vertical-align: top;
 }
 
-#haagngjcbb .gt_row_group_first td {
+#wtpmbfasrn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#haagngjcbb .gt_row_group_first th {
+#wtpmbfasrn .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#haagngjcbb .gt_summary_row {
+#wtpmbfasrn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1278,16 +1301,16 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#haagngjcbb .gt_first_summary_row {
+#wtpmbfasrn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_first_summary_row.thick {
+#wtpmbfasrn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#haagngjcbb .gt_last_summary_row {
+#wtpmbfasrn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1297,7 +1320,7 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_grand_summary_row {
+#wtpmbfasrn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1307,7 +1330,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#haagngjcbb .gt_first_grand_summary_row {
+#wtpmbfasrn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1317,7 +1340,7 @@ Stephan Fally
   border-top-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_last_grand_summary_row_top {
+#wtpmbfasrn .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1327,11 +1350,11 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_striped {
+#wtpmbfasrn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#haagngjcbb .gt_table_body {
+#wtpmbfasrn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1340,7 +1363,7 @@ Stephan Fally
   border-bottom-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_footnotes {
+#wtpmbfasrn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1354,7 +1377,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_footnote {
+#wtpmbfasrn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1363,7 +1386,7 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#haagngjcbb .gt_sourcenotes {
+#wtpmbfasrn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1377,7 +1400,7 @@ Stephan Fally
   border-right-color: #D3D3D3;
 }
 
-#haagngjcbb .gt_sourcenote {
+#wtpmbfasrn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1385,63 +1408,63 @@ Stephan Fally
   padding-right: 5px;
 }
 
-#haagngjcbb .gt_left {
+#wtpmbfasrn .gt_left {
   text-align: left;
 }
 
-#haagngjcbb .gt_center {
+#wtpmbfasrn .gt_center {
   text-align: center;
 }
 
-#haagngjcbb .gt_right {
+#wtpmbfasrn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#haagngjcbb .gt_font_normal {
+#wtpmbfasrn .gt_font_normal {
   font-weight: normal;
 }
 
-#haagngjcbb .gt_font_bold {
+#wtpmbfasrn .gt_font_bold {
   font-weight: bold;
 }
 
-#haagngjcbb .gt_font_italic {
+#wtpmbfasrn .gt_font_italic {
   font-style: italic;
 }
 
-#haagngjcbb .gt_super {
+#wtpmbfasrn .gt_super {
   font-size: 65%;
 }
 
-#haagngjcbb .gt_footnote_marks {
+#wtpmbfasrn .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#haagngjcbb .gt_asterisk {
+#wtpmbfasrn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#haagngjcbb .gt_indent_1 {
+#wtpmbfasrn .gt_indent_1 {
   text-indent: 5px;
 }
 
-#haagngjcbb .gt_indent_2 {
+#wtpmbfasrn .gt_indent_2 {
   text-indent: 10px;
 }
 
-#haagngjcbb .gt_indent_3 {
+#wtpmbfasrn .gt_indent_3 {
   text-indent: 15px;
 }
 
-#haagngjcbb .gt_indent_4 {
+#wtpmbfasrn .gt_indent_4 {
   text-indent: 20px;
 }
 
-#haagngjcbb .gt_indent_5 {
+#wtpmbfasrn .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1501,12 +1524,9 @@ Stephan Fally
 </div>
 </div>
 </section><section id="exercise" class="slide level2"><h2>Exercise</h2>
-<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout callout-caution no-icon callout-titled callout-style-simple">
 <div class="callout-body">
 <div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
 <p><strong>See beyond summary statistics</strong></p>
 </div>
 <div class="callout-content">
@@ -1545,109 +1565,273 @@ Stephan Fally
 </div>
 </section></section><section><section id="visual-channels" class="title-slide slide level1"><h1>Visual Channels</h1>
 
-</section><section id="position-is-interpreted-most-accurately" class="slide level2"><h2>Position is interpreted most accurately</h2>
+</section><section id="visualizing-different-magnitudes" class="slide level2"><h2>Visualizing different magnitudes</h2>
+<ul>
+<li>We can express the comparison of numbers in multiple ways</li>
+<li>Some representations can be interpreted (by humans) more accurately</li>
+<li>According to <span class="citation" data-cites="franconeriScienceVisualData2021">(<a href="#/references" role="doc-biblioref" onclick=""><strong>franconeriScienceVisualData2021?</strong></a>)</span> from most to least accurate:
+<ul>
+<li>Position</li>
+<li>Length</li>
+<li>Area</li>
+<li>Angle</li>
+<li>Intensity</li>
+</ul>
+</li>
+</ul></section><section id="visualizing-sameness" class="slide level2"><h2>Visualizing “sameness”</h2>
+
+<img data-src="Graphics/GestaltPrinciples.png" class="r-stretch"></section><section id="caution-these-can-create-spurious-interpretations" class="slide level2"><h2>Caution: these can create spurious interpretations</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>related_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-2"><a></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="fl">0.1</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>)), </span>
+<span id="cb6-3"><a></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">0</span>, <span class="fl">0.1</span>), <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>)))</span>
+<span id="cb6-4"><a></a><span class="fu">ggplot</span>(related_data, <span class="fu">aes</span>(<span class="at">x =</span> x , <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb6-5"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a></a></span>
+<span id="cb6-7"><a></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb6-8"><a></a>  <span class="fu">theme</span>(</span>
+<span id="cb6-9"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb6-10"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb6-11"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb6-12"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>)</span>
+<span id="cb6-13"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="counteract-by-using-another-principle" class="slide level2"><h2>Counteract by using another principle</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>related_data<span class="sc">$</span>g <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(<span class="fu">rbinom</span>(<span class="dv">200</span>, <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.5</span>) <span class="sc">==</span> <span class="dv">1</span>, <span class="st">'F'</span>, <span class="st">'M'</span>))</span>
+<span id="cb7-2"><a></a><span class="fu">ggplot</span>(related_data, <span class="fu">aes</span>(<span class="at">x =</span> x , <span class="at">y =</span> y, <span class="at">color =</span> g, <span class="at">shape =</span> g)) <span class="sc">+</span></span>
+<span id="cb7-3"><a></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">7</span>))) <span class="sc">+</span></span>
+<span id="cb7-5"><a></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-6"><a></a>  <span class="fu">theme</span>(</span>
+<span id="cb7-7"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb7-8"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb7-9"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb7-10"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb7-11"><a></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-12"><a></a>    <span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb7-13"><a></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">25</span>)</span>
+<span id="cb7-14"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="position-is-interpreted-most-accurately" class="slide level2"><h2>Position is interpreted most accurately</h2>
 <ul>
 <li>Common y-axis alignment allows for accurate interpretation</li>
 <li>Categories in the x-axis sorted by y-axis value</li>
 <li>Position should encode the answer to the questions the audience asks</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb6" data-code-line-numbers="7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="fu">library</span>(palmerpenguins)</span>
-<span id="cb6-2"><a></a><span class="fu">library</span>(forcats)</span>
-<span id="cb6-3"><a></a>fct_revfreq <span class="ot">&lt;-</span> \(x) <span class="fu">fct_rev</span>(<span class="fu">fct_infreq</span>(x))</span>
-<span id="cb6-4"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species))) <span class="sc">+</span></span>
-<span id="cb6-5"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
-<span id="cb6-6"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb6-7"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
-<span id="cb6-8"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
-<span id="cb6-9"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb6-10"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species"</span>,</span>
-<span id="cb6-11"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
-<span id="cb6-12"><a></a>    ) <span class="sc">+</span></span>
-<span id="cb6-13"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb6-14"><a></a>    <span class="fu">theme</span>(</span>
-<span id="cb6-15"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
-<span id="cb6-16"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb6-17"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb6-18"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>)</span>
-<span id="cb6-19"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb8" data-code-line-numbers="7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb8-2"><a></a><span class="fu">library</span>(forcats)</span>
+<span id="cb8-3"><a></a>fct_revfreq <span class="ot">&lt;-</span> \(x) <span class="fu">fct_rev</span>(<span class="fu">fct_infreq</span>(x))</span>
+<span id="cb8-4"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species))) <span class="sc">+</span></span>
+<span id="cb8-5"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb8-7"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
+<span id="cb8-8"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
+<span id="cb8-9"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb8-10"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species"</span>,</span>
+<span id="cb8-11"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
+<span id="cb8-12"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb8-13"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb8-14"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb8-15"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb8-16"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb8-17"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb8-18"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb8-19"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>)</span>
+<span id="cb8-20"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="lengths-of-unaligned-segments-are-harder-to-compare" class="slide level2"><h2>Lengths of unaligned segments are harder to compare</h2>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="lengths-of-unaligned-segments-are-harder-to-compare" class="slide level2"><h2>Lengths of unaligned segments are harder to compare</h2>
 <ul>
 <li>Are there more female Gentoo or female Adelie penguins?</li>
 <li>Are there more male or female Gentoo penuins?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species), <span class="at">color =</span> sex, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
-<span id="cb7-2"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
-<span id="cb7-3"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb7-4"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
-<span id="cb7-5"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
-<span id="cb7-6"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-7"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species and sex"</span>,</span>
-<span id="cb7-8"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
-<span id="cb7-9"><a></a>    ) <span class="sc">+</span></span>
-<span id="cb7-10"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb7-11"><a></a>    <span class="fu">theme</span>(</span>
-<span id="cb7-12"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
-<span id="cb7-13"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb7-14"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb7-15"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb7-16"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
-<span id="cb7-17"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
-<span id="cb7-18"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
-<span id="cb7-19"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species), <span class="at">color =</span> sex, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb9-2"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
+<span id="cb9-3"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb9-4"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
+<span id="cb9-5"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
+<span id="cb9-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-7"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species and sex"</span>,</span>
+<span id="cb9-8"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
+<span id="cb9-9"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb9-10"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb9-11"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb9-12"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb9-13"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb9-14"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb9-15"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb9-16"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
+<span id="cb9-17"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb9-18"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
+<span id="cb9-19"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="if-the-total-number-is-not-important-but-sub-group-numbers-are" class="slide level2"><h2>If the total number is not important but sub-group numbers are…</h2>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="if-the-total-number-is-not-important-but-sub-group-numbers-are" class="slide level2"><h2>If the total number is not important but sub-group numbers are…</h2>
 <ul>
 <li>Are there more female Gentoo or female Adelie penguins?</li>
 <li>Are there more male or female Gentoo penuins?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb8" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species), <span class="at">color =</span> sex, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
-<span id="cb8-2"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>) <span class="sc">+</span></span>
-<span id="cb8-3"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb8-4"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
-<span id="cb8-5"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
-<span id="cb8-6"><a></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-7"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species and sex"</span>,</span>
-<span id="cb8-8"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
-<span id="cb8-9"><a></a>    ) <span class="sc">+</span></span>
-<span id="cb8-10"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb8-11"><a></a>    <span class="fu">theme</span>(</span>
-<span id="cb8-12"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
-<span id="cb8-13"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb8-14"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb8-15"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb8-16"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
-<span id="cb8-17"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
-<span id="cb8-18"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
-<span id="cb8-19"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb10" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">ggplot</span>(penguins, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species), <span class="at">color =</span> sex, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb10-2"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb10-4"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
+<span id="cb10-5"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
+<span id="cb10-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-7"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species and sex"</span>,</span>
+<span id="cb10-8"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
+<span id="cb10-9"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb10-10"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb10-11"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb10-12"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb10-13"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb10-14"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb10-15"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb10-16"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
+<span id="cb10-17"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb10-18"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
+<span id="cb10-19"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="exercise-1" class="slide level2"><h2>Exercise</h2>
-<div class="callout callout-tip callout-titled callout-style-default">
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="using-pre-attentive-attributes" class="slide level2"><h2>Using pre-attentive attributes</h2>
+<div class="columns">
+<div class="column">
+<ul>
+<li>Action potentials are means of communication between neurons in the brain</li>
+<li>The probability of firing depends on the strength of the stimulus</li>
+<li>The strength of the stimulus is relative to the background</li>
+<li>All or nothing process
+<ul>
+<li>Once the threshold is exceeded the neuron fires</li>
+</ul>
+</li>
+<li>Takeaway for visualization:
+<ul>
+<li><strong>Most important information needs to be “highlighted” relativ to all other information</strong></li>
+</ul>
+</li>
+</ul>
+</div><div class="column">
+<p><img data-src="Graphics/action_potential.png" style="width:100.0%"></p>
+</div>
+</div>
+</section><section id="how-many-bs-are-there" class="slide level2"><h2>How many “b”s are there?</h2>
+<ul>
+<li>top-down attention: deliberate &amp; slow</li>
+</ul>
+<div class="cell" data-layout-align="center" data-fig-heigt="4">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb11-2"><a></a>xy <span class="ot">=</span> <span class="fu">expand.grid</span>(<span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">5</span>), <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">5</span>))</span>
+<span id="cb11-3"><a></a>text <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>), <span class="dv">25</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-4"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">0.1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb11-5"><a></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ann =</span> F, <span class="at">bty =</span> <span class="st">'n'</span>,<span class="at">type =</span> <span class="st">'n'</span>, <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span>
+<span id="cb11-6"><a></a><span class="fu">text</span>(xy[,<span class="dv">1</span>], xy[,<span class="dv">2</span>], text, <span class="at">cex =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="7200"></section><section id="how-many-bs-are-there-1" class="slide level2"><h2>How many “b”s are there?</h2>
+<ul>
+<li>bottom-up attention: unconscious &amp; fast</li>
+</ul>
+<div class="cell" data-layout-align="center" data-fig-heigt="4">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb12-2"><a></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ann =</span> F, <span class="at">bty =</span> <span class="st">'n'</span>,<span class="at">type =</span> <span class="st">'n'</span>,  <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span>
+<span id="cb12-3"><a></a><span class="fu">text</span>(xy[,<span class="dv">1</span>], xy[,<span class="dv">2</span>], text, <span class="at">cex =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="fu">ifelse</span>(text <span class="sc">==</span> <span class="st">"b"</span>, <span class="st">"black"</span>, <span class="st">"gray"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="7200"></section><section id="how-many-шs-are-there" class="slide level2"><h2>How many “ш”s are there?</h2>
+<div class="cell" data-fig-heigt="4">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb13-2"><a></a>text_cyr <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ш"</span>, <span class="st">"ц"</span>, <span class="st">"ж"</span>, <span class="st">"є"</span>, <span class="st">"ґ"</span>), <span class="dv">25</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-3"><a></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ann =</span> F, <span class="at">bty =</span> <span class="st">'n'</span>,<span class="at">type =</span> <span class="st">'n'</span>,  <span class="at">xaxt =</span> <span class="st">'n'</span>, <span class="at">yaxt =</span> <span class="st">'n'</span>)</span>
+<span id="cb13-4"><a></a><span class="fu">text</span>(xy[,<span class="dv">1</span>], xy[,<span class="dv">2</span>], text_cyr, <span class="at">cex =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="fu">ifelse</span>(text_cyr <span class="sc">==</span> <span class="st">"ш"</span>, <span class="st">"black"</span>, <span class="st">"gray"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-13-1.png" width="7200" class="r-stretch"></section><section id="areas-can-be-useful-to-add-a-third-least-important-variable" class="slide level2"><h2>Areas can be useful to add a third (least important) variable</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a></a><span class="fu">library</span>(gapminder)</span>
+<span id="cb14-2"><a></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb14-3"><a></a><span class="fu">library</span>(scales)</span>
+<span id="cb14-4"><a></a>gm_last <span class="ot">&lt;-</span> gapminder <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a></a>  <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a></a>  <span class="fu">slice_max</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a></a>  <span class="fu">mutate</span>(<span class="at">hl =</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"China"</span>, <span class="st">"United States"</span>), country, <span class="st">'other'</span>)))</span>
+<span id="cb14-8"><a></a><span class="fu">ggplot</span>(gm_last, <span class="fu">aes</span>(<span class="at">y =</span> lifeExp, <span class="at">x =</span> gdpPercap, <span class="at">size =</span> pop, <span class="at">color =</span> hl)) <span class="sc">+</span></span>
+<span id="cb14-9"><a></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb14-10"><a></a>  <span class="fu">scale_size</span>(</span>
+<span id="cb14-11"><a></a>    <span class="at">name =</span> <span class="st">"Population"</span>,</span>
+<span id="cb14-12"><a></a>    <span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale_cut =</span> <span class="fu">cut_short_scale</span>()),</span>
+<span id="cb14-13"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb14-14"><a></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb14-15"><a></a>    <span class="fu">aes</span>(<span class="at">label =</span> country, <span class="at">x =</span> gdpPercap, <span class="at">y =</span> lifeExp),</span>
+<span id="cb14-16"><a></a>    <span class="at">data =</span> <span class="fu">filter</span>(gm_last, country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'China'</span>, <span class="st">'United States'</span>)),</span>
+<span id="cb14-17"><a></a>    <span class="at">hjust =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.5</span>),</span>
+<span id="cb14-18"><a></a>    <span class="at">vjust =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">2</span>),</span>
+<span id="cb14-19"><a></a>    <span class="at">size =</span> <span class="dv">12</span></span>
+<span id="cb14-20"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb14-21"><a></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb14-22"><a></a>  <span class="fu">aes</span>(</span>
+<span id="cb14-23"><a></a>    <span class="at">x =</span> gdpPercap <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">200</span>, <span class="dv">0</span>), </span>
+<span id="cb14-24"><a></a>    <span class="at">y =</span> lifeExp <span class="sc">-</span> <span class="dv">1</span>, </span>
+<span id="cb14-25"><a></a>    <span class="at">xend =</span> gdpPercap<span class="sc">+</span><span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">0</span>), </span>
+<span id="cb14-26"><a></a>    <span class="at">yend =</span> lifeExp<span class="sc">-</span><span class="fu">c</span>(<span class="fl">5.5</span>, <span class="dv">2</span>)),</span>
+<span id="cb14-27"><a></a>  <span class="at">data =</span> <span class="fu">filter</span>(gm_last, country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'China'</span>, <span class="st">'United States'</span>)),</span>
+<span id="cb14-28"><a></a>  <span class="at">size =</span> <span class="fl">0.5</span></span>
+<span id="cb14-29"><a></a>  ) <span class="sc">+</span></span>
+<span id="cb14-30"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_comma</span>()) <span class="sc">+</span></span>
+<span id="cb14-31"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>, <span class="st">'darkblue'</span>)) <span class="sc">+</span></span>
+<span id="cb14-32"><a></a>  <span class="fu">guides</span>(<span class="at">colour =</span> <span class="st">'none'</span>) <span class="sc">+</span></span>
+<span id="cb14-33"><a></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Life Expectancy"</span>, <span class="at">x =</span> <span class="st">"GDP/Capita"</span>) <span class="sc">+</span></span>
+<span id="cb14-34"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb14-35"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb14-36"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb14-37"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb14-38"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb14-39"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb14-40"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
+<span id="cb14-41"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb14-42"><a></a>    <span class="at">legend.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>)</span>
+<span id="cb14-43"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="do-not-use-pie-charts-just-dont" class="slide level2"><h2>Do not use pie-charts… just don’t</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a></a>  <span class="fu">summarize</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> count, <span class="at">fill =</span> species)) <span class="sc">+</span></span>
+<span id="cb15-5"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-7"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species"</span>,</span>
+<span id="cb15-8"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb15-9"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb15-10"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb15-11"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb15-12"><a></a>    <span class="at">axis.ticks=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb15-13"><a></a>    <span class="at">axis.text=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb15-14"><a></a>    <span class="at">axis.title=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb15-15"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
+<span id="cb15-16"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb15-17"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
+<span id="cb15-18"><a></a>  ) <span class="sc">+</span></span>
+<span id="cb15-19"><a></a>  <span class="fu">coord_polar</span>(<span class="st">"y"</span>, <span class="at">start=</span><span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="exercise-1" class="slide level2"><h2>Exercise</h2>
+<div class="callout callout-caution no-icon callout-titled callout-style-simple">
 <div class="callout-body">
 <div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
 <p><strong>Perceptual accuracy</strong></p>
 </div>
 <div class="callout-content">
 <ul>
-<li>
-</li><li>Create a table showing the following statistics for the two <code>dataset</code>s:
-<ul>
-<li>mean of <code>x</code> and <code>y</code>,</li>
-<li>standard deviation of <code>x</code> and <code>y</code>, and</li>
-<li>covariance between <code>x</code> and <code>y</code>
-</li>
-</ul>
-</li>
-<li>Create a plot showing the two <code>dataset</code>s</li>
+<li>Create a graph that shows the population of penguins for the different species per island</li>
+<li>It is of particular interest which species is the most common on each island</li>
+<li>Create another graph that shows the analysis separately for the two sexes</li>
 </ul>
 </div>
 </div>
@@ -1658,113 +1842,560 @@ Stephan Fally
 <li>Where does MO rank in terms of size?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb9" data-code-line-numbers="5,8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">library</span>(datasets)</span>
-<span id="cb9-2"><a></a><span class="fu">library</span>(scales)</span>
-<span id="cb9-3"><a></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">abb =</span> state.abb, <span class="at">area =</span> state.area), <span class="fu">aes</span>(<span class="at">x =</span> abb, <span class="at">y =</span> area)) <span class="sc">+</span></span>
-<span id="cb9-4"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>) <span class="sc">+</span></span>
-<span id="cb9-5"><a></a>  <span class="fu">scale_x_discrete</span>(<span class="at">guide =</span> <span class="fu">guide_axis</span>(<span class="at">n.dodge =</span> <span class="dv">2</span>)) <span class="sc">+</span></span>
-<span id="cb9-6"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb9-7"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
-<span id="cb9-8"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>)) <span class="sc">+</span> </span>
-<span id="cb9-9"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb9-10"><a></a>    <span class="fu">theme</span>(</span>
-<span id="cb9-11"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
-<span id="cb9-12"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb9-13"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">20</span>),</span>
-<span id="cb9-14"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
-<span id="cb9-15"><a></a>    <span class="at">axis.title.x=</span><span class="fu">element_blank</span>()</span>
-<span id="cb9-16"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb16" data-code-line-numbers="5,8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a><span class="fu">library</span>(datasets)</span>
+<span id="cb16-2"><a></a><span class="fu">library</span>(scales)</span>
+<span id="cb16-3"><a></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">abb =</span> state.abb, <span class="at">area =</span> state.area), <span class="fu">aes</span>(<span class="at">x =</span> abb, <span class="at">y =</span> area)) <span class="sc">+</span></span>
+<span id="cb16-4"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>) <span class="sc">+</span></span>
+<span id="cb16-5"><a></a>  <span class="fu">scale_x_discrete</span>(<span class="at">guide =</span> <span class="fu">guide_axis</span>(<span class="at">n.dodge =</span> <span class="dv">2</span>)) <span class="sc">+</span></span>
+<span id="cb16-6"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb16-7"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
+<span id="cb16-8"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>)) <span class="sc">+</span> </span>
+<span id="cb16-9"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb16-10"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb16-11"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb16-12"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb16-13"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">20</span>),</span>
+<span id="cb16-14"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb16-15"><a></a>    <span class="at">axis.title.x=</span><span class="fu">element_blank</span>()</span>
+<span id="cb16-16"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="visualizing-many-categories" class="slide level2"><h2>Visualizing many categories</h2>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1728"></section><section id="visualizing-many-categories" class="slide level2"><h2>Visualizing many categories</h2>
 <ul>
 <li>What is the 5th smallest state?</li>
 <li>Where does MO rank in terms of size?</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb10" data-code-line-numbers="3,5,12-17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="fu">library</span>(colorspace)</span>
-<span id="cb10-2"><a></a>state_areas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">abb =</span> state.abb, <span class="at">area =</span> state.area, <span class="at">name =</span> state.name) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a></a>  <span class="fu">mutate</span>(<span class="at">abb =</span> <span class="fu">fct_reorder</span>(abb, area))</span>
-<span id="cb10-4"><a></a><span class="fu">ggplot</span>(state_areas, <span class="fu">aes</span>(<span class="at">x =</span> abb, <span class="at">y =</span> area, </span>
-<span id="cb10-5"><a></a>  <span class="at">color =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>, <span class="at">fill =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>)) <span class="sc">+</span></span>
-<span id="cb10-6"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>) <span class="sc">+</span></span>
-<span id="cb10-7"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
-<span id="cb10-8"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">50000</span>,<span class="dv">600000</span>, <span class="at">by =</span> <span class="dv">100000</span>),</span>
-<span id="cb10-9"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>)) <span class="sc">+</span> </span>
-<span id="cb10-10"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray85'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
-<span id="cb10-11"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
-<span id="cb10-12"><a></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb10-13"><a></a>    <span class="fu">aes</span>(<span class="at">label=</span>abb, <span class="at">y =</span> area), </span>
-<span id="cb10-14"><a></a>    <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span><span class="fl">0.9</span>), </span>
-<span id="cb10-15"><a></a>    <span class="at">vjust=</span><span class="sc">-</span><span class="fl">0.50</span>, </span>
-<span id="cb10-16"><a></a>    <span class="at">color =</span> <span class="fu">ifelse</span>(state_areas<span class="sc">$</span>abb<span class="sc">==</span><span class="st">'MO'</span>, <span class="st">'red'</span>, <span class="st">'gray20'</span>),</span>
-<span id="cb10-17"><a></a>    <span class="at">size =</span> <span class="dv">8</span>)<span class="sc">+</span></span>
-<span id="cb10-18"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"US state areas"</span>) <span class="sc">+</span></span>
-<span id="cb10-19"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb10-20"><a></a>    <span class="fu">theme</span>(</span>
-<span id="cb10-21"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">45</span>),</span>
-<span id="cb10-22"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb10-23"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
-<span id="cb10-24"><a></a>    <span class="at">axis.text.x=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb10-25"><a></a>    <span class="at">axis.title=</span><span class="fu">element_blank</span>(),</span>
-<span id="cb10-26"><a></a>    <span class="at">legend.position=</span><span class="st">'none'</span></span>
-<span id="cb10-27"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb17" data-code-line-numbers="3,5,12-17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a></a><span class="fu">library</span>(colorspace)</span>
+<span id="cb17-2"><a></a><span class="fu">library</span>(forcats)</span>
+<span id="cb17-3"><a></a>state_areas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">abb =</span> state.abb, <span class="at">area =</span> state.area, <span class="at">name =</span> state.name) <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a></a>  <span class="fu">mutate</span>(<span class="at">abb =</span> <span class="fu">fct_reorder</span>(abb, area))</span>
+<span id="cb17-5"><a></a><span class="fu">ggplot</span>(state_areas, <span class="fu">aes</span>(<span class="at">x =</span> abb, <span class="at">y =</span> area, </span>
+<span id="cb17-6"><a></a>  <span class="at">color =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>, <span class="at">fill =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>)) <span class="sc">+</span></span>
+<span id="cb17-7"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">'identity'</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb17-9"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">50000</span>,<span class="dv">600000</span>, <span class="at">by =</span> <span class="dv">100000</span>),</span>
+<span id="cb17-10"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>)) <span class="sc">+</span> </span>
+<span id="cb17-11"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray85'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
+<span id="cb17-12"><a></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
+<span id="cb17-13"><a></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb17-14"><a></a>    <span class="fu">aes</span>(<span class="at">label=</span>abb, <span class="at">y =</span> area), </span>
+<span id="cb17-15"><a></a>    <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span><span class="fl">0.9</span>), </span>
+<span id="cb17-16"><a></a>    <span class="at">vjust=</span><span class="sc">-</span><span class="fl">0.50</span>, </span>
+<span id="cb17-17"><a></a>    <span class="at">color =</span> <span class="fu">ifelse</span>(state_areas<span class="sc">$</span>abb<span class="sc">==</span><span class="st">'MO'</span>, <span class="st">'red'</span>, <span class="st">'gray20'</span>),</span>
+<span id="cb17-18"><a></a>    <span class="at">size =</span> <span class="dv">8</span>)<span class="sc">+</span></span>
+<span id="cb17-19"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"US state areas"</span>) <span class="sc">+</span></span>
+<span id="cb17-20"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb17-21"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb17-22"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">45</span>),</span>
+<span id="cb17-23"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb17-24"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb17-25"><a></a>    <span class="at">axis.text.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb17-26"><a></a>    <span class="at">axis.title=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb17-27"><a></a>    <span class="at">legend.position=</span><span class="st">'none'</span></span>
+<span id="cb17-28"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="3264"></section><section id="color-intensity-provides-less-accurate-encoding" class="slide level2"><h2>Color intensity provides less accurate encoding</h2>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" width="3264"></section><section id="color-intensity-provides-less-accurate-encoding" class="slide level2"><h2>Color intensity provides less accurate encoding</h2>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">library</span>(maps)</span>
-<span id="cb11-2"><a></a><span class="fu">library</span>(sf)</span>
-<span id="cb11-3"><a></a><span class="fu">library</span>(colorspace)</span>
-<span id="cb11-4"><a></a>us_map_data <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>, <span class="at">plot =</span><span class="cn">FALSE</span>)</span>
-<span id="cb11-5"><a></a></span>
-<span id="cb11-6"><a></a>usa <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(<span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>, <span class="at">plot =</span><span class="cn">FALSE</span>))</span>
-<span id="cb11-7"><a></a>usa <span class="ot">&lt;-</span> <span class="fu">merge</span>(</span>
-<span id="cb11-8"><a></a>  usa, </span>
-<span id="cb11-9"><a></a>  <span class="fu">mutate</span>(state_areas, <span class="at">ID =</span> <span class="fu">str_to_lower</span>(name)),</span>
-<span id="cb11-10"><a></a>  )</span>
-<span id="cb11-11"><a></a><span class="fu">ggplot</span>(usa) <span class="sc">+</span></span>
-<span id="cb11-12"><a></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> area), <span class="at">color =</span> <span class="st">"#2b2b2b"</span>, <span class="at">size=</span><span class="fl">0.125</span>) <span class="sc">+</span></span>
-<span id="cb11-13"><a></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">6350</span>)) <span class="sc">+</span></span>
-<span id="cb11-14"><a></a>  <span class="fu">geom_sf_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> abb, <span class="at">color =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>)) <span class="sc">+</span></span>
-<span id="cb11-15"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
-<span id="cb11-16"><a></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">'none'</span>) <span class="sc">+</span> </span>
-<span id="cb11-17"><a></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>() <span class="sc">+</span></span>
-<span id="cb11-18"><a></a>  <span class="fu">scale_fill_continuous_sequential</span>(</span>
-<span id="cb11-19"><a></a>    <span class="at">palette =</span> <span class="st">"Heat"</span>, </span>
-<span id="cb11-20"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>) </span>
-<span id="cb11-21"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a><span class="fu">library</span>(maps)</span>
+<span id="cb18-2"><a></a><span class="fu">library</span>(sf)</span>
+<span id="cb18-3"><a></a><span class="fu">library</span>(colorspace)</span>
+<span id="cb18-4"><a></a>us_map_data <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>, <span class="at">plot =</span><span class="cn">FALSE</span>)</span>
+<span id="cb18-5"><a></a></span>
+<span id="cb18-6"><a></a>usa <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(<span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">fill=</span><span class="cn">TRUE</span>, <span class="at">plot =</span><span class="cn">FALSE</span>))</span>
+<span id="cb18-7"><a></a>usa <span class="ot">&lt;-</span> <span class="fu">merge</span>(</span>
+<span id="cb18-8"><a></a>  usa, </span>
+<span id="cb18-9"><a></a>  <span class="fu">mutate</span>(state_areas, <span class="at">ID =</span> <span class="fu">str_to_lower</span>(name)),</span>
+<span id="cb18-10"><a></a>  )</span>
+<span id="cb18-11"><a></a><span class="fu">ggplot</span>(usa) <span class="sc">+</span></span>
+<span id="cb18-12"><a></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> area), <span class="at">color =</span> <span class="st">"#2b2b2b"</span>, <span class="at">size=</span><span class="fl">0.125</span>) <span class="sc">+</span></span>
+<span id="cb18-13"><a></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">6350</span>)) <span class="sc">+</span></span>
+<span id="cb18-14"><a></a>  <span class="fu">geom_sf_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> abb, <span class="at">color =</span> abb <span class="sc">==</span> <span class="st">'MO'</span>)) <span class="sc">+</span></span>
+<span id="cb18-15"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
+<span id="cb18-16"><a></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">'none'</span>) <span class="sc">+</span> </span>
+<span id="cb18-17"><a></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>() <span class="sc">+</span></span>
+<span id="cb18-18"><a></a>  <span class="fu">scale_fill_binned_sequential</span>(</span>
+<span id="cb18-19"><a></a>    <span class="at">palette =</span> <span class="st">"Heat"</span>, </span>
+<span id="cb18-20"><a></a>    <span class="at">labels =</span> <span class="fu">label_comma</span>(<span class="at">suffix =</span> <span class="st">" sq mi"</span>) </span>
+<span id="cb18-21"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-11-1.png" width="1152" class="r-stretch"></section><section id="colors-are-useful-to-mark-targets-for-preattentive-processing" class="slide level2"><h2>Colors are useful to mark targets for preattentive processing</h2>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-18-1.png" width="1152" class="r-stretch"></section><section id="colors-are-useful-to-mark-targets-for-preattentive-processing" class="slide level2"><h2>Colors are useful to mark targets for preattentive processing</h2>
 <ul>
 <li>Large scale spatial data needs to be “projected” to 2D</li>
 <li>Most well known projection is <a href="https://spatialreference.org/ref/epsg/4326/">4326</a> measured in degrees latitude and longitude</li>
 <li>However, there are more accurate projections for specific regions e.g, <a href="https://spatialreference.org/ref/epsg/3035/">3035</a> for EU+candidates</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="do">## Example using "shapefile"</span></span>
-<span id="cb12-2"><a></a><span class="do">### e.g. for EU download here https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts</span></span>
-<span id="cb12-3"><a></a>eu <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/NUTS_RG_60M_2021_3035.shp/"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb12-4"><a></a>eu0 <span class="ot">&lt;-</span> <span class="fu">filter</span>(eu, LEVL_CODE <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb12-5"><a></a><span class="do">## Transform to longitude and latitude</span></span>
-<span id="cb12-6"><a></a>eu0 <span class="ot">&lt;-</span> eu0 <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(<span class="dv">4326</span>)</span>
-<span id="cb12-7"><a></a>eu0_box <span class="ot">&lt;-</span> eu0 <span class="sc">|&gt;</span> <span class="fu">st_bbox</span>()</span>
-<span id="cb12-8"><a></a>eu0_box <span class="ot">&lt;-</span> eu0_box <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">20</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">10</span>)</span>
-<span id="cb12-9"><a></a><span class="fu">ggplot</span>(<span class="fu">st_crop</span>(eu0, eu0_box))<span class="sc">+</span> </span>
-<span id="cb12-10"><a></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> <span class="st">'white'</span>, <span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb12-11"><a></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">filter</span>(eu0, CNTR_CODE <span class="sc">==</span> <span class="st">'AT'</span>), <span class="at">color =</span> <span class="st">'red'</span>, <span class="at">lwd =</span><span class="fl">1.5</span>) <span class="sc">+</span> </span>
-<span id="cb12-12"><a></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">3035</span>)) <span class="sc">+</span></span>
-<span id="cb12-13"><a></a>  <span class="fu">geom_sf_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> CNTR_CODE, <span class="at">color =</span> CNTR_CODE <span class="sc">==</span> <span class="st">'AT'</span>), <span class="at">size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb12-14"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
-<span id="cb12-15"><a></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">'none'</span>) <span class="sc">+</span> </span>
-<span id="cb12-16"><a></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>(<span class="at">base_size =</span> <span class="dv">12</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a><span class="do">## Example using "shapefile"</span></span>
+<span id="cb19-2"><a></a><span class="do">### e.g. for EU download here https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts</span></span>
+<span id="cb19-3"><a></a>eu <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">"data/NUTS_RG_60M_2021_3035.shp/"</span>, <span class="at">quiet =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-4"><a></a>eu0 <span class="ot">&lt;-</span> <span class="fu">filter</span>(eu, LEVL_CODE <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb19-5"><a></a><span class="do">## Transform to longitude and latitude</span></span>
+<span id="cb19-6"><a></a>eu0 <span class="ot">&lt;-</span> eu0 <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(<span class="dv">4326</span>)</span>
+<span id="cb19-7"><a></a>eu0_box <span class="ot">&lt;-</span> eu0 <span class="sc">|&gt;</span> <span class="fu">st_bbox</span>()</span>
+<span id="cb19-8"><a></a>eu0_box <span class="ot">&lt;-</span> eu0_box <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">20</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">10</span>)</span>
+<span id="cb19-9"><a></a><span class="fu">ggplot</span>(<span class="fu">st_crop</span>(eu0, eu0_box))<span class="sc">+</span> </span>
+<span id="cb19-10"><a></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> <span class="st">'white'</span>, <span class="at">lwd =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> <span class="fu">filter</span>(eu0, CNTR_CODE <span class="sc">==</span> <span class="st">'AT'</span>), <span class="at">color =</span> <span class="st">'red'</span>, <span class="at">lwd =</span><span class="fl">1.5</span>) <span class="sc">+</span> </span>
+<span id="cb19-12"><a></a>  <span class="fu">coord_sf</span>(<span class="at">crs =</span> <span class="fu">st_crs</span>(<span class="dv">3035</span>)) <span class="sc">+</span></span>
+<span id="cb19-13"><a></a>  <span class="fu">geom_sf_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> CNTR_CODE, <span class="at">color =</span> CNTR_CODE <span class="sc">==</span> <span class="st">'AT'</span>), <span class="at">size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb19-14"><a></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'gray20'</span>, <span class="st">'red'</span>)) <span class="sc">+</span></span>
+<span id="cb19-15"><a></a>  <span class="fu">guides</span>(<span class="at">color =</span> <span class="st">'none'</span>) <span class="sc">+</span> </span>
+<span id="cb19-16"><a></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>(<span class="at">base_size =</span> <span class="dv">12</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="3840"></section></section><section id="mapping-visual-ratios" class="title-slide slide level1"><h1>Mapping visual ratios</h1>
-<div class="note">
-<p>If including <span class="math inline">\(0\)</span> in the y-axis would make the graph unreadable include additional annotation Or visualize the difference.</p>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" width="3840"></section><section id="exercise-2" class="slide level2"><h2>Exercise</h2>
+<div class="callout callout-caution no-icon callout-titled callout-style-simple">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Geospacial data</strong></p>
 </div>
+<div class="callout-content">
+<ul>
+<li>Obtain the shape (“SHP”) file for the EU + candidates from <a href="https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts">Eurostat</a>
+</li>
+<li>Crop the data to exclude overseas territories</li>
+<li>Highlight the “DACH” region</li>
+</ul>
+</div>
+</div>
+</div>
+</section><section id="connectedness-helps-connecting-the-dots" class="slide level2"><h2>“Connectedness” helps connecting the dots</h2>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a>charts <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(</span>
+<span id="cb20-2"><a></a>    <span class="st">"data/chart_data/spotify_charts.parquet"</span>)  <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a></a>    <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"de"</span>, <span class="st">"fr"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a></a>    <span class="fu">group_by</span>(country, date) <span class="sc">|&gt;</span></span>
+<span id="cb20-5"><a></a>    <span class="fu">summarize</span>(<span class="at">total_streams =</span> <span class="fu">sum</span>(streams)) </span>
+<span id="cb20-6"><a></a>charts <span class="sc">|&gt;</span></span>
+<span id="cb20-7"><a></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> <span class="fu">log</span>(total_streams))) <span class="sc">+</span></span>
+<span id="cb20-8"><a></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> country), <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb20-9"><a></a>    <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">7</span>))) <span class="sc">+</span></span>
+<span id="cb20-10"><a></a>    <span class="fu">scale_color_discrete_qualitative</span>(<span class="at">palette =</span> <span class="st">"Dark 2"</span>) <span class="sc">+</span></span>
+<span id="cb20-11"><a></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb20-12"><a></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"log(total streams)"</span>, <span class="at">title =</span> <span class="st">"Total streams 2023/24"</span>, <span class="at">subtitle =</span> <span class="st">"Top 200 songs"</span>) <span class="sc">+</span></span>
+<span id="cb20-13"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb20-14"><a></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb20-15"><a></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb20-16"><a></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb20-17"><a></a>        <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb20-18"><a></a>        <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb20-19"><a></a>        <span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb20-20"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb20-21"><a></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>)</span>
+<span id="cb20-22"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-20-1.png" width="2304" class="r-stretch"></section><section id="connectedness-helps-connecting-the-dots-1" class="slide level2"><h2>“Connectedness” helps connecting the dots</h2>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a></a>charts <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(</span>
+<span id="cb21-2"><a></a>    <span class="st">"data/chart_data/spotify_charts.parquet"</span>)  <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a></a>    <span class="fu">filter</span>(country <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"de"</span>, <span class="st">"fr"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a></a>    <span class="fu">group_by</span>(country, date) <span class="sc">|&gt;</span></span>
+<span id="cb21-5"><a></a>    <span class="fu">summarize</span>(<span class="at">total_streams =</span> <span class="fu">sum</span>(streams)) </span>
+<span id="cb21-6"><a></a>charts <span class="sc">|&gt;</span></span>
+<span id="cb21-7"><a></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> <span class="fu">log</span>(total_streams), <span class="at">color =</span> country)) <span class="sc">+</span></span>
+<span id="cb21-8"><a></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb21-9"><a></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb21-10"><a></a>    <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">7</span>))) <span class="sc">+</span></span>
+<span id="cb21-11"><a></a>    <span class="fu">scale_color_discrete_qualitative</span>(<span class="at">palette =</span> <span class="st">"Dark 2"</span>) <span class="sc">+</span></span>
+<span id="cb21-12"><a></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb21-13"><a></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"log(total streams)"</span>, <span class="at">title =</span> <span class="st">"Total streams 2023/24"</span>, <span class="at">subtitle =</span> <span class="st">"Top 200 songs"</span>) <span class="sc">+</span></span>
+<span id="cb21-14"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb21-15"><a></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb21-16"><a></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb21-17"><a></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb21-18"><a></a>        <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb21-19"><a></a>        <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb21-20"><a></a>        <span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb21-21"><a></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb21-22"><a></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>)</span>
+<span id="cb21-23"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-21-1.png" width="2304" class="r-stretch"></section><section id="use-scatter-plots-to-show-correlation" class="slide level2"><h2>Use scatter plots to show correlation</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bill_length_mm, <span class="at">y =</span> bill_depth_mm, <span class="co">#color = species</span></span>
+<span id="cb22-3"><a></a>)) <span class="sc">+</span></span>
+<span id="cb22-4"><a></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a></a>    <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">7</span>))) <span class="sc">+</span></span>
+<span id="cb22-7"><a></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb22-8"><a></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Bill depth"</span>, <span class="at">x =</span> <span class="st">"Bill length"</span>) <span class="sc">+</span></span>
+<span id="cb22-9"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb22-10"><a></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb22-11"><a></a>        <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb22-12"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center r-stretch" width="2304"></section><section id="beware-of-simpsons-paradox" class="slide level2"><h2>Beware of “Simpson’s Paradox”</h2>
+<ul>
+<li>When between-group correlation is the opposite of within-group correlation</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bill_length_mm, <span class="at">y =</span> bill_depth_mm, <span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb23-3"><a></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb23-5"><a></a>    <span class="fu">guides</span>(<span class="at">colour =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">size=</span><span class="dv">7</span>))) <span class="sc">+</span></span>
+<span id="cb23-6"><a></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb23-7"><a></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Bill depth"</span>, <span class="at">x =</span> <span class="st">"Bill length"</span>) <span class="sc">+</span></span>
+<span id="cb23-8"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb23-9"><a></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb23-10"><a></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb23-11"><a></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb23-12"><a></a>        <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb23-13"><a></a>        <span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb23-14"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center r-stretch" width="2304"></section><section id="use-boxplots-to-show-distributions" class="slide level2"><h2>Use Boxplots to show distributions</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
+<span id="cb24-3"><a></a>  <span class="at">y =</span> bill_length_mm, </span>
+<span id="cb24-4"><a></a>  <span class="at">x =</span> <span class="fu">fct_reorder</span>(species, bill_length_mm, <span class="at">.fun =</span> median, <span class="at">.na_rm =</span> <span class="cn">TRUE</span>))) <span class="sc">+</span></span>
+<span id="cb24-5"><a></a>    <span class="fu">geom_boxplot</span>(<span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb24-6"><a></a>    <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb24-7"><a></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Bill length"</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb24-9"><a></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">35</span>),</span>
+<span id="cb24-10"><a></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb24-11"><a></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb24-12"><a></a>        <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb24-13"><a></a>        <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb24-14"><a></a>        <span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb24-15"><a></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center r-stretch" width="2304"></section></section><section><section id="visualizing-uncertainty" class="title-slide slide level1"><h1>Visualizing Uncertainty</h1>
+<ul>
+<li>Recap DAGs <span class="math inline">\(\rightarrow\)</span> observational data</li>
+<li>Experiments</li>
+<li>Model choice</li>
+<li>Visualization</li>
+</ul></section><section id="analyzing-dags-pipe" class="slide level2"><h2>Analyzing DAGs: Pipe</h2>
+<p><strong>Bad Control (possibly use mediation analysis)</strong></p>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>med <span class="ot">&lt;-</span> <span class="fu">dagify</span>(z <span class="sc">~</span> x, y2 <span class="sc">~</span> z,</span>
+<span id="cb25-2"><a></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="fl">1.5</span>, <span class="at">y2 =</span> <span class="dv">2</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x=</span><span class="dv">1</span>, <span class="at">y2 =</span> <span class="dv">1</span>, <span class="at">z=</span><span class="dv">1</span>))</span>
+<span id="cb25-3"><a></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"z"</span>, <span class="st">"Mediator"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-6"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb25-7"><a></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span> </span>
+<span id="cb25-8"><a></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb25-9"><a></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb25-10"><a></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb25-11"><a></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb25-12"><a></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>) </span>
+<span id="cb25-13"><a></a>med</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-25-1.png" width="576" class="r-stretch"><ul>
+<li>x causes y through z</li>
+<li>Controlling for z blocks the causal association x <span class="math inline">\(\rightarrow\)</span> y2</li>
+</ul></section><section id="analyzing-dags-collider" class="slide level2"><h2>Analyzing DAGs: Collider</h2>
+<p><strong>Bad control</strong></p>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a><span class="fu">dagify</span>(a <span class="sc">~</span> x, a <span class="sc">~</span> y,</span>
+<span id="cb26-2"><a></a>  <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>,  <span class="at">a =</span> <span class="dv">0</span>))</span>
+<span id="cb26-3"><a></a>) <span class="sc">|&gt;</span></span>
+<span id="cb26-4"><a></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-5"><a></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"a"</span>, <span class="st">"Collider"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb26-6"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span></span>
+<span id="cb26-7"><a></a>  <span class="fu">geom_dag_point</span>(<span class="at">size =</span> <span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span></span>
+<span id="cb26-8"><a></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb26-9"><a></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb26-10"><a></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb26-11"><a></a>  <span class="fu">theme</span>(</span>
+<span id="cb26-12"><a></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb26-13"><a></a>    <span class="at">legend.position =</span> <span class="st">"top"</span></span>
+<span id="cb26-14"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-26-1.png" width="576" class="r-stretch"><ul>
+<li>x &amp; y cause a</li>
+<li>x &amp; y are d-separated and uncorrelated</li>
+<li>By adding a to the model spurious correlation between x &amp; y is introduced</li>
+</ul></section><section id="analyzing-dags-fork" class="slide level2"><h2>Analyzing DAGs: Fork</h2>
+<p><strong>Good Control</strong></p>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>med <span class="ot">&lt;-</span> <span class="fu">dagify</span>( x <span class="sc">~</span> d, y1 <span class="sc">~</span> d,</span>
+<span id="cb27-2"><a></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="fl">1.5</span>, <span class="at">y =</span> <span class="dv">2</span>, <span class="at">a =</span> <span class="fl">1.5</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">d =</span> <span class="fl">1.5</span>, <span class="at">y1 =</span> <span class="dv">2</span>), </span>
+<span id="cb27-3"><a></a>                     <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">z =</span> <span class="dv">1</span>, <span class="at">a =</span> <span class="dv">0</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">d =</span> <span class="dv">2</span>, <span class="at">y1 =</span> <span class="dv">2</span>))</span>
+<span id="cb27-4"><a></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-5"><a></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-6"><a></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"d"</span>, <span class="st">"Confounder"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-7"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb27-8"><a></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span> </span>
+<span id="cb27-9"><a></a>  <span class="fu">geom_dag_edges</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb27-10"><a></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb27-11"><a></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb27-12"><a></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb27-13"><a></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>) </span>
+<span id="cb27-14"><a></a>med</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-27-1.png" width="576" class="r-stretch"><ul>
+<li>d causes both x and y1</li>
+<li>Arrows pointing to x are called “back-door” paths</li>
+<li>Controlling for d “blocks” the non-causal association x <span class="math inline">\(\rightarrow\)</span> y1</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>
+<strong>Eliminated by randomized experiment!</strong> Why?</li>
+</ul>
+</div>
+</section><section id="randomized-experiments" class="slide level2"><h2>Randomized experiments</h2>
+<ul>
+<li>Researcher manipulates the variable of interest (x)</li>
+<li>Holding all other variables (confounders) constant</li>
+<li>To check the “pure” causal effect of the manipulation on the relevant outcome (y)</li>
+<li>Intuition: variation in y has to be due to x as all other things are kept constant</li>
+</ul>
+<div class="cell">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a>exper <span class="ot">&lt;-</span> <span class="fu">dagify</span>( x <span class="sc">~</span> d, y <span class="sc">~</span> d, y <span class="sc">~</span> x,</span>
+<span id="cb28-2"><a></a>       <span class="at">coords =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">d =</span> <span class="fl">1.5</span>, <span class="at">y =</span> <span class="dv">2</span>), </span>
+<span id="cb28-3"><a></a>                     <span class="at">y =</span> <span class="fu">c</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">d =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">0</span>))</span>
+<span id="cb28-4"><a></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-5"><a></a>  <span class="fu">tidy_dagitty</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a></a>  <span class="fu">mutate</span>(<span class="at">fill =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">"d"</span>, <span class="st">"Confounder"</span>, <span class="st">"variables of interest"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-7"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">xend =</span> xend, <span class="at">yend =</span> yend)) <span class="sc">+</span> </span>
+<span id="cb28-8"><a></a>  <span class="fu">geom_dag_point</span>(<span class="at">size=</span><span class="dv">7</span>, <span class="fu">aes</span>(<span class="at">color =</span> fill)) <span class="sc">+</span> </span>
+<span id="cb28-9"><a></a>  <span class="fu">geom_dag_edges</span>(</span>
+<span id="cb28-10"><a></a>    <span class="at">show.legend =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb28-11"><a></a>    <span class="fu">aes</span>(</span>
+<span id="cb28-12"><a></a>      <span class="at">edge_color =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">'d'</span>, <span class="st">'gray80'</span>, <span class="st">'darkgreen'</span>),</span>
+<span id="cb28-13"><a></a>      <span class="at">edge_linetype =</span> <span class="fu">ifelse</span>(name <span class="sc">==</span> <span class="st">'d'</span>, <span class="st">'dashed'</span>, <span class="st">'solid'</span>)</span>
+<span id="cb28-14"><a></a>      ))<span class="sc">+</span></span>
+<span id="cb28-15"><a></a>  <span class="fu">geom_dag_text</span>() <span class="sc">+</span></span>
+<span id="cb28-16"><a></a>  <span class="fu">theme_dag</span>() <span class="sc">+</span></span>
+<span id="cb28-17"><a></a>  <span class="fu">theme</span>(<span class="at">legend.title  =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb28-18"><a></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
+<span id="cb28-19"><a></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fl">1.5</span>, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">label =</span> <span class="st">'← kept constant'</span>), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>)</span>
+<span id="cb28-20"><a></a>exper</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-28-1.png" width="480" class="r-stretch"></section><section id="notes-on-choosing-a-model" class="slide level2"><h2>Notes on choosing a model</h2>
+<ul>
+<li>Often models assume a distribution of the error term
+<ul>
+<li>e.g., linear regression: normal distribution</li>
+</ul>
+</li>
+<li>We can choose a model based on its assumptions
+<ul>
+<li>e.g., continuous data: linear regression</li>
+<li>e.g., binary data: logistic regression</li>
+</ul>
+</li>
+<li>Specialized methods for dependent observations
+<ul>
+<li>e.g., paired t-test <span class="math inline">\(\rightarrow\)</span> test on difference of within-subject design</li>
+</ul>
+</li>
+<li>Specialized methods for violations of assumptions
+<ul>
+<li>e.g., Wilcoxon signed-rank test as alternative to t-test</li>
+</ul>
+</li>
+</ul></section><section id="visualizing-uncertainty-simple-experiments" class="slide level2 smaller"><h2>Visualizing Uncertainty: Simple experiments</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Outputs from statistical models should generally include:
+<ul>
+<li>Effect size</li>
+<li>Test statistic calculated (incl.&nbsp;paramters) &amp; p-value</li>
+<li>It is typical to include an interpretation of significance</li>
+<li>However, this is not recommended by statistical community. <span class="citation" data-cites="wassersteinMovingWorld052019">Wasserstein, Schirm, and Lazar (<a href="#/references" role="doc-biblioref" onclick="">2019</a>)</span>:</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>“if p = 0.03 then “…was statistically significant” would be replaced by “…had p = 0.03,””</p>
+</blockquote>
+<ul>
+<li>The <code>ggstatsplot</code> library <span class="citation" data-cites="patilGgstatsplot2021">(<a href="#/references" role="doc-biblioref" onclick="">Patil 2021</a>)</span> provides useful functions to calculate and visualize statistical tests and model parameters</li>
+<li>Follows best practices</li>
+<li>
+<code>ggbetweenstats</code> &amp; <code>ggwithinstats</code> for between- and within-subject experimental designs
+<ul>
+<li>Chooses automatically between t-test (2 groups) and ANOVA (3+ groups)</li>
+<li>Large number of tests available</li>
+<li>Choose <code>type='nonparametric'</code> for versions that are robust to violations of the normal-distribution assumption</li>
+<li>Choose <code>type='robust'</code> for versions that are robust to a few outliers</li>
+</ul>
+</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a></a><span class="fu">library</span>(ggstatsplot)</span>
+<span id="cb29-2"><a></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb29-3"><a></a><span class="fu">ggbetweenstats</span>(</span>
+<span id="cb29-4"><a></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb29-5"><a></a>  <span class="at">x =</span> species,</span>
+<span id="cb29-6"><a></a>  <span class="at">y =</span> body_mass_g,</span>
+<span id="cb29-7"><a></a>  <span class="at">type =</span> <span class="st">'nonparametric'</span>,</span>
+<span id="cb29-8"><a></a>  <span class="at">violin.args =</span> <span class="fu">list</span>(<span class="at">width =</span> <span class="dv">0</span>, <span class="at">linewidth=</span><span class="dv">0</span>),</span>
+<span id="cb29-9"><a></a>  <span class="at">point.args =</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="dv">0</span>),</span>
+<span id="cb29-10"><a></a>  <span class="at">bf.message =</span> <span class="cn">FALSE</span></span>
+<span id="cb29-11"><a></a>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"body mass"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="visualizing-uncertainty-regression-models" class="slide level2"><h2>Visualizing uncertainty: Regression models</h2>
+<ul>
+<li>Use the <code>ggcoefstats</code> function to visualize the results of (currently) <span class="math inline">\(225\)</span> different types of regression models</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">ggcoefstats</span>(</span>
+<span id="cb30-2"><a></a>  <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">+</span> sex, <span class="at">data =</span> penguins)</span>
+<span id="cb30-3"><a></a>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">'Error bars show 95% confidence interval'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center r-stretch" width="768"></section><section id="visualizing-uncertainty-regression-models-1" class="slide level2"><h2>Visualizing uncertainty: Regression models</h2>
+<ul>
+<li>Coefficient names can be modified by providing a <code>data.frame</code> with the relevant statistics instead of the model</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a>body_mass_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">+</span> sex, <span class="at">data =</span> penguins)</span>
+<span id="cb31-2"><a></a>tidy_coefs <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(body_mass_mod)</span>
+<span id="cb31-3"><a></a>tidy_coefs<span class="sc">$</span>df.error <span class="ot">&lt;-</span> body_mass_mod<span class="sc">$</span>df.residual</span>
+<span id="cb31-4"><a></a>tidy_coefs <span class="ot">&lt;-</span> <span class="fu">confint</span>(body_mass_mod) <span class="sc">|&gt;</span> </span>
+<span id="cb31-5"><a></a>  <span class="fu">data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb31-6"><a></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">conf.low =</span> <span class="st">'X2.5..'</span>, <span class="at">conf.high =</span> <span class="st">'X97.5..'</span>) <span class="sc">|&gt;</span></span>
+<span id="cb31-7"><a></a>  <span class="fu">cbind</span>(tidy_coefs) <span class="sc">|&gt;</span></span>
+<span id="cb31-8"><a></a>  <span class="fu">mutate</span>(<span class="at">term =</span> <span class="fu">str_replace_all</span>(</span>
+<span id="cb31-9"><a></a>    term, <span class="fu">c</span>(</span>
+<span id="cb31-10"><a></a>      <span class="at">sexmale =</span> <span class="st">"male (vs. female)"</span>,</span>
+<span id="cb31-11"><a></a>      <span class="at">speciesGentoo =</span> <span class="st">"Gentoo (vs. Adelie)"</span>,</span>
+<span id="cb31-12"><a></a>      <span class="at">speciesChinstrap =</span> <span class="st">"Chinstrap (vs. Adelie)"</span></span>
+<span id="cb31-13"><a></a>    )))</span>
+<span id="cb31-14"><a></a><span class="fu">ggcoefstats</span>(</span>
+<span id="cb31-15"><a></a>  tidy_coefs, </span>
+<span id="cb31-16"><a></a>  <span class="at">statistic =</span> <span class="st">'t'</span>,</span>
+<span id="cb31-17"><a></a>  <span class="at">exclude.intercept =</span> <span class="cn">TRUE</span></span>
+<span id="cb31-18"><a></a>  ) <span class="sc">+</span> </span>
+<span id="cb31-19"><a></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'DV: body mass (g)'</span>, <span class="at">caption =</span> <span class="st">'Intercept omitted; error bars show 95% confidence interval'</span>) <span class="sc">+</span></span>
+<span id="cb31-20"><a></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">suffix =</span> <span class="st">'g'</span>)) <span class="sc">+</span></span>
+<span id="cb31-21"><a></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center r-stretch" width="768"></section><section id="a-few-notes-on-colors" class="slide level2"><h2>A few notes on colors</h2>
+<ul>
+<li>The <code><a href="https://colorspace.R-Forge.R-project.org/">library(colorspace)</a></code> has convenient functions for <a href="https://colorspace.r-forge.r-project.org/articles/ggplot2_color_scales.html">picking correct color patterns</a>
+</li>
+<li>Palette type depends on the scaling of the data visualized
+<ul>
+<li>Is the data discrete or continuous?</li>
+<li>Is there an ordering?
+<ul>
+<li>Is the ordering diverging (i.e., there is a neutral state)?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>There are convenience functions for <code>ggplot</code>
+</li>
+</ul>
+<p><code>scale_&lt;aesthetic&gt;_&lt;datatype&gt;_&lt;colorscale&gt;()</code></p>
+<ul>
+<li>
+<code>aesthetic</code>s: <code>fill</code>, <code>color</code>
+</li>
+<li>
+<code>datatype</code>s: <code>discrete</code>, <code>continuous</code>, <code>binned</code>
+</li>
+<li>
+<code>colorscale</code>s: <code>qualitative</code>, <code>sequential</code>, <code>diverging</code>
+</li>
+</ul></section><section id="diverging-colors-correlation-matrix" class="slide level2"><h2>Diverging colors: correlation matrix</h2>
+<ul>
+<li>Diverging from -1 to 1 with 0 as a neutral point</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a>corrs <span class="ot">&lt;-</span> palmerpenguins<span class="sc">::</span>penguins <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb32-3"><a></a>  <span class="fu">select</span>(bill_length_mm, bill_depth_mm, flipper_length_mm) <span class="sc">|&gt;</span></span>
+<span id="cb32-4"><a></a>  <span class="fu">cor</span>()</span>
+<span id="cb32-5"><a></a>cor_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">cor =</span> <span class="fu">c</span>(corrs), <span class="at">var1 =</span> <span class="fu">factor</span>(<span class="fu">col</span>(corrs)), <span class="at">var2 =</span> <span class="fu">factor</span>(<span class="fu">row</span>(corrs)))</span>
+<span id="cb32-6"><a></a><span class="fu">ggplot</span>(cor_df, <span class="fu">aes</span>(var1, var2, <span class="at">fill =</span> cor)) <span class="sc">+</span> </span>
+<span id="cb32-7"><a></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span> </span>
+<span id="cb32-8"><a></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb32-9"><a></a>  <span class="fu">ylab</span>(<span class="st">"variable"</span>) <span class="sc">+</span></span>
+<span id="cb32-10"><a></a>  <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>, <span class="at">name =</span> <span class="st">"variable"</span>) <span class="sc">+</span></span>
+<span id="cb32-11"><a></a>  <span class="fu">scale_fill_continuous_diverging</span>(<span class="st">"Blue-Red 3"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center r-stretch" width="576"></section><section id="qualitative-colors-unordered-groups" class="slide level2"><h2>Qualitative colors: Unordered groups</h2>
+<ul>
+<li>Rule of thumb: visualize up to 7 groups with colors</li>
+<li>More become hard to differentiate</li>
+</ul>
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a></a><span class="fu">ggplot</span>(penguins, </span>
+<span id="cb33-2"><a></a>  <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_revfreq</span>(species), </span>
+<span id="cb33-3"><a></a>      <span class="at">color =</span> sex, <span class="at">fill =</span> sex)) <span class="sc">+</span></span>
+<span id="cb33-4"><a></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"count"</span>, <span class="at">position =</span> <span class="st">'dodge'</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a></a>  <span class="fu">scale_fill_discrete_qualitative</span>(<span class="st">"pastel 1"</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb33-7"><a></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.05</span>)),</span>
+<span id="cb33-8"><a></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">150</span>, <span class="at">by =</span> <span class="dv">20</span>)) <span class="sc">+</span> </span>
+<span id="cb33-9"><a></a>  <span class="fu">labs</span>(</span>
+<span id="cb33-10"><a></a>    <span class="at">title =</span> <span class="st">"Number of observations by species and sex"</span>,</span>
+<span id="cb33-11"><a></a>    <span class="at">x =</span> <span class="st">"Penguin Species"</span></span>
+<span id="cb33-12"><a></a>    ) <span class="sc">+</span></span>
+<span id="cb33-13"><a></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb33-14"><a></a>    <span class="fu">theme</span>(</span>
+<span id="cb33-15"><a></a>    <span class="at">plot.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">35</span>),</span>
+<span id="cb33-16"><a></a>    <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb33-17"><a></a>    <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb33-18"><a></a>    <span class="at">axis.title=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">30</span>),</span>
+<span id="cb33-19"><a></a>    <span class="at">legend.position=</span><span class="st">'top'</span>,</span>
+<span id="cb33-20"><a></a>    <span class="at">legend.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">25</span>),</span>
+<span id="cb33-21"><a></a>    <span class="at">legend.title=</span><span class="fu">element_blank</span>()</span>
+<span id="cb33-22"><a></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-33-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section><section id="color-vision-deficiency" class="slide level2"><h2>Color Vision Deficiency</h2>
+<ul>
+<li>~8% of men and ~0.5% of women have color vision deficiency (CVD) (“color blindness”)</li>
+<li>We can simulate CVD using <code>swatchplot(&lt;palette&gt;, cvd = TRUE)</code>
+</li>
+</ul>
+<div class="cell columns column-output-location" data-layout-align="center">
+<div class="column">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a></a><span class="fu">swatchplot</span>(<span class="fu">diverging_hcl</span>(<span class="dv">7</span>, <span class="st">'Red-Green'</span>), <span class="at">cvd =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="03-data_visualization_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section><section id="references" class="slide level2 scrollable smaller"><h2>References</h2>
 
 <div class="quarto-auto-generated-content">
 <p><img src="Graphics/WU_logo.png" class="slide-logo"></p>
@@ -1772,7 +2403,15 @@ Stephan Fally
 <p><a href="./index.html">Data-based Storytelling</a></p>
 </div>
 </div>
-</section>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-patilGgstatsplot2021" class="csl-entry" role="listitem">
+Patil, Indrajeet. 2021. <span>“<span class="nocase">Visualizations with statistical details: The <span class="nocase">’ggstatsplot’</span> approach</span>.”</span> <em><span>Journal of Open Source Software</span></em> 6 (61): 3167. <a href="https://doi.org/10.21105/joss.03167">https://doi.org/10.21105/joss.03167</a>.
+</div>
+<div id="ref-wassersteinMovingWorld052019" class="csl-entry" role="listitem">
+Wasserstein, Ronald L., Allen L. Schirm, and Nicole A. Lazar. 2019. <span>“Moving to a World Beyond <span>‘p <span>&lt;</span> 0.05’</span>.”</span> <em>The American Statistician</em> 73 (March): 1–19. <a href="https://doi.org/10.1080/00031305.2019.1583913">https://doi.org/10.1080/00031305.2019.1583913</a>.
+</div>
+</div>
+</section></section>
 </div>
   </div>
 

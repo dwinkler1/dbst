@@ -329,12 +329,8 @@ modelsummary(
     lm(streams~perfect_rating + genre)),
     coef_rename = c("perfect_ratingTRUE" = "perfect rating"),
     stars = TRUE,
-    output = 'gt',
     statistic = "{p.value}",
-    gof_map = NA) |>
-    tab_style(style = cell_fill(color='lavenderblush3'),
-              locations = cells_body(rows = 3)
-    )
+    gof_map = NA)
 ```
 
 ## Grades and happyness
@@ -356,12 +352,8 @@ modelsummary(
     lm(happyness~grades+self_esteem)),
     coef_rename = c("self_esteem" = "self esteem"),
     stars = TRUE,
-    output = 'gt',
     statistic = "{p.value}",
-    gof_map = NA) |>
-    tab_style(style = cell_fill(color='lavenderblush3'),
-              locations = cells_body(rows = 3)
-    )
+    gof_map = NA)
 ```
 
 ## Restaurant and location ratings
@@ -450,7 +442,7 @@ $$
 [Causal Pitchfork](./CausalPitchfork.html)
 :::
 
-# Analyzing DAGs: **d-separation** 
+## Analyzing DAGs: **d-separation** 
 
 - Necessary to decide which variables to use in model
 - "d" stands for "directional"
@@ -472,13 +464,12 @@ dagify(z ~ x, y2 ~ z, a ~ x, a ~ y3, x ~ d, y1 ~ d,
 ```
 
 
-# Analyzing DAGs: Fork
+## Analyzing DAGs: Fork
 
-:::: {.columns}
-::: {.column width="50%"}
+**Good Control**
 ```{r}
-#| fig-width: 10
-#| fig-height: 3
+#| fig-width: 6
+#| fig-height: 2.5
 med <- dagify( x ~ d, y1 ~ d,
        coords = list(x = c(x = 1, z = 1.5, y = 2, a = 1.5, b = 2, d = 1.5, y1 = 2), 
                      y = c(x = 1, y = 1, z = 1, a = 0, b = 0, d = 2, y1 = 2))
@@ -486,7 +477,7 @@ med <- dagify( x ~ d, y1 ~ d,
   tidy_dagitty() %>%
   mutate(fill = ifelse(name == "d", "Confounder", "variables of interest")) %>% 
   ggplot(aes(x = x, y = y, xend = xend, yend = yend)) + 
-  geom_dag_point(size=12, aes(color = fill)) + 
+  geom_dag_point(size=7, aes(color = fill)) + 
   geom_dag_edges(show.legend = FALSE)+
   geom_dag_text() +
   theme_dag() +
@@ -494,17 +485,15 @@ med <- dagify( x ~ d, y1 ~ d,
         legend.position = "top") 
 med
 ```
-:::
-::: {.column width="50%"}
+
 - d causes both x and y1
 - Arrows pointing to x are called "back-door" paths 
 - Eliminated by randomized experiment! Why?
 - Controlling for d "blocks" the non-causal association x $\rightarrow$ y1
-:::
-::::
 
-# Analyzing DAGs: Pipe
+## Analyzing DAGs: Pipe
 
+**Bad Control (possibly use mediation analysis)**
 ```{r}
 #| fig-width: 6
 #| fig-height: 2
@@ -526,7 +515,31 @@ med
 - x causes y through z
 - Controlling for z blocks the causal association x $\rightarrow$ y2
 
+## Analyzing DAGs: Collider
 
+**Bad control**
+```{r}
+#| fig-width: 6
+#| fig-height: 2
+dagify(a ~ x, a ~ y,
+  coords = list(x = c(x = 1, y = 2, a = 1.5), y = c(x = 1, y = 0,  a = 0))
+) |>
+  tidy_dagitty() |>
+  mutate(fill = ifelse(name == "a", "Collider", "variables of interest")) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point(size = 7, aes(color = fill)) +
+  geom_dag_edges(show.legend = FALSE) +
+  geom_dag_text() +
+  theme_dag() +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
+```
+
+- x & y cause a
+- x & y are d-separated and uncorrelated
+- By adding a to the model spurious correlation between x & y is introduced
 
 ## Exercise
 
