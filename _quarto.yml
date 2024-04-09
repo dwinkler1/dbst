@@ -13,6 +13,8 @@ website:
         text: Introduction to R
       - href: 02-modeling.qmd
         text: Modeling
+      - href: 03-data_visualization.qmd
+        text: Visualization
 format:
   html:
     theme: flatly
