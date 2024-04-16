@@ -1552,5 +1552,12 @@
     "title": "Welcome!",
     "section": "Optional",
     "text": "Optional\nIf you are already familiar with Jupyter you can install a kernel for R. Open R in a terminal (do not use the R.app in MacOS) and run the following:\n\ninstall.packages(\"IRkernel\")\nIRkernel::installspec()\n\nNow you can open the downloaded .ipynb file and execute it."
+  },
+  {
+    "objectID": "02-modeling.html#moderation",
+    "href": "02-modeling.html#moderation",
+    "title": "Modeling",
+    "section": "Moderation",
+    "text": "Moderation\n\nAn effect of variable \\(x\\) on outcome \\(y\\) is moderated if it depends on another variable \\(z\\) in any way (strength, sign, …)\nIn regression analysis we can test for moderation by including interactions (product of two variables) in the model\nE.g., the association of flipper length and body mass is moderated by the species\n\n\nCodelibrary(palmerpenguins)\nlibrary(ggstatsplot)\nlm(body_mass_g ~ species:flipper_length_mm + species + flipper_length_mm, data = penguins) |&gt;\nbroom::tidy() |&gt;\ngt::gt() |&gt;\ngt::tab_options(table.font.size = 35)\n\n\n\n\n\nterm\nestimate\nstd.error\nstatistic\np.value\n\n\n\n(Intercept)\n-2535.836802\n879.467667\n-2.8833770\n0.004187922468810483\n\n\nspeciesChinstrap\n-501.358972\n1523.459013\n-0.3290925\n0.742290787208460534\n\n\nspeciesGentoo\n-4251.443811\n1427.332228\n-2.9785944\n0.003106357935232562\n\n\nflipper_length_mm\n32.831690\n4.627184\n7.0953936\n0.000000000007691129\n\n\nspeciesChinstrap:flipper_length_mm\n1.741704\n7.855734\n0.2217112\n0.824673398945700575\n\n\nspeciesGentoo:flipper_length_mm\n21.790812\n6.941167\n3.1393586\n0.001843295165362903"
   }
 ]

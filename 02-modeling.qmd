@@ -715,4 +715,21 @@ Right: Case-control Bias
 **Prepare a short presentation of a (potential) DAG for your thesis**
 :::
 
+## Moderation
+
+- An effect of variable $x$ on outcome $y$ is moderated if it depends on another variable $z$ in any way (strength, sign, ...)
+- In regression analysis we can test for moderation by including interactions (product of two variables) in the model
+- E.g., the association of flipper length and body mass is moderated by the species
+
+```{r}
+library(palmerpenguins)
+library(ggstatsplot)
+lm(body_mass_g ~ species:flipper_length_mm + species + flipper_length_mm, data = penguins) |>
+broom::tidy() |>
+gt::gt() |>
+gt::tab_options(table.font.size = 35)
+```
+
+## Mediation
+
 ## References
